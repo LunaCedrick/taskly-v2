@@ -1,6 +1,6 @@
 ---
 name: g2-store-and-sync
-description: Use to build Gate 2 of Taskly: the store, the three Firestore listeners, writes, and security rules.
+description: "Use to build Gate 2 of Taskly: the store, the three Firestore listeners, writes, and security rules."
 ---
 # Gate 2: Store and sync
 

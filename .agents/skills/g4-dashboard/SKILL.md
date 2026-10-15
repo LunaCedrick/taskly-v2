@@ -1,6 +1,6 @@
 ---
 name: g4-dashboard
-description: Use to build Gate 4 of Taskly: the dashboard with stats, Overdue, Today, Upcoming, and recent activity.
+description: "Use to build Gate 4 of Taskly: the dashboard with stats, Overdue, Today, Upcoming, and recent activity."
 ---
 # Gate 4: Dashboard
 

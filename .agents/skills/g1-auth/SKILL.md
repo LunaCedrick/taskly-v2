@@ -1,6 +1,6 @@
 ---
 name: g1-auth
-description: Use to build Gate 1 of Taskly: Google sign-in, protected routes, the session check, and the sign-in error states.
+description: "Use to build Gate 1 of Taskly: Google sign-in, protected routes, the session check, and the sign-in error states."
 ---
 # Gate 1: Authentication
 

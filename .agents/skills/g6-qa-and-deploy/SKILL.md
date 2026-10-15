@@ -1,6 +1,6 @@
 ---
 name: g6-qa-and-deploy
-description: Use to build Gate 6 of Taskly: accessibility, responsive checks, performance tuning, and the production release.
+description: "Use to build Gate 6 of Taskly: accessibility, responsive checks, performance tuning, and the production release."
 ---
 # Gate 6: QA and deploy
 

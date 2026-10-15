@@ -13,8 +13,8 @@ Gate rhythm: new session, plan first, build on a branch, run the exit commands, 
 | A2 | Designs approved: 20 canvas frames covering every v0.1 page | Claude, You | Canvas approved | [x] |
 | A3 | Workflow agreed | Claude, You | You say yes | [x] |
 | A4 | Starter pack delivered | Claude | Files delivered, `AGENTS.md` under 8 KB | [x] |
-| A5 | New GitHub repo, pack pushed, old repo tagged `v1-prototype`, canvas frames exported to `docs/design/` | You | `main` has the pack | [ ] |
-| A6 | New Firebase project: Google sign-in on, Firestore created, web app registered, config in `.env` | You | `.env` works locally | [ ] |
+| A5 | New GitHub repo, pack pushed, old repo tagged `v1-prototype`, canvas frames exported to `docs/design/` | You | `main` has the pack | [x] |
+| A6 | New Firebase project: Google sign-in on, Firestore created, web app registered, config in `.env` | You | `.env` works locally | [x] |
 | A7 | Vercel connected, `VITE_FIREBASE_*` set for Production and Preview | You | A branch push gives a preview URL | [ ] |
 | A8 | Codex sees all of `AGENTS.md` (last heading "Reports") and lists the skills | You | Heading matches | [ ] |
 

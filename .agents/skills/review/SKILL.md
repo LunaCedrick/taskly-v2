@@ -1,6 +1,6 @@
 ---
 name: review
-description: Use at the end of every Taskly gate, before opening the pull request, to run the quality checklist and record lessons.
+description: "Use at the end of every Taskly gate, before opening the pull request, to run the quality checklist and record lessons."
 ---
 
 # Review

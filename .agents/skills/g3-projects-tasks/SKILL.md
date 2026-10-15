@@ -1,6 +1,6 @@
 ---
 name: g3-projects-tasks
-description: Use to build Gate 3 of Taskly: project and task create, edit, delete, forms, Quick Add, pickers, dialogs, and toasts.
+description: "Use to build Gate 3 of Taskly: project and task create, edit, delete, forms, Quick Add, pickers, dialogs, and toasts."
 ---
 # Gate 3: Projects, tasks, Quick Add
 
