@@ -1,9 +1,37 @@
-node_modules/
-dist/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# Dependencies and builds
+node_modules
+dist
+dist-ssr
+*.local
+
+# Secrets and environment (never commit)
 .env
-.env.local
-.DS_Store
+.env.*
+!.env.example
+
+# Firebase, tests, coverage
+.firebase/
 coverage/
 playwright-report/
 test-results/
-.firebase/
+
+# Editor and OS files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
