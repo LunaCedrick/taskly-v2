@@ -7,6 +7,7 @@ Screens: `docs/SCREENS.md` (per-screen behavior) and `docs/design/*.png`. Tokens
 ## Commands
 `npm run dev | build | lint | typecheck | test | e2e | test:rules`
 These are created in Gate 0 and later gates. If a command you need is missing, say so instead of guessing.
+Emulator ports: `Auth 9099 | Firestore 8081` (`8080` is taken on the owner's machine). Keep them in one constant.
 
 ## Hard rules (always true)
 1. Speed is a requirement. Budgets are in PLAN.md section 6. A change that breaks a budget is not done.

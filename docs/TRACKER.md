@@ -1,6 +1,6 @@
 # TASKLY v2: TRACKER.md
 
-Where we are: Phase A, step A5. Update this file after every step (tick the box, add a log line).
+Where we are: Phase A, step A8. Update this file after every step (tick the box, add a log line).
 Owners: **You** = Cedrick, **Claude** = planning, design, and review in chat, **Codex** = builds code.
 Targets for each gate are in `docs/PLAN.md` section 10 and in the gate's skill.
 
@@ -15,7 +15,7 @@ Gate rhythm: new session, plan first, build on a branch, run the exit commands, 
 | A4 | Starter pack delivered | Claude | Files delivered, `AGENTS.md` under 8 KB | [x] |
 | A5 | New GitHub repo, pack pushed, old repo tagged `v1-prototype`, canvas frames exported to `docs/design/` | You | `main` has the pack | [x] |
 | A6 | New Firebase project: Google sign-in on, Firestore created, web app registered, config in `.env` | You | `.env` works locally | [x] |
-| A7 | Vercel connected, `VITE_FIREBASE_*` set for Production and Preview | You | A branch push gives a preview URL | [ ] |
+| A7 | Vercel connected, `VITE_FIREBASE_*` set for Production and Preview | You | A branch push gives a preview URL | [x] |
 | A8 | Codex sees all of `AGENTS.md` (last heading "Reports") and lists the skills | You | Heading matches | [ ] |
 
 ## Phase B: Build
@@ -47,3 +47,4 @@ Offline sync, settings page, installable app, offline banner, custom calendar, U
 | 2026-10-13 | A1, A2 | Plan v2 and calm warm designs approved |
 | 2026-10-13 | A3, A4 | Workflow approved; starter pack delivered |
 | 2026-10-13 | Design | Canvas finalized (20 frames); scope additions approved; milestone targets set |
+| 2026-10-16 | A5 to A7 done | Repo, Firebase project, Vercel connected, domain authorized. Firestore emulator moved to 8081|
