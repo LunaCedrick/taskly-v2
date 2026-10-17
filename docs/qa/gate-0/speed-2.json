@@ -1,0 +1,120 @@
+{
+  "virtualize": true,
+  "transitions": [
+    {
+      "from": "/",
+      "to": "/tasks",
+      "milliseconds": 192.7
+    },
+    {
+      "from": "/tasks",
+      "to": "/projects/project-1",
+      "milliseconds": 99.6
+    },
+    {
+      "from": "/projects/project-1",
+      "to": "/",
+      "milliseconds": 60
+    },
+    {
+      "from": "/",
+      "to": "/tasks",
+      "milliseconds": 66
+    },
+    {
+      "from": "/tasks",
+      "to": "/projects/project-1",
+      "milliseconds": 59.1
+    },
+    {
+      "from": "/projects/project-1",
+      "to": "/",
+      "milliseconds": 56.6
+    },
+    {
+      "from": "/",
+      "to": "/tasks",
+      "milliseconds": 56.7
+    },
+    {
+      "from": "/tasks",
+      "to": "/projects/project-1",
+      "milliseconds": 58.3
+    },
+    {
+      "from": "/projects/project-1",
+      "to": "/",
+      "milliseconds": 55.3
+    },
+    {
+      "from": "/",
+      "to": "/tasks",
+      "milliseconds": 57.3
+    },
+    {
+      "from": "/tasks",
+      "to": "/projects/project-1",
+      "milliseconds": 55.5
+    },
+    {
+      "from": "/projects/project-1",
+      "to": "/",
+      "milliseconds": 41.7
+    },
+    {
+      "from": "/",
+      "to": "/tasks",
+      "milliseconds": 56.2
+    },
+    {
+      "from": "/tasks",
+      "to": "/projects/project-1",
+      "milliseconds": 61
+    },
+    {
+      "from": "/projects/project-1",
+      "to": "/",
+      "milliseconds": 55.6
+    },
+    {
+      "from": "/",
+      "to": "/tasks",
+      "milliseconds": 50.2
+    },
+    {
+      "from": "/tasks",
+      "to": "/projects/project-1",
+      "milliseconds": 55.1
+    },
+    {
+      "from": "/projects/project-1",
+      "to": "/",
+      "milliseconds": 55.5
+    },
+    {
+      "from": "/",
+      "to": "/tasks",
+      "milliseconds": 58.6
+    },
+    {
+      "from": "/tasks",
+      "to": "/projects/project-1",
+      "milliseconds": 54
+    }
+  ],
+  "median": 56.650000000000006,
+  "p75": 59.1,
+  "p95": 99.6,
+  "navigationRequests": [],
+  "consoleErrors": [],
+  "cpuThrottle": 4,
+  "machine": {
+    "hostname": "DESKTOP-4HM6D76",
+    "cpu": "AMD Ryzen 5 3400G with Radeon Vega Graphics    ",
+    "logicalCpus": 8,
+    "memoryGiB": 13.94,
+    "os": "win32 10.0.19045",
+    "node": "v24.16.0",
+    "browser": "156.0.8078.4"
+  }
+}

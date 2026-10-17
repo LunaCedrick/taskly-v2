@@ -43,4 +43,8 @@ All must pass. Report the median and 95th percentile route-change times.
 Command results, numbers, what was not done, proposed `AGENTS.md` changes.
 
 ## Lessons
-(none yet)
+- 2026-10-17: Extend the existing scaffold and preserve package.json; Gate 0 does not need Firebase.
+- 2026-10-17: Read row geometry once per render, reuse Intl formatters, and seed the virtualizer's initial rectangle to avoid an empty first range.
+- 2026-10-17: Disable Playwright tracing for CPU-throttled speed tests; use two animation frames across the committed view's paint, not three.
+- 2026-10-17: Native modal dialogs still need explicit Tab wrapping; test focus return, scrim dismissal, and every shell control's target size.
+- 2026-10-17: Run Lighthouse through pinned npx with Playwright's CHROME_PATH; retain failed measurements and separate the informational unvirtualized benchmark.

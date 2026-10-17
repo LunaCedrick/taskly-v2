@@ -21,7 +21,7 @@ Gate rhythm: new session, plan first, build on a branch, run the exit commands, 
 ## Phase B: Build
 | Gate | Pages delivered | Key targets | Status |
 |---|---|---|---|
-| G0 Shell and speed | App shell: sidebar, topbar, phone top bar, bottom tab bar, menu drawer; Floating Quick Add button (visible, not wired yet); Placeholder Dashboard, My Tasks, Project view rendering 1,000 fake tasks; ... | Median and 95th percentile route-change time recorded; 95th percentile under 100 ms with CPU throttled 4x; Zero network requests during navigation; ... | [ ] |
+| G0 Shell and speed | App shell: sidebar, topbar, phone top bar, bottom tab bar, menu drawer; Floating Quick Add button (visible, not wired yet); Placeholder Dashboard, My Tasks, Project view rendering 1,000 fake tasks; ... | Median and 95th percentile route-change time recorded; 95th percentile under 100 ms with CPU throttled 4x; Zero network requests during navigation; ... | [x] |
 | G1 Authentication | Sign in (desktop, phone stacked); Session check screen (app start); Sign-in error state (popup blocked, network, cancelled); ... | Signed-out visit goes to /sign-in, then returns to the requested route after sign-in; A page refresh keeps the session; ... | [ ] |
 | G2 Store and sync | Dashboard, My Tasks, Project view now read real data (read-only); States: loading skeleton, first run, empty project, load error | Exactly 3 Firestore listeners during navigation (automated test); A burst of 100 snapshot updates causes at most 1 render per frame; ... | [ ] |
 | G3 Projects, tasks, Quick Add | Task form: modal on desktop, bottom sheet on phone, add and edit; Dialogs: new project, rename project, delete task, delete project; Quick Add: floating button live, popover on desktop, sheet on phone, "More options" opens the full form; ... | Quick Add takes at most 3 steps: open, type, Enter; The new task appears under 100 ms after Enter (optimistic); ... | [ ] |
@@ -44,6 +44,9 @@ Offline sync, settings page, installable app, offline banner, custom calendar, U
 ## Log
 | Date | Step | Note |
 |---|---|---|
+| 2026-10-17 | G0 complete | Build, lint, strict typecheck, 10 unit/component and 5 browser tests pass. Final route p95 73.3/99.6/77.9 ms at 4x CPU; 0 requests. JS 96,155 bytes gzip. Lighthouse mobile 99, accessibility 100, LCP 1.856 s. Review and screenshot differences: `docs/qa/gate-0/REVIEW.md`. |
+| 2026-10-17 | G0 tooling | Extended the existing Vite scaffold; strict TypeScript, approved test tools, local licensed fonts, SPA rewrite. Commit `1f2ceb8`. |
+| 2026-10-17 | G0 shell, data, tests | Responsive shell, three in-memory views, 1,000 deterministic tasks, bounded Dashboard, accessible virtual lists. Ten unit/component tests and six browser checks passed; final audit and review pending. Commit `cd37a03`. |
 | 2026-10-13 | A1, A2 | Plan v2 and calm warm designs approved |
 | 2026-10-13 | A3, A4 | Workflow approved; starter pack delivered |
 | 2026-10-13 | Design | Canvas finalized (20 frames); scope additions approved; milestone targets set |
