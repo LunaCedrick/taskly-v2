@@ -41,14 +41,20 @@ function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
 function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; label: string; listId: string }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const { active, row, onFocus } = useRows(listId, tasks)
-  const rowHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--row-height'))
+  const tokens = getComputedStyle(document.documentElement)
+  const rowHeight = parseFloat(tokens.getPropertyValue('--row-height'))
+  const initialHeight = tokens.getPropertyValue('--desktop-display').trim() === 'none'
+    ? window.innerHeight - parseFloat(tokens.getPropertyValue('--list-phone-offset'))
+    : parseFloat(tokens.getPropertyValue('--list-height'))
   // No React Compiler is enabled; this component deliberately uses the virtualizer imperatively.
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: tasks.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => rowHeight,
-    overscan: 5,
+    // Render the first range immediately, rather than waiting for ResizeObserver to populate an empty list.
+    initialRect: { height: initialHeight, width: window.innerWidth },
+    overscan: 3,
     getItemKey: (index) => tasks[index].id,
     // Keep the focused row mounted when pointer scrolling moves it out of view.
     rangeExtractor: (range) => [...new Set([...defaultRangeExtractor(range), active])].sort((a, b) => a - b),

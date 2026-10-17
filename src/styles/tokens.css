@@ -32,6 +32,7 @@
   --tab-height:62px; --phone-bar:64px; --content-bottom:112px;
   --row-height:64px; --preview-row:52px; --row-pad:16px;
   --list-height:520px; --progress-height:4px; --search-width:250px;
+  --list-phone-offset:300px;
   --stat-height:108px; --stat-columns:repeat(4,minmax(0,1fr));
   --dashboard-columns:minmax(0,1fr) var(--activity);
   --desktop-display:flex; --phone-display:none; --shell-columns:var(--sidebar) minmax(0,1fr);
@@ -58,7 +59,7 @@
     --row-pad:12px; --panel-space:var(--space-4); --row-project-display:none;
     --preview-row:60px; --stat-padding:12px; --stat-number-size:26px; --banner-extra-display:none;
     --due-pill-padding:var(--space-0); --phone-priority-display:none;
-    --list-height:calc(100dvh - 300px);
+    --list-height:calc(100dvh - var(--list-phone-offset));
   }
 }
 @media (prefers-reduced-motion:reduce) {

@@ -15,7 +15,7 @@
     "measure:unvirtualized": "playwright test tests/e2e/speed.spec.ts --grep @comparison",
     "measure:bundle": "node scripts/measure-bundle.mjs",
     "lighthouse": "node scripts/lighthouse.mjs",
-    "lighthouse:audit": "npx --yes lighthouse@13.5.0 http://127.0.0.1:4174 --chrome-flags=\"--headless --no-sandbox\" --only-categories=performance,accessibility --output=json --output=html --output-path=test-results/lighthouse"
+    "lighthouse:audit": "npx --yes lighthouse@13.5.0 http://127.0.0.1:4174 --chrome-flags=\"--headless --no-sandbox\" --only-categories=performance,accessibility --save-assets --output=json --output=html --output-path=test-results/lighthouse"
   },
   "dependencies": {
     "@tanstack/react-virtual": "^3.14.21",

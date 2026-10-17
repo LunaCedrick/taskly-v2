@@ -38,7 +38,8 @@ export function Shell() {
     <nav className={styles.tabs} aria-label="Phone navigation">
       <NavLink end to="/"><Icon name="dashboard" />Dashboard</NavLink>
       <NavLink to="/tasks"><Icon name="tasks" />Tasks</NavLink>
-      <button type="button" onClick={() => setDrawerOpen(true)} aria-haspopup="dialog"><Icon name="folder" />Projects</button>
+      <button type="button" onClick={() => setDrawerOpen(true)} aria-haspopup="dialog"
+        aria-current={pathname.startsWith('/projects/') ? 'page' : undefined}><Icon name="folder" />Projects</button>
     </nav>
     <Drawer />
   </div>

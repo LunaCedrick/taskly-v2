@@ -29,8 +29,8 @@ try {
     speedIndexMs: report.audits['speed-index'].numericValue,
     environment: report.environment,
     configSettings: report.configSettings,
-    failedAccessibilityAudits: Object.values(report.audits).filter((audit) => audit.score === 0 && audit.details?.type === 'table')
-      .map((audit) => ({ id: audit.id, title: audit.title })),
+    failedAccessibilityAudits: report.categories.accessibility.auditRefs.map(({ id }) => report.audits[id])
+      .filter((audit) => audit.score === 0).map((audit) => ({ id: audit.id, title: audit.title })),
     cliExitCode: exitCode,
   }
   await writeFile('docs/qa/gate-0/lighthouse.json', JSON.stringify(metrics, null, 2) + '\n')

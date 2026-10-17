@@ -18,6 +18,30 @@ for (const width of [390, 1280]) {
       await page.screenshot({ path: `docs/qa/gate-0/${name}-${width}.png`, fullPage: true })
     }
     await page.goto('/')
+    const controlCount = await page.evaluate(() => {
+      const controls = [...document.querySelectorAll<HTMLElement>('a[href], button, [tabindex="0"]')]
+        .filter((element) => element.getBoundingClientRect().width > 0)
+      controls.forEach((element, index) => { element.dataset.keyboardCheck = String(index) })
+      return controls.length
+    })
+    const reached = new Set<string>()
+    for (let index = 0; index < controlCount + 2; index++) {
+      await page.keyboard.press('Tab')
+      const focused = await page.evaluate(() => {
+        const element = document.activeElement as HTMLElement
+        const rect = element.getBoundingClientRect()
+        return { id: element.dataset.keyboardCheck, width: rect.width, height: rect.height,
+          outline: parseFloat(getComputedStyle(element).outlineWidth) }
+      })
+      if (focused.id !== undefined) {
+        reached.add(focused.id)
+        expect(focused.width).toBeGreaterThanOrEqual(44)
+        expect(focused.height).toBeGreaterThanOrEqual(44)
+        expect(focused.outline).toBeGreaterThanOrEqual(3)
+      }
+    }
+    expect(reached.size).toBe(controlCount)
+    await page.goto('/')
     await page.keyboard.press('Tab')
     await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused()
     await page.keyboard.press('Enter')
