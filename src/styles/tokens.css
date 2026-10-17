@@ -1,0 +1,66 @@
+@font-face {
+  font-family: 'Instrument Sans'; font-style: normal; font-weight: 400 600;
+  font-display: swap; src: url('/fonts/instrument-sans-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Newsreader'; font-style: normal; font-weight: 500 600;
+  font-display: swap; src: url('/fonts/newsreader-latin.woff2') format('woff2');
+}
+:root {
+  --bg:#FAF9F5; --surface:#FFFFFF; --sand:#F3F1EA; --line:#E6E2D6;
+  --ink:#2B2924; --muted:#6F6B60; --accent:#B5522F; --accent-tint:#F6E3DA;
+  --overdue:#A63A2A; --overdue-tint:#F3DAD3; --overdue-row:#FCF3F0;
+  --today:#8A5A0B; --today-tint:#F6E7C8; --done:#4F6339; --done-tint:#E3E9D8;
+  --prio-high:#A63A2A; --prio-med:#B07A1E; --prio-low:#68794F;
+  --project-0:var(--accent); --project-1:var(--done); --project-2:var(--today);
+  --project-3:#3F6B6E; --project-4:#7A4A68; --project-5:#55607A;
+  --scrim:rgb(43 41 36 / 38%); --clear:transparent;
+  --radius-sm:8px; --radius-md:10px; --radius-lg:14px; --radius-round:999px;
+  --space-0:0px; --space-1:4px; --space-2:8px; --space-3:12px;
+  --space-4:16px; --space-5:24px; --space-6:32px; --space-7:36px;
+  --font-ui:'Instrument Sans',system-ui,sans-serif;
+  --font-display:'Newsreader',Georgia,serif;
+  --text-xs:12px; --text-sm:13px; --text-body:14px; --text-section:20px;
+  --text-logo:26px; --text-title:34px; --text-stat:32px;
+  --weight-normal:400; --weight-medium:500; --weight-bold:600;
+  --line-body:1.45; --line-title:1.1; --line-tight:1.25;
+  --border:1px; --focus-width:3px; --focus-offset:3px;
+  --touch:44px; --icon:18px; --logo:30px; --checkbox:22px; --dot:7px;
+  --sidebar:232px; --drawer:300px; --activity:300px;
+  --content-top:28px; --content-side:36px; --page-max:1600px;
+  --fab:56px; --fab-offset:32px; --fab-bottom:32px; --fab-text:32px;
+  --tab-height:62px; --phone-bar:64px; --content-bottom:112px;
+  --row-height:64px; --preview-row:52px; --row-pad:16px;
+  --list-height:520px; --progress-height:4px; --search-width:250px;
+  --stat-height:108px; --stat-columns:repeat(4,minmax(0,1fr));
+  --dashboard-columns:minmax(0,1fr) var(--activity);
+  --desktop-display:flex; --phone-display:none; --shell-columns:var(--sidebar) minmax(0,1fr);
+  --row-direction:row; --row-align:center; --title-lines:1;
+  --row-project-display:inline-flex; --due-pill-padding:var(--space-1) var(--space-2);
+  --due-pill-bg:var(--sand); --phone-priority-display:inline;
+  --panel-space:var(--space-5); --viewport-height:100dvh;
+  --full:100%; --zero:0; --one:1; --half:50%; --disabled-opacity:.45;
+  --done-opacity:.7; --z-shell:10; --z-fab:20; --z-drawer:30;
+  --dur-1:120ms; --dur-2:200ms; --ease:cubic-bezier(.2,.7,.2,1);
+  --skeleton-width:60%; --skeleton-height:14px;
+  --hover-brightness:.97; --search-fluid:18vw;
+  --stat-padding:16px; --stat-number-size:32px; --banner-extra-display:inline;
+}
+/* The single approved breakpoint exception: CSS variables cannot be used in media conditions. */
+@media (width < 820px) {
+  :root {
+    --desktop-display:none; --phone-display:flex; --shell-columns:minmax(0,1fr);
+    --content-top:var(--space-4); --content-side:var(--space-4);
+    --stat-columns:repeat(2,minmax(0,1fr)); --stat-height:70px;
+    --dashboard-columns:minmax(0,1fr); --text-title:26px;
+    --fab-offset:18px; --fab-bottom:calc(var(--tab-height) + var(--space-5));
+    --row-direction:column; --row-align:flex-start; --title-lines:2;
+    --row-pad:12px; --panel-space:var(--space-4); --row-project-display:none;
+    --preview-row:60px; --stat-padding:12px; --stat-number-size:26px; --banner-extra-display:none;
+    --due-pill-padding:var(--space-0); --phone-priority-display:none;
+    --list-height:calc(100dvh - 300px);
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  :root { --dur-1:0ms; --dur-2:0ms; }
+}
