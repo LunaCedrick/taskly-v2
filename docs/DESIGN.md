@@ -31,6 +31,7 @@ Desktop: sidebar 232 px (sand background, right border), main area padding 28 px
 Dashboard: main column plus a 300 px activity column. Phone (under 820 px): top bar, content, floating add button (56 px), bottom tab bar (Dashboard, Tasks, Projects).
 
 Gate 0 decisions (owner approved):
+
 - The interim initial-JavaScript target is 100 KB gzipped, leaving room for Firebase in later gates.
 - The 820 px breakpoint is an approved exception to the token-only size rule. Keep its media condition in one place, `src/styles/tokens.css`, because CSS custom properties cannot be used in media query conditions.
 - The phone Projects tab opens the project drawer (the existing menu drawer), because G0 has no `/projects` index route.

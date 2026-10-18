@@ -46,6 +46,7 @@ Offline sync, settings page, installable app, offline banner, custom calendar, U
 ## Log
 | Date | Step | Note |
 |---|---|---|
+| 2026-10-18 | G0 review follow-ups | 60 transitions per run; median/p95/max recorded; 15 superseded JSON files removed. Build, lint, typecheck, 10 unit/component and 5 browser tests pass. p95 82.6/75.6/73.2 ms; 0 requests; JS 96,155 bytes gzip; Lighthouse 99, LCP 1.857 s. G0 remains unchecked for the owner to tick after merge. |
 | 2026-10-17 | G0 complete | Build, lint, strict typecheck, 10 unit/component and 5 browser tests pass. Final route p95 73.3/99.6/77.9 ms at 4x CPU; 0 requests. JS 96,155 bytes gzip. Lighthouse mobile 99, accessibility 100, LCP 1.856 s. Review and screenshot differences: `docs/qa/gate-0/REVIEW.md`. |
 | 2026-10-17 | G0 tooling | Extended the existing Vite scaffold; strict TypeScript, approved test tools, local licensed fonts, SPA rewrite. Commit `1f2ceb8`. |
 | 2026-10-17 | G0 shell, data, tests | Responsive shell, three in-memory views, 1,000 deterministic tasks, bounded Dashboard, accessible virtual lists. Ten unit/component tests and six browser checks passed; final audit and review pending. Commit `cd37a03`. |
