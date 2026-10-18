@@ -1,6 +1,6 @@
 # TASKLY v2: TRACKER.md
 
-Where we are: Phase B, Gate 0. Update this file after every step (tick the box, add a log line).
+Where we are: Phase B, Gate 1 next. Update this file after every step (tick the box, add a log line).
 Owners: **You** = Cedrick, **Claude** = planning, design, and review in chat, **Codex** = builds code.
 Targets for each gate are in `docs/PLAN.md` section 10 and in the gate's skill.
 
@@ -21,7 +21,7 @@ Gate rhythm: new session, plan first, build on a branch, run the exit commands, 
 ## Phase B: Build
 | Gate | Pages delivered | Key targets | Status |
 |---|---|---|---|
-| G0 Shell and speed | App shell: sidebar, topbar, phone top bar, bottom tab bar, menu drawer; Floating Quick Add button (visible, not wired yet); Placeholder Dashboard, My Tasks, Project view rendering 1,000 fake tasks; ... | Median and 95th percentile route-change time recorded; 95th percentile under 100 ms with CPU throttled 4x; Zero network requests during navigation; ... | [ ] |
+| G0 Shell and speed | App shell: sidebar, topbar, phone top bar, bottom tab bar, menu drawer; Floating Quick Add button (visible, not wired yet); Placeholder Dashboard, My Tasks, Project view rendering 1,000 fake tasks; ... | Median and 95th percentile route-change time recorded; 95th percentile under 100 ms with CPU throttled 4x; Zero network requests during navigation; ... | [x] |
 | G1 Authentication | Sign in (desktop, phone stacked); Session check screen (app start); Sign-in error state (popup blocked, network, cancelled); ... | Signed-out visit goes to /sign-in, then returns to the requested route after sign-in; A page refresh keeps the session; ... | [ ] |
 | G2 Store and sync | Dashboard, My Tasks, Project view now read real data (read-only); States: loading skeleton, first run, empty project, load error | Exactly 3 Firestore listeners during navigation (automated test); A burst of 100 snapshot updates causes at most 1 render per frame; ... | [ ] |
 | G3 Projects, tasks, Quick Add | Task form: modal on desktop, bottom sheet on phone, add and edit; Dialogs: new project, rename project, delete task, delete project; Quick Add: floating button live, popover on desktop, sheet on phone, "More options" opens the full form; ... | Quick Add takes at most 3 steps: open, type, Enter; The new task appears under 100 ms after Enter (optimistic); ... | [ ] |
@@ -30,8 +30,6 @@ Gate rhythm: new session, plan first, build on a branch, run the exit commands, 
 | G6 QA and deploy | Project not found; Final polish across every page against the canvas; README | Lighthouse mobile: performance 90 or higher, accessibility 95 or higher, no critical axe violations; Keyboard-only walkthrough of every page passes; ... | [ ] |
 
 Common to every gate: route change 95th percentile under 100 ms (1,000 tasks, CPU throttled 4x); lint, typecheck, unit and end-to-end tests pass; no console errors; no horizontal scroll at 390 and 1280 px; the `review` skill is run.
-
-G0 remains unchecked until the owner ticks it after merge; passing local checks does not mark it complete here.
 
 ## Phase C: Release
 | ID | Step | Owner | Done when | Status |
@@ -46,6 +44,7 @@ Offline sync, settings page, installable app, offline banner, custom calendar, U
 ## Log
 | Date | Step | Note |
 |---|---|---|
+| 2026-10-19 | G0 merged | `gate-0-shell-speed` merged into `main` and G0 ticked. Final strict p95 < 100 ms runs: p95 55.9/62.8/67.7 ms, median about 44 ms, 0 requests, 1 of 60 transitions over 100 ms per run. Lighthouse mobile 93. |
 | 2026-10-18 | G0 review follow-ups | 60 transitions per run; median/p95/max recorded; 15 superseded JSON files removed. Build, lint, typecheck, 10 unit/component and 5 browser tests pass. p95 82.6/75.6/73.2 ms; 0 requests; JS 96,155 bytes gzip; Lighthouse 99, LCP 1.857 s. G0 remains unchecked for the owner to tick after merge. |
 | 2026-10-17 | G0 complete | Build, lint, strict typecheck, 10 unit/component and 5 browser tests pass. Final route p95 73.3/99.6/77.9 ms at 4x CPU; 0 requests. JS 96,155 bytes gzip. Lighthouse mobile 99, accessibility 100, LCP 1.856 s. Review and screenshot differences: `docs/qa/gate-0/REVIEW.md`. |
 | 2026-10-17 | G0 tooling | Extended the existing Vite scaffold; strict TypeScript, approved test tools, local licensed fonts, SPA rewrite. Commit `1f2ceb8`. |
