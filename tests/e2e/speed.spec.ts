@@ -89,7 +89,7 @@ async function measureRoutes(page: Page, virtualize: boolean) {
 }
 
 for (const run of [1, 2, 3]) {
-  test(`route speed run ${run}: p95 <= 100ms, no navigation requests`, async ({ page }, testInfo) => {
+  test(`route speed run ${run}: p95 < 100ms, no navigation requests`, async ({ page }, testInfo) => {
     const result = await measureRoutes(page, true)
     await mkdir('docs/qa/gate-0', { recursive: true })
     await writeFile(`docs/qa/gate-0/speed-${run}.json`, measurementJson(result))
@@ -97,7 +97,7 @@ for (const run of [1, 2, 3]) {
     console.log(`Run ${run} (${result.transitions.length} transitions): median ${result.median.toFixed(2)}ms; p95 ${result.p95.toFixed(2)}ms; max ${result.max.toFixed(2)}ms; requests ${result.navigationRequests.length}`)
     expect(result.consoleErrors).toEqual([])
     expect(result.navigationRequests).toEqual([])
-    expect(result.p95).toBeLessThanOrEqual(100)
+    expect(result.p95).toBeLessThan(100)
   })
 }
 
