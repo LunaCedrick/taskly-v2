@@ -21,7 +21,7 @@ Gate rhythm: new session, plan first, build on a branch, run the exit commands, 
 ## Phase B: Build
 | Gate | Pages delivered | Key targets | Status |
 |---|---|---|---|
-| G0 Shell and speed | App shell: sidebar, topbar, phone top bar, bottom tab bar, menu drawer; Floating Quick Add button (visible, not wired yet); Placeholder Dashboard, My Tasks, Project view rendering 1,000 fake tasks; ... | Median and 95th percentile route-change time recorded; 95th percentile under 100 ms with CPU throttled 4x; Zero network requests during navigation; ... | [x] |
+| G0 Shell and speed | App shell: sidebar, topbar, phone top bar, bottom tab bar, menu drawer; Floating Quick Add button (visible, not wired yet); Placeholder Dashboard, My Tasks, Project view rendering 1,000 fake tasks; ... | Median and 95th percentile route-change time recorded; 95th percentile under 100 ms with CPU throttled 4x; Zero network requests during navigation; ... | [ ] |
 | G1 Authentication | Sign in (desktop, phone stacked); Session check screen (app start); Sign-in error state (popup blocked, network, cancelled); ... | Signed-out visit goes to /sign-in, then returns to the requested route after sign-in; A page refresh keeps the session; ... | [ ] |
 | G2 Store and sync | Dashboard, My Tasks, Project view now read real data (read-only); States: loading skeleton, first run, empty project, load error | Exactly 3 Firestore listeners during navigation (automated test); A burst of 100 snapshot updates causes at most 1 render per frame; ... | [ ] |
 | G3 Projects, tasks, Quick Add | Task form: modal on desktop, bottom sheet on phone, add and edit; Dialogs: new project, rename project, delete task, delete project; Quick Add: floating button live, popover on desktop, sheet on phone, "More options" opens the full form; ... | Quick Add takes at most 3 steps: open, type, Enter; The new task appears under 100 ms after Enter (optimistic); ... | [ ] |
@@ -30,6 +30,8 @@ Gate rhythm: new session, plan first, build on a branch, run the exit commands, 
 | G6 QA and deploy | Project not found; Final polish across every page against the canvas; README | Lighthouse mobile: performance 90 or higher, accessibility 95 or higher, no critical axe violations; Keyboard-only walkthrough of every page passes; ... | [ ] |
 
 Common to every gate: route change 95th percentile under 100 ms (1,000 tasks, CPU throttled 4x); lint, typecheck, unit and end-to-end tests pass; no console errors; no horizontal scroll at 390 and 1280 px; the `review` skill is run.
+
+G0 remains unchecked until the owner ticks it after merge; passing local checks does not mark it complete here.
 
 ## Phase C: Release
 | ID | Step | Owner | Done when | Status |

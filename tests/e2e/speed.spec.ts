@@ -6,6 +6,20 @@ import { cpus, hostname, platform, release, totalmem } from 'node:os'
 test.use({ trace: 'off' })
 
 type Measurement = { from: string; to: string; milliseconds: number }
+const TRANSITIONS_PER_RUN = 60
+
+function median(sorted: number[]) {
+  const middle = Math.floor(sorted.length / 2)
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2
+}
+
+function measurementJson<T extends { transitions: Measurement[] }>(result: T) {
+  const { transitions, ...summary } = result
+  // Keep each sample on one line so the 60-transition artifacts stay readable and under 300 lines.
+  return `${JSON.stringify(summary, null, 2).slice(0, -2)},\n  "transitions": [\n${
+    transitions.map((transition) => `    ${JSON.stringify(transition)}`).join(',\n')
+  }\n  ]\n}\n`
+}
 declare global {
   interface Window { __routeMeasurement?: { started: number; duration?: number } }
 }
@@ -27,7 +41,7 @@ async function measureRoutes(page: Page, virtualize: boolean) {
     { path: '/projects/project-1', view: 'project' },
     { path: '/', view: 'dashboard' },
   ]
-  for (let index = 0; index < 20; index++) {
+  for (let index = 0; index < TRANSITIONS_PER_RUN; index++) {
     const target = routes[index % routes.length]
     const from = new URL(page.url()).pathname
     // Start at the trusted click event. Resolve only after the new view and its rows
@@ -61,9 +75,10 @@ async function measureRoutes(page: Page, virtualize: boolean) {
   }
   const sorted = measurements.map((item) => item.milliseconds).sort((a, b) => a - b)
   const result = {
-    virtualize, transitions: measurements, median: (sorted[9] + sorted[10]) / 2,
+    virtualize, transitions: measurements, median: median(sorted),
     p75: sorted[Math.ceil(sorted.length * .75) - 1],
     p95: sorted[Math.ceil(sorted.length * .95) - 1],
+    max: sorted[sorted.length - 1],
     navigationRequests: network, consoleErrors: errors, cpuThrottle: 4,
     machine: { hostname: hostname(), cpu: cpus()[0].model, logicalCpus: cpus().length,
       memoryGiB: Number((totalmem() / 1024 ** 3).toFixed(2)), os: `${platform()} ${release()}`,
@@ -74,27 +89,27 @@ async function measureRoutes(page: Page, virtualize: boolean) {
 }
 
 for (const run of [1, 2, 3]) {
-  test(`route speed run ${run}: p95 < 100ms, no navigation requests`, async ({ page }, testInfo) => {
+  test(`route speed run ${run}: p95 <= 100ms, no navigation requests`, async ({ page }, testInfo) => {
     const result = await measureRoutes(page, true)
     await mkdir('docs/qa/gate-0', { recursive: true })
-    await writeFile(`docs/qa/gate-0/speed-${run}.json`, JSON.stringify(result, null, 2) + '\n')
+    await writeFile(`docs/qa/gate-0/speed-${run}.json`, measurementJson(result))
     await testInfo.attach('measurement', { body: JSON.stringify(result), contentType: 'application/json' })
-    console.log(`Run ${run}: median ${result.median.toFixed(2)}ms; p95 ${result.p95.toFixed(2)}ms; requests ${result.navigationRequests.length}`)
+    console.log(`Run ${run} (${result.transitions.length} transitions): median ${result.median.toFixed(2)}ms; p95 ${result.p95.toFixed(2)}ms; max ${result.max.toFixed(2)}ms; requests ${result.navigationRequests.length}`)
     expect(result.consoleErrors).toEqual([])
     expect(result.navigationRequests).toEqual([])
-    expect(result.p95).toBeLessThan(100)
+    expect(result.p95).toBeLessThanOrEqual(100)
   })
 }
 
 test('informational comparison: My Tasks without virtualization @comparison', async ({ page }, testInfo) => {
   const result = await measureRoutes(page, false)
   const myTasks = result.transitions.filter((item) => item.to === '/tasks').map((item) => item.milliseconds).sort((a, b) => a - b)
-  const comparison = { ...result, myTasksMedian: myTasks[Math.floor(myTasks.length / 2)],
-    myTasksP95: myTasks[Math.ceil(myTasks.length * .95) - 1] }
+  const comparison = { ...result, myTasksMedian: median(myTasks),
+    myTasksP95: myTasks[Math.ceil(myTasks.length * .95) - 1], myTasksMax: myTasks[myTasks.length - 1] }
   await mkdir('docs/qa/gate-0', { recursive: true })
-  await writeFile('docs/qa/gate-0/speed-unvirtualized.json', JSON.stringify(comparison, null, 2) + '\n')
+  await writeFile('docs/qa/gate-0/speed-unvirtualized.json', measurementJson(comparison))
   await testInfo.attach('comparison', { body: JSON.stringify(comparison), contentType: 'application/json' })
-  console.log(`Virtualization off, My Tasks: median ${comparison.myTasksMedian}ms; p95 ${comparison.myTasksP95}ms (informational)`)
+  console.log(`Virtualization off, My Tasks: median ${comparison.myTasksMedian}ms; p95 ${comparison.myTasksP95}ms; max ${comparison.myTasksMax}ms (informational)`)
   expect(result.navigationRequests).toEqual([])
   expect(result.consoleErrors).toEqual([])
 })

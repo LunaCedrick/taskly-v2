@@ -30,6 +30,11 @@ Page title 34 px, section title 20 px, stat number 32 px.
 Desktop: sidebar 232 px (sand background, right border), main area padding 28 px by 36 px.
 Dashboard: main column plus a 300 px activity column. Phone (under 820 px): top bar, content, floating add button (56 px), bottom tab bar (Dashboard, Tasks, Projects).
 
+Gate 0 decisions (owner approved):
+- The interim initial-JavaScript target is 100 KB gzipped, leaving room for Firebase in later gates.
+- The 820 px breakpoint is an approved exception to the token-only size rule. Keep its media condition in one place, `src/styles/tokens.css`, because CSS custom properties cannot be used in media query conditions.
+- The phone Projects tab opens the project drawer (the existing menu drawer), because G0 has no `/projects` index route.
+
 ## Components
 - Button: primary (accent, white text), secondary (surface, line border), icon (40 px square, 44 px on phones).
 - TaskRow: 22 px checkbox, title, project chip, due pill, priority label with dot. Min height 52 px (60 px on phones). Overdue rows use `--overdue-row`.
