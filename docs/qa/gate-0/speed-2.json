@@ -1,110 +1,9 @@
 {
   "virtualize": true,
-  "transitions": [
-    {
-      "from": "/",
-      "to": "/tasks",
-      "milliseconds": 192.7
-    },
-    {
-      "from": "/tasks",
-      "to": "/projects/project-1",
-      "milliseconds": 99.6
-    },
-    {
-      "from": "/projects/project-1",
-      "to": "/",
-      "milliseconds": 60
-    },
-    {
-      "from": "/",
-      "to": "/tasks",
-      "milliseconds": 66
-    },
-    {
-      "from": "/tasks",
-      "to": "/projects/project-1",
-      "milliseconds": 59.1
-    },
-    {
-      "from": "/projects/project-1",
-      "to": "/",
-      "milliseconds": 56.6
-    },
-    {
-      "from": "/",
-      "to": "/tasks",
-      "milliseconds": 56.7
-    },
-    {
-      "from": "/tasks",
-      "to": "/projects/project-1",
-      "milliseconds": 58.3
-    },
-    {
-      "from": "/projects/project-1",
-      "to": "/",
-      "milliseconds": 55.3
-    },
-    {
-      "from": "/",
-      "to": "/tasks",
-      "milliseconds": 57.3
-    },
-    {
-      "from": "/tasks",
-      "to": "/projects/project-1",
-      "milliseconds": 55.5
-    },
-    {
-      "from": "/projects/project-1",
-      "to": "/",
-      "milliseconds": 41.7
-    },
-    {
-      "from": "/",
-      "to": "/tasks",
-      "milliseconds": 56.2
-    },
-    {
-      "from": "/tasks",
-      "to": "/projects/project-1",
-      "milliseconds": 61
-    },
-    {
-      "from": "/projects/project-1",
-      "to": "/",
-      "milliseconds": 55.6
-    },
-    {
-      "from": "/",
-      "to": "/tasks",
-      "milliseconds": 50.2
-    },
-    {
-      "from": "/tasks",
-      "to": "/projects/project-1",
-      "milliseconds": 55.1
-    },
-    {
-      "from": "/projects/project-1",
-      "to": "/",
-      "milliseconds": 55.5
-    },
-    {
-      "from": "/",
-      "to": "/tasks",
-      "milliseconds": 58.6
-    },
-    {
-      "from": "/tasks",
-      "to": "/projects/project-1",
-      "milliseconds": 54
-    }
-  ],
-  "median": 56.650000000000006,
-  "p75": 59.1,
-  "p95": 99.6,
+  "median": 47.6,
+  "p75": 55.1,
+  "p95": 75.6,
+  "max": 224.6,
   "navigationRequests": [],
   "consoleErrors": [],
   "cpuThrottle": 4,
@@ -116,5 +15,67 @@
     "os": "win32 10.0.19045",
     "node": "v24.16.0",
     "browser": "156.0.8078.4"
-  }
+  },
+  "transitions": [
+    {"from":"/","to":"/tasks","milliseconds":224.6},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":122},
+    {"from":"/projects/project-1","to":"/","milliseconds":124.2},
+    {"from":"/","to":"/tasks","milliseconds":75.6},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":71},
+    {"from":"/projects/project-1","to":"/","milliseconds":48},
+    {"from":"/","to":"/tasks","milliseconds":56},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":48.9},
+    {"from":"/projects/project-1","to":"/","milliseconds":44.8},
+    {"from":"/","to":"/tasks","milliseconds":56.8},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":55.1},
+    {"from":"/projects/project-1","to":"/","milliseconds":42.4},
+    {"from":"/","to":"/tasks","milliseconds":55.6},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":47.6},
+    {"from":"/projects/project-1","to":"/","milliseconds":39.6},
+    {"from":"/","to":"/tasks","milliseconds":54.5},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":45.4},
+    {"from":"/projects/project-1","to":"/","milliseconds":42},
+    {"from":"/","to":"/tasks","milliseconds":56},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":46.4},
+    {"from":"/projects/project-1","to":"/","milliseconds":38.6},
+    {"from":"/","to":"/tasks","milliseconds":45.1},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":48.9},
+    {"from":"/projects/project-1","to":"/","milliseconds":43.9},
+    {"from":"/","to":"/tasks","milliseconds":47.5},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":44.6},
+    {"from":"/projects/project-1","to":"/","milliseconds":40.8},
+    {"from":"/","to":"/tasks","milliseconds":48.5},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":55.9},
+    {"from":"/projects/project-1","to":"/","milliseconds":44.4},
+    {"from":"/","to":"/tasks","milliseconds":47.6},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":55.6},
+    {"from":"/projects/project-1","to":"/","milliseconds":41.6},
+    {"from":"/","to":"/tasks","milliseconds":47.3},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":58.3},
+    {"from":"/projects/project-1","to":"/","milliseconds":48.6},
+    {"from":"/","to":"/tasks","milliseconds":52.5},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":46.4},
+    {"from":"/projects/project-1","to":"/","milliseconds":42.6},
+    {"from":"/","to":"/tasks","milliseconds":56},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":50.1},
+    {"from":"/projects/project-1","to":"/","milliseconds":43.8},
+    {"from":"/","to":"/tasks","milliseconds":58.8},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":49.6},
+    {"from":"/projects/project-1","to":"/","milliseconds":39.9},
+    {"from":"/","to":"/tasks","milliseconds":55},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":46.8},
+    {"from":"/projects/project-1","to":"/","milliseconds":54.3},
+    {"from":"/","to":"/tasks","milliseconds":48.1},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":43.7},
+    {"from":"/projects/project-1","to":"/","milliseconds":40.6},
+    {"from":"/","to":"/tasks","milliseconds":63.4},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":46.3},
+    {"from":"/projects/project-1","to":"/","milliseconds":40},
+    {"from":"/","to":"/tasks","milliseconds":45.4},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":44.6},
+    {"from":"/projects/project-1","to":"/","milliseconds":40.7},
+    {"from":"/","to":"/tasks","milliseconds":49.2},
+    {"from":"/tasks","to":"/projects/project-1","milliseconds":46.5},
+    {"from":"/projects/project-1","to":"/","milliseconds":38.7}
+  ]
 }

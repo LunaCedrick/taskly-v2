@@ -1,4 +1,4 @@
-# Gate 0 review — 2026-10-17
+# Gate 0 review — follow-ups 2026-10-18
 
 Branch: `gate-0-shell-speed`. Reference: `.agents/skills/review/SKILL.md`.
 
@@ -9,17 +9,42 @@ Branch: `gate-0-shell-speed`. Reference: `.agents/skills/review/SKILL.md`.
 | `npm run build` | pass; 123 modules; Vite JavaScript 97.09 kB gzip |
 | `npm run lint` | pass; 0 errors, 0 warnings |
 | `npm run typecheck` | pass; app, tooling, and tests strict; 0 errors |
-| `npm run test` | 10 tests across 2 files passed, 2.77 s |
-| `npm run e2e` | 5 tests passed, 15.5 s; no retries |
+| `npm run test` | 10 tests across 2 files passed, 27.27 s |
+| `npm run e2e` | 5 tests passed, 33.4 s; no retries; 60 measured transitions per speed run |
 | `npm run measure:bundle` | 96,155 bytes gzip, 308,068 bytes uncompressed |
-| `npm run lighthouse` | pass; pinned 13.5.0; mobile performance 99, accessibility 100, LCP 1,855.924 ms, TBT 81 ms |
+| `npm run lighthouse` | pass; pinned 13.5.0; mobile performance 99, accessibility 100, LCP 1,856.726 ms, TBT 88.5 ms |
 
-Final route runs at 4x CPU: medians 55.60 / 56.65 / 53.40 ms; p95 73.30 / 99.60 / 77.90 ms.
-Every run made zero network requests and logged zero console errors. All prior measurements,
-including failures and the unvirtualized comparison, are listed in DECISIONS.md with machine details.
-Previous review p95 was 75.20 / 91.70 / 83.40 ms. A later 100.60 ms failure led to seeding the virtual
-list's initial rectangle and reducing overscan; the test threshold stayed strictly below 100 ms.
-The 99.60 ms final run has only 0.40 ms margin and is an explicit risk for future gates.
+Final route runs at 4x CPU: medians 53.95 / 47.60 / 46.35 ms; p95 82.60 / 75.60 / 73.20 ms;
+max 195.10 / 224.60 / 248.90 ms. Each run measured 60 transitions and made zero network requests
+with zero console errors. Per the owner's follow-up, p95 >100 ms fails; exactly 100 ms passes.
+All three runs passed on the first attempt. No application code, features, or dependencies changed.
+Previous accepted 20-transition p95 was 73.30 / 99.60 / 77.90 ms. Current machine details and the
+retained informational unvirtualized comparison are in DECISIONS.md.
+
+## Measurement cleanup
+
+Kept six final JSON artifacts: `bundle.json`, `lighthouse.json`, `speed-1.json`, `speed-2.json`,
+`speed-3.json`, and `speed-unvirtualized.json`. The unvirtualized comparison is the final accepted
+2026-10-17 comparison and was not rerun. The three new speed JSON files each contain 60 raw samples
+and verified median, nearest-rank p95, and max summaries. Screenshots are unchanged.
+
+Removed exactly these 15 superseded JSON files (paths relative to `docs/qa/gate-0/`):
+
+- `focus-review/speed-1.json`
+- `focus-review/speed-2.json`
+- `focus-review/speed-3.json`
+- `implementation/speed-1.json`
+- `implementation/speed-2.json`
+- `implementation/speed-3.json`
+- `initial/speed-1.json`
+- `initial/speed-2.json`
+- `initial/speed-3.json`
+- `initial/speed-unvirtualized.json`
+- `review/speed-1.json`
+- `review/speed-2.json`
+- `review/speed-3.json`
+- `lighthouse-initial.json`
+- `lighthouse-font-optimized.json`
 
 ## Visual comparison
 
@@ -66,7 +91,9 @@ Browser title is `Taskly` under the owner's explicit Gate 0 instruction.
 
 ## Proposed document changes
 
-No AGENTS.md or PLAN.md edits applied. Future owner edits could record the interim ~100 kB Gate 0
-JavaScript target and the CSS media-condition exception in the permanent hard rules.
+AGENTS.md and PLAN.md are unchanged. DECISIONS.md already recorded the interim 100 KB initial-JS
+target, the 820 px breakpoint exception, and phone Projects opening the drawer; DESIGN.md now records
+all three, including the reason that G0 has no `/projects` index route.
+G0 is unchecked in TRACKER.md; the owner ticks it after merge. No additional document changes proposed.
 
 Open questions: none for Gate 0. Later-gate interfaces remain placeholders as listed above.
