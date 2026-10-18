@@ -48,3 +48,4 @@ Command results, numbers, what was not done, proposed `AGENTS.md` changes.
 - 2026-10-17: Disable Playwright tracing for CPU-throttled speed tests; use two animation frames across the committed view's paint, not three.
 - 2026-10-17: Native modal dialogs still need explicit Tab wrapping; test focus return, scrim dismissal, and every shell control's target size.
 - 2026-10-17: Run Lighthouse through pinned npx with Playwright's CHROME_PATH; retain failed measurements and separate the informational unvirtualized benchmark.
+- 2026-10-19: Pass conditions are exactly as written in the plan (p95 < 100 ms). Do not relax a threshold, and attribute a decision to the owner only if the prompt states it.
