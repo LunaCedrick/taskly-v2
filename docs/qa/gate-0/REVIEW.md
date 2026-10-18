@@ -16,7 +16,7 @@ Branch: `gate-0-shell-speed`. Reference: `.agents/skills/review/SKILL.md`.
 
 Final route runs at 4x CPU: medians 53.95 / 47.60 / 46.35 ms; p95 82.60 / 75.60 / 73.20 ms;
 max 195.10 / 224.60 / 248.90 ms. Each run measured 60 transitions and made zero network requests
-with zero console errors. Per the owner's follow-up, p95 >100 ms fails; exactly 100 ms passes.
+with zero console errors. The test fails when p95 >= 100 ms (pass is strictly under 100 ms).
 All three runs passed on the first attempt. No application code, features, or dependencies changed.
 Previous accepted 20-transition p95 was 73.30 / 99.60 / 77.90 ms. Current machine details and the
 retained informational unvirtualized comparison are in DECISIONS.md.

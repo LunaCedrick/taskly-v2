@@ -27,8 +27,8 @@ Chromium 156.0.8078.4. Browser timezone: Asia/Shanghai.
 
 Each speed run performs 60 trusted clicks between Dashboard, My Tasks, and Thesis, with CDP CPU
 throttling at 4x. Timing starts in the click capture handler, waits for the target view and rows,
-then crosses a rendering opportunity with two animation frames. Per the owner's 2026-10-18 review,
-the test fails when nearest-rank **p95 >100 ms** (100 ms passes). No tracing during timing.
+then crosses a rendering opportunity with two animation frames. The test fails when
+nearest-rank **p95 >= 100 ms** (pass is strictly under 100 ms). No tracing during timing.
 Initial fonts finish before navigation is measured. JSON includes median, p95, max, and all 60 samples.
 These are lab interaction measurements, not field INP.
 
@@ -41,6 +41,12 @@ These are lab interaction measurements, not field INP.
 Raw samples and machine details: `docs/qa/gate-0/speed-{1,2,3}.json`. These replace the older 20-click
 measurements. Superseded raw JSON was removed per review; `docs/qa/gate-0/REVIEW.md` lists all 15 deletions.
 **Risk:** the p95 budget passes, but the maximum observed transition remains above 100 ms in each run.
+
+Virtualizer: its initial rectangle is seeded and overscan reduced from 5 to 3 (after a 100.60 ms p95 failure).
+Navigation then needs no empty first render before the visible range is measured.
+
+Earlier failing runs (20 clicks, kept in git history, commit 625eb3b): focus review 1 p95 100.60 ms;
+initial diagnostics p95 143.80 / 148.70 / 197.30 ms. Causes and fixes: tracing, an extra frame, repeated style reads.
 
 Final accepted informational comparison from 2026-10-17, virtualization disabled:
 My Tasks median **1,137.7 ms**, p95 **2,088.4 ms**
