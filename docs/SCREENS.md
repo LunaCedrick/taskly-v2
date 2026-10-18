@@ -59,6 +59,8 @@ Added, Deleted, Save failed. Desktop bottom-left, phone above the tab bar and th
 ### Menu drawer (phone)
 Left drawer 300 px: logo, Dashboard, My Tasks, projects with progress bars, New project, user and Sign out. The scrim closes it.
 
+Gate 0 decision (owner approved 2026-10-17): the phone Projects tab opens this drawer. It does not introduce a projects index route.
+
 ### States
 Loading skeleton rows (never a spinner alone). First run: "Nothing here yet" with "Create your first project". Empty project: "No tasks in {project}" with "Add a task". No results: "No tasks match “{query}”" with "Clear filters". Load error: message and "Try again". Alerts all clear. Sign-in error. Session check at app start. Project not found with "Back to dashboard".
 

@@ -1,0 +1,3 @@
+.scroll { height:var(--list-height); min-height:var(--stat-height); overflow:auto; border:var(--border) solid var(--line); border-radius:var(--radius-lg); background:var(--surface); scroll-padding:var(--space-2); }
+.virtualCanvas { width:var(--full); position:relative; }
+.virtualRow { position:absolute; top:var(--space-0); left:var(--space-0); width:var(--full); }
