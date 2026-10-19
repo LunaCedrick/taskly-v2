@@ -1,0 +1,32 @@
+{
+  "capturedAt": "2026-10-19T02:36:29.376Z",
+  "firebaseVersion": "13.0.0",
+  "nodeVersion": "v24.16.0",
+  "viteVersion": "8.3.4",
+  "scaffoldRevision": "6a99bb5",
+  "method": "Matched production builds; all adapter exports retained; no auth UI or bootstrap changes",
+  "recordedGate0GzipBytes": 96155,
+  "baseline": {
+    "chunks": [
+      {
+        "file": "assets/index-BekDORKR.js",
+        "bytes": 308068,
+        "gzipBytes": 96155
+      }
+    ],
+    "gzipBytes": 96155
+  },
+  "adapterOnly": {
+    "chunks": [
+      {
+        "file": "assets/index-DhYRTm2t.js",
+        "bytes": 403314,
+        "gzipBytes": 124127
+      }
+    ],
+    "gzipBytes": 124127
+  },
+  "increaseBytes": 27972,
+  "limitBytes": 50000,
+  "passed": true
+}

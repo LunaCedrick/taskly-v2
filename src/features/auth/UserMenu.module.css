@@ -1,0 +1,6 @@
+.profile { display:flex; align-items:center; gap:var(--space-3); margin-top:auto; padding:var(--space-4) var(--space-2) var(--space-0); border-top:var(--border) solid var(--line); font-size:var(--text-sm); }
+.avatar { width:var(--logo); height:var(--logo); flex-shrink:var(--zero); display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:var(--radius-round); background:var(--accent); color:var(--surface); font-weight:var(--weight-bold); }
+.avatar img { width:var(--full); height:var(--full); object-fit:cover; }
+.details { min-width:var(--zero); }
+.name { display:block; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.profile button { display:block; min-height:var(--touch); min-width:var(--touch); border:var(--space-0); padding:var(--space-0); background:var(--clear); color:var(--muted); font-size:var(--text-xs); }

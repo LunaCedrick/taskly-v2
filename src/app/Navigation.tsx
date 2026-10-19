@@ -1,9 +1,11 @@
 import { NavLink } from 'react-router'
+import { memo } from 'react'
 import { useStore, setDrawerOpen } from '../store'
 import { Icon } from '../ui/Icon'
 import styles from './Shell.module.css'
+import { UserMenu } from '../features/auth/UserMenu'
 
-export function Navigation() {
+export const Navigation = memo(function Navigation() {
   const projects = useStore((state) => state.projects)
   const projectTasks = useStore((state) => state.projectTasks)
   return <>
@@ -26,7 +28,6 @@ export function Navigation() {
       })}
       <button type="button" className={styles.newProject} aria-disabled="true"><Icon name="plus" />New project</button>
     </nav>
-    <div className={styles.profile}><span className={styles.avatar}>C</span><div>Cedrick Luna
-      <button type="button" aria-disabled="true">Sign out</button></div></div>
+    <UserMenu />
   </>
-}
+})

@@ -1,10 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { useStore, setDrawerOpen } from '../store'
 import { IconButton } from '../ui/Controls'
 import { Navigation } from './Navigation'
 import styles from './Shell.module.css'
 
-export function Drawer() {
+export const Drawer = memo(function Drawer() {
   const open = useStore((state) => state.drawerOpen)
   const ref = useRef<HTMLDialogElement>(null)
   useEffect(() => {
@@ -42,4 +42,4 @@ export function Drawer() {
       <Navigation />
     </div>
   </dialog>
-}
+})

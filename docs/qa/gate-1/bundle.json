@@ -1,0 +1,13 @@
+{
+  "chunks": [
+    {
+      "file": "index-CTySC-d8.js",
+      "bytes": 409110,
+      "gzipBytes": 126224
+    }
+  ],
+  "gzipBytes": 126224,
+  "gate0GzipBytes": 96155,
+  "increaseBytes": 30069,
+  "hardBudgetBytes": 200000
+}

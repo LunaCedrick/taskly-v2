@@ -1,0 +1,7 @@
+.page { min-height:var(--viewport-height); display:flex; align-items:center; justify-content:center; padding:var(--space-5); background:var(--surface); }
+.content { display:flex; flex-direction:column; align-items:center; text-align:center; }
+.mark { width:var(--auth-session-mark); height:var(--auth-session-mark); display:flex; align-items:center; justify-content:center; color:var(--surface); background:var(--accent); border-radius:var(--radius-lg); margin-bottom:var(--space-5); }
+.mark svg { width:var(--text-stat); height:var(--text-stat); }
+.track { width:var(--auth-loading-width); max-width:var(--full); height:var(--progress-height); border-radius:var(--radius-round); background:var(--line); margin:var(--space-6) var(--space-0) var(--space-4); }
+.track span { display:block; width:var(--auth-loading-fill); height:var(--full); border-radius:var(--radius-round); background:var(--accent); }
+.content p { color:var(--muted); font-size:var(--auth-body-size); }
