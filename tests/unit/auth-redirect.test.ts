@@ -11,7 +11,8 @@ describe('internal auth return destinations', () => {
   it.each([
     'https://example.com/tasks', '//example.com/tasks', 'javascript:alert(1)',
     '/\\example.com', '/%2f%2fexample.com', '/%5cexample.com', '/tasks\n', '/%00tasks',
-    '/sign-in', '/sign-in?returnTo=/tasks#again', '/sign-in/', '/tasks/../sign-in', '/%73ign-in', '/%zz',
+    '/sign-in', '/sign-in?returnTo=/tasks#again', '/sign-in/', '/tasks/../sign-in', '/%73ign-in',
+    '/SIGN-IN', '/Sign-In/', '/%53IGN-IN', '/%zz',
   ])('rejects external, malformed, or looping destination %j', (value) => {
     expect(authReturnDestination(value)).toBe('/')
   })

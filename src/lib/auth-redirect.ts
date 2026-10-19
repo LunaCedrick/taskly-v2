@@ -13,7 +13,7 @@ export function authReturnDestination(value: unknown): string {
     const decodedPath = decodeURIComponent(url.pathname)
     if (url.origin !== 'https://taskly.invalid' || decodedPath.startsWith('//') ||
       hasUnsafeCharacters(decodedPath) ||
-      decodedPath.replace(/\/+$/, '') === '/sign-in') return '/'
+      decodedPath.replace(/\/+$/, '').toLowerCase() === '/sign-in') return '/'
     return url.pathname + url.search + url.hash
   } catch {
     return '/'
