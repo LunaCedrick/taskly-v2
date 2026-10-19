@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router'
+import { memo } from 'react'
 import { useStore, setDrawerOpen } from '../store'
 import { Icon } from '../ui/Icon'
 import styles from './Shell.module.css'
 import { UserMenu } from '../features/auth/UserMenu'
 
-export function Navigation() {
+export const Navigation = memo(function Navigation() {
   const projects = useStore((state) => state.projects)
   const projectTasks = useStore((state) => state.projectTasks)
   return <>
@@ -29,4 +30,4 @@ export function Navigation() {
     </nav>
     <UserMenu />
   </>
-}
+})
