@@ -1,29 +1,30 @@
 {
-  "capturedAt": "2026-10-19T02:22:45.285Z",
+  "capturedAt": "2026-10-19T02:32:18.000Z",
   "firebaseVersion": "13.0.0",
   "nodeVersion": "v24.16.0",
   "viteVersion": "8.3.4",
+  "scaffoldRevision": "6a99bb5",
   "method": "Matched production builds; all adapter exports retained; no auth UI or bootstrap changes",
   "recordedGate0GzipBytes": 96155,
   "baseline": {
     "chunks": [
       {
-        "file": "assets/index-BgFtyH5W.js",
-        "bytes": 308076,
-        "gzipBytes": 96160
+        "file": "assets/index-BekDORKR.js",
+        "bytes": 308068,
+        "gzipBytes": 96155
       }
     ],
-    "gzipBytes": 96160
+    "gzipBytes": 96155
   },
   "adapterOnly": {
     "chunks": [
       {
-        "file": "assets/index-Cj4Vuczk.js",
-        "bytes": 403322,
-        "gzipBytes": 124132
+        "file": "assets/index-DhYRTm2t.js",
+        "bytes": 403314,
+        "gzipBytes": 124127
       }
     ],
-    "gzipBytes": 124132
+    "gzipBytes": 124127
   },
   "increaseBytes": 27972,
   "limitBytes": 50000,

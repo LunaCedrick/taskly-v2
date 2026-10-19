@@ -46,6 +46,11 @@
   --skeleton-width:60%; --skeleton-height:14px;
   --hover-brightness:.97; --search-fluid:18vw;
   --stat-padding:16px; --stat-number-size:32px; --banner-extra-display:inline;
+  --auth-columns:minmax(0,56fr) minmax(0,44fr); --auth-form-width:400px;
+  --auth-brand-offset:48px; --auth-form-padding:var(--space-6);
+  --auth-values-padding:var(--space-7) 64px; --auth-title-size:40px;
+  --auth-body-size:16px; --auth-button-height:48px; --auth-session-mark:64px;
+  --auth-loading-width:224px; --auth-loading-fill:40%;
 }
 /* The single approved breakpoint exception: CSS variables cannot be used in media conditions. */
 @media (width < 820px) {
@@ -60,6 +65,8 @@
     --preview-row:60px; --stat-padding:12px; --stat-number-size:26px; --banner-extra-display:none;
     --due-pill-padding:var(--space-0); --phone-priority-display:none;
     --list-height:calc(100dvh - var(--list-phone-offset));
+    --auth-columns:minmax(0,1fr); --auth-brand-offset:var(--space-5);
+    --auth-form-padding:var(--space-4); --auth-title-size:34px;
   }
 }
 @media (prefers-reduced-motion:reduce) {

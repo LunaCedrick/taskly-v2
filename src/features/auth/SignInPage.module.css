@@ -1,0 +1,19 @@
+.page { min-height:var(--viewport-height); display:grid; grid-template-columns:var(--auth-columns); position:relative; }
+.brand { position:absolute; top:var(--space-7); left:var(--auth-brand-offset); display:flex; align-items:center; gap:var(--space-3); font:var(--weight-bold) var(--text-logo)/var(--line-tight) var(--font-display); }
+.mark { width:var(--logo); height:var(--logo); border-radius:var(--radius-md); background:var(--accent); color:var(--surface); display:flex; align-items:center; justify-content:center; }
+.formRegion { display:flex; align-items:center; justify-content:center; padding:var(--auth-form-padding); }
+.form { width:var(--full); max-width:var(--auth-form-width); }
+.form h1 { font-size:var(--auth-title-size); margin-bottom:var(--space-4); }
+.subtitle { color:var(--muted); font-size:var(--auth-body-size); margin-bottom:var(--space-6); }
+.action > button { width:var(--full); min-height:var(--auth-button-height); }
+.google { display:inline-flex; align-items:center; justify-content:center; width:var(--checkbox); height:var(--checkbox); border:var(--border) solid var(--ink); border-radius:var(--radius-round); font-size:var(--text-xs); font-weight:var(--weight-normal); }
+.privacy { display:flex; align-items:center; gap:var(--space-2); margin-top:var(--space-5); color:var(--muted); font-size:var(--text-sm); }
+.privacy svg { width:var(--text-body); height:var(--text-body); }
+.error { display:flex; align-items:flex-start; gap:var(--space-2); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-4); border:var(--border) solid var(--overdue); border-radius:var(--radius-md); background:var(--overdue-tint); color:var(--overdue); }
+.error svg { margin-top:var(--space-1); }
+.pending { margin-top:var(--space-3); color:var(--muted); font-size:var(--text-sm); }
+.values { display:var(--desktop-display); flex-direction:column; justify-content:center; gap:var(--space-5); padding:var(--auth-values-padding); border-left:var(--border) solid var(--line); background:var(--sand); }
+.value { display:flex; align-items:flex-start; gap:var(--space-3); }
+.valueIcon { display:flex; align-items:center; justify-content:center; flex-shrink:var(--zero); width:var(--touch); height:var(--touch); border:var(--border) solid var(--line); border-radius:var(--radius-md); background:var(--surface); color:var(--accent); }
+.value strong { display:block; margin-bottom:var(--space-1); font-weight:var(--weight-bold); }
+.value p { color:var(--muted); }

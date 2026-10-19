@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { makeFakeData } from '../lib/fake-data'
 import { dashboardGroups, taskStats, tasksByProject } from '../lib/task-selectors'
+import { initialAuthState } from './auth-slice'
+import type { AuthProfile } from '../lib/firebase/auth'
 
 const fixture = makeFakeData()
 const projectTasks = Object.fromEntries(fixture.projects.map((project) => [
@@ -8,6 +10,7 @@ const projectTasks = Object.fromEntries(fixture.projects.map((project) => [
 ]))
 
 export const useStore = create(() => ({
+  ...initialAuthState,
   ...fixture,
   projectTasks,
   groups: dashboardGroups(fixture.tasks, fixture.now),
@@ -20,6 +23,11 @@ export const useStore = create(() => ({
 
 export const setDrawerOpen = (drawerOpen: boolean) => useStore.setState({ drawerOpen })
 export const dismissBanner = () => useStore.setState({ bannerDismissed: true })
+
+export const applySession = (authUser: AuthProfile | null) => useStore.setState({
+  authUser, sessionStatus: authUser ? 'signed-in' : 'signed-out', authError: null,
+  ...(!authUser ? { drawerOpen: false } : {}),
+})
 
 // Kept out of the product UI; the benchmark switches this through Playwright only.
 export const setVirtualize = (virtualize: boolean) => useStore.setState({ virtualize })

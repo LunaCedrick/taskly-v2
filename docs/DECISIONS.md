@@ -103,16 +103,20 @@ no Firestore imports. Node 24.16.0, Vite 8.3.4.
 | Measurement | Bytes gzip |
 |---|---:|
 | Recorded Gate 0 baseline | 96,155 |
-| Matched scaffold baseline | 96,160 |
-| Scaffold plus complete Auth adapter | 124,132 |
+| Matched committed scaffold baseline | 96,155 |
+| Committed scaffold plus complete Auth adapter | 124,127 |
 | Adapter increase against matched baseline | 27,972 |
 | Owner stop threshold (exceeded only above this value) | 50,000 |
 
-Result: pass. The matched baseline is 5 bytes above the recorded Gate 0 build. Evidence:
-`docs/qa/gate-1/auth-adapter-bundle.json`. The measurement exposes the adapter only in a temporary
-in-memory build; the application bootstrap and interface were unchanged at measurement time.
+Result: pass. The initial check, before building the interface, measured 96,160 to 124,132 bytes;
+its 27,972-byte increase is preserved in commit `983bd86`. The reproducibility check loads the
+committed Gate 0 scaffold (`6a99bb5`) in memory and reproduces the original 96,155-byte baseline,
+with the same 27,972-byte increase. Evidence: `docs/qa/gate-1/auth-adapter-bundle.json`.
+The measurement exposes all adapter exports only in an in-memory build.
 
 Installation added 82 packages. `npm audit` reported 4 high advisories through the unimported
 Firestore/gRPC dependency chain. No dependency override, downgrade, or automatic fix was applied.
-Final production bundle, tests, navigation measurements, visual checks, and real-Google preview
-checks are pending.
+After the interface integration, build, lint, and strict typecheck pass; all 69 unit/component
+tests across 8 files pass (7.53 s). The production JavaScript is 126,209 bytes gzip, a 30,054-byte
+increase over Gate 0 and below 200,000 bytes. Browser/navigation measurements, visual checks,
+real-Google preview checks, and review are pending.

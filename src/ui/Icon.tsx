@@ -8,6 +8,10 @@ const paths = {
   bell: 'M5 17h14l-2-3V9a5 5 0 0 0-10 0v5z M10 21h4',
   search: 'M16 16l5 5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',
   check: 'm5 12 4 4L19 6',
+  bolt: 'm13 2-9 12h7l-1 8 10-13h-7z',
+  leaf: 'M20 4C9 3 3 9 5 19c10 2 16-4 15-15z M5 19l9-9',
+  lock: 'M6 10h12v11H6z M8 10V6a4 4 0 0 1 8 0v4',
+  warning: 'm12 3 10 18H2z M12 9v5 M12 17v1',
 } as const
 export type IconName = keyof typeof paths
 

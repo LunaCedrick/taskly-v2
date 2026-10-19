@@ -1,14 +1,28 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { gzipSync } from 'node:zlib'
 import { build, version as viteVersion } from 'vite'
+import { execFileSync } from 'node:child_process'
+import { resolve } from 'node:path'
 
 const limitBytes = 50_000
+const scaffoldRevision = '6a99bb5'
 const reference = JSON.parse(await readFile('docs/qa/gate-0/bundle.json', 'utf8'))
+// Keep the adapter-only comparison reproducible after the interface is integrated.
+const scaffoldFiles = execFileSync('git', [
+  'ls-tree', '-r', '--name-only', scaffoldRevision, 'src',
+], { encoding: 'utf8' }).trim().split(/\r?\n/)
+const scaffoldSources = new Map(scaffoldFiles.map((file) => [
+  resolve(file).replaceAll('\\', '/'),
+  execFileSync('git', ['show', `${scaffoldRevision}:${file}`], { encoding: 'utf8' }),
+]))
 
 async function measure(includeAdapter) {
   const result = await build({
     build: { write: false, reportCompressedSize: false },
-    plugins: includeAdapter ? [{
+    plugins: [{
+      name: 'auth-measurement-gate-zero-scaffold', enforce: 'pre',
+      load(id) { return scaffoldSources.get(id.replaceAll('\\', '/')) },
+    }, ...(includeAdapter ? [{
       name: 'measure-complete-auth-adapter',
       enforce: 'pre',
       transform(code, id) {
@@ -18,7 +32,7 @@ async function measure(includeAdapter) {
         return `${code}\nimport * as adapter from './lib/firebase/auth';\n` +
           'Object.assign(globalThis, { __tasklyMeasuredAuthAdapter: adapter });\n'
       },
-    }] : [],
+    }] : [])],
   })
   const outputs = (Array.isArray(result) ? result : [result]).flatMap((item) => item.output)
   const chunks = outputs.filter((item) => item.type === 'chunk').map((chunk) => ({
@@ -34,7 +48,7 @@ const adapterOnly = await measure(true)
 const increaseBytes = adapterOnly.gzipBytes - baseline.gzipBytes
 const result = {
   capturedAt: new Date().toISOString(), firebaseVersion: '13.0.0',
-  nodeVersion: process.version, viteVersion,
+  nodeVersion: process.version, viteVersion, scaffoldRevision,
   method: 'Matched production builds; all adapter exports retained; no auth UI or bootstrap changes',
   recordedGate0GzipBytes: reference.gzipBytes,
   baseline, adapterOnly, increaseBytes, limitBytes, passed: increaseBytes <= limitBytes,

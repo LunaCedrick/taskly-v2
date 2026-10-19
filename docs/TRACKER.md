@@ -44,6 +44,7 @@ Offline sync, settings page, installable app, offline banner, custom calendar, U
 ## Log
 | Date | Step | Note |
 |---|---|---|
+| 2026-10-19 | G1 session and interface | Steps 4–9 implemented: one store/observer, route guards, approved sign-in states, and shared profile/sign-out. Build, lint, strict typecheck, and 69 unit/component tests pass. Production JS: 126,209 bytes gzip. Emulator browser checks and preview verification pending. |
 | 2026-10-19 | G1 plan and adapter | Plan and `firebase@13.0.0` approved. Adapter-only matched-build increase: 27,972 bytes gzip (96,160 to 124,132), below the 50,000-byte stop threshold. No interface built at measurement time. `firebase.json` unchanged; remaining G1 work pending. |
 | 2026-10-19 | G0 merged | `gate-0-shell-speed` merged into `main` and G0 ticked. Final strict p95 < 100 ms runs: p95 55.9/62.8/67.7 ms, median about 44 ms, 0 requests, 1 of 60 transitions over 100 ms per run. Lighthouse mobile 93. |
 | 2026-10-18 | G0 review follow-ups | 60 transitions per run; median/p95/max recorded; 15 superseded JSON files removed. Build, lint, typecheck, 10 unit/component and 5 browser tests pass. p95 82.6/75.6/73.2 ms; 0 requests; JS 96,155 bytes gzip; Lighthouse 99, LCP 1.857 s. G0 remains unchecked for the owner to tick after merge. |
