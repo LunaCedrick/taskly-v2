@@ -1,7 +1,7 @@
 # Gate 1 review — 2026-10-19
 
 Branch: `gate-1-auth`. Review skill: `.agents/skills/review/SKILL.md`.
-Application commit: `b3ffa18`. Gate status: all required targets verified; branch awaits review and owner merge.
+Application commit: `5690a7c`. Gate status: all required targets verified; branch awaits review and owner merge.
 
 ## Changed
 
@@ -21,7 +21,7 @@ Application commit: `b3ffa18`. Gate status: all required targets verified; branc
 | `npm run lint` | pass; 0 errors/warnings, including review rerun |
 | `npm run typecheck` | pass; strict app/tooling/tests, including review rerun |
 | `npm run test` | 72 tests across 8 files; exit 8.70 s, review 6.67 s |
-| `npm run e2e` | 24 tests; exit 1.5 min, review 1.8 min; Playwright retries configured as 0; later owner review required one whole-command rerun after a startup timeout (below) |
+| `npm run e2e` | 24 tests; exit 1.5 min, review 1.8 min; Playwright retries configured as 0; later Claude Code review required one whole-command rerun after a startup timeout (below) |
 | `npm run measure:bundle` | 126,224 bytes gzip; +30,069 over Gate 0; <200,000 |
 | `npm run measure:auth-adapter` | +27,972 bytes gzip; below the 50,000-byte stop threshold |
 
@@ -36,6 +36,7 @@ builds differed by 113 bytes for the full bundle and 103 bytes for the adapter i
 
 Routine E2E screenshots/speed JSON and both bundle measurements now write to `test-results/gate-1/`;
 only an explicit `--record-evidence` updates committed snapshots in `docs/qa/gate-1/`.
+Codex designed this flag in response to the Claude Code review findings.
 Use `npm run e2e -- --record-evidence`, `npm run measure:bundle -- --record-evidence`, or
 `npm run measure:auth-adapter -- --record-evidence` when intentionally replacing evidence.
 The original artifacts and tables above remain the historical application review results.
@@ -143,7 +144,7 @@ only. Subsequent test/tooling fixes and their checks are recorded below; app cod
 
 ## Review follow-up
 
-The owner reported a fresh-worktree E2E startup timeout at 90 seconds, followed by a complete
+The Claude Code review run encountered a fresh-worktree E2E startup timeout at 90 seconds, followed by a complete
 24/24 pass on the next command invocation. This was a whole-command retry, not a Playwright
 test retry. The corresponding temp directory contains `firebase.json` but no Firebase debug log.
 The missing log suggests a stall before CLI logging initialized; its exact cause, including
@@ -160,7 +161,7 @@ Port-consistency tests read the real `firebase.json` and compare Auth/Firestore 
 The env comparison uses unchanged source/dependencies with normal env loading versus an empty
 `envDir`; no owner env file was edited or values printed. Full bundle: 126,224 -> 126,111 bytes
 (+30,069 -> +29,956 against Gate 0); adapter: 124,127 -> 124,024 (+27,972 -> +27,869 against
-the same 96,155 baseline). The owner's independent no-env full bundle was 126,110, one byte
+the same 96,155 baseline). The Claude Code review's independent no-env full bundle was 126,110, one byte
 below this in-memory comparison. Both comparisons confirm the roughly 100-byte env effect.
 
 Follow-up build, lint and strict typecheck pass; review unit/component run: 75 tests across
@@ -179,6 +180,29 @@ both follow-up suites pass, as did the earlier 66.30 / 78.20 / 75.30 ms review p
 Nineteen fresh screenshots were written locally; shell keyboard/overflow checks pass at both widths.
 Output flag checks passed in scratch fixtures. All 28 pre-existing committed JSON/PNG artifacts
 remain byte-identical to `be43ece`. Intentional follow-up summary: `review-followup.json`.
+
+## Runner test and attribution corrections (base `5690a7c`)
+
+The startup-failure test now uses a Node preload only in its fixture child: port checks bind
+OS-assigned ports and readiness fetches reject without contacting any real service. The checked-in
+runner is unchanged. Both isolated tests still assert fake CLI exit 23 and retained failure output.
+The regression case holds port 9099, or uses an already occupied port without stopping its owner.
+
+Build, lint and strict typecheck pass. Normal unit suite: 76 tests across 10 files in 7.43 s.
+A separate full `npm run test` with a TCP listener bound to `127.0.0.1:9099` also passed 76/76
+across 10 files in 7.40 s; the listener remained open throughout, then the proof harness closed it.
+Browser suite: 24/24 in 1.6 min, including keyboard/overflow checks and 19 local screenshots.
+
+| Run | Median / p95 / max ms | >100 ms | Requests / app errors |
+|---|---|---:|---|
+| 1 | 49.90 / 59.20 / 142.10 | 1 | 0 / 0 |
+| 2 | 48.15 / 58.70 / 138.60 | 1 | 0 / 0 |
+| 3 | 49.70 / 59.80 / 129.60 | 1 | 0 / 0 |
+
+Same 1,000 tasks, 60 transitions/run and 4x CPU protocol; all p95 values remain below 100 ms.
+The fresh-worktree failure is attributed to the Claude Code review run; the flag design is
+attributed to Codex. The application reference is `5690a7c`; the stale G1 tracker row is preserved
+and marked superseded. Latest check details are in `review-followup.json` under `reviewCorrections`.
 
 ## Risks, open questions, and proposed lessons
 

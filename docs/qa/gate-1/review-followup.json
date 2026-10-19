@@ -1,7 +1,7 @@
 {
   "date": "2026-10-19",
   "reviewBaseCommit": "be43ece",
-  "applicationCommit": "b3ffa18",
+  "applicationCommit": "5690a7c",
   "checks": {
     "build": "PASS: 150 modules",
     "lint": "PASS: 0 errors/warnings",
@@ -27,7 +27,7 @@
     "prerequisite": "Globally installed firebase-tools on PATH; not installed by the runner",
     "timeoutMs": 90000,
     "historicalFailure": {
-      "source": "Owner review of a fresh worktree",
+      "source": "Claude Code review run in a fresh worktree",
       "timeoutSeconds": 90,
       "nextWholeCommandRunPassed": 24,
       "wholeCommandReruns": 1,
@@ -167,7 +167,8 @@
     "originalCommittedJsonAndPngFilesCompared": 28,
     "unchanged": true,
     "routineOutput": "test-results/gate-1/",
-    "committedOutputRequires": "--record-evidence"
+    "committedOutputRequires": "--record-evidence",
+    "decisionSource": "Codex designed the explicit flag in response to the Claude Code review findings"
   },
   "productionDependencyAudit": {
     "command": "npm audit --omit=dev",
@@ -176,5 +177,72 @@
     "currentGate1DistGrpcMatches": 0,
     "gate2Followup": "Repeat npm audit --omit=dev and rg -i \"grpc\" dist after importing Firestore and rebuilding"
   },
-  "previewEvidence": "Owner-reported timings, functional results and console setup confirmations; not independently verified by the agent. Original preview.json is unchanged."
+  "previewEvidence": "Owner-reported timings, functional results and console setup confirmations; not independently verified by the agent. Original preview.json is unchanged.",
+  "reviewCorrections": {
+    "date": "2026-10-19",
+    "baseCommit": "5690a7c",
+    "realRunnerChanged": false,
+    "testIsolation": "Fixture-child-only Node preload uses OS-assigned ports for port checks and rejects readiness fetches; no real service is probed or reused",
+    "regressionCase": "Assert fake CLI exit 23 and retained output while real Auth port 9099 is occupied; leave any existing listener running",
+    "build": "PASS: 150 modules",
+    "lint": "PASS: 0 errors/warnings",
+    "typecheck": "PASS",
+    "normalUnitSuite": {
+      "command": "npm run test",
+      "passed": 76,
+      "files": 10,
+      "seconds": 7.43
+    },
+    "occupiedPortUnitSuite": {
+      "command": "npm run test",
+      "listener": "127.0.0.1:9099",
+      "passed": 76,
+      "files": 10,
+      "seconds": 7.4,
+      "exitCode": 0,
+      "listenerRemainedOpen": true
+    },
+    "browserSuite": {
+      "command": "npm run e2e",
+      "passed": 24,
+      "minutes": 1.6,
+      "retries": 0,
+      "screenshots": 19
+    },
+    "routeSpeed": [
+      {
+        "run": 1,
+        "medianMs": 49.9,
+        "p95Ms": 59.2,
+        "maxMs": 142.1,
+        "transitionsOver100Ms": 1,
+        "transitions": 60,
+        "cpuThrottle": 4,
+        "navigationRequests": 0,
+        "consoleErrors": 0
+      },
+      {
+        "run": 2,
+        "medianMs": 48.15,
+        "p95Ms": 58.7,
+        "maxMs": 138.6,
+        "transitionsOver100Ms": 1,
+        "transitions": 60,
+        "cpuThrottle": 4,
+        "navigationRequests": 0,
+        "consoleErrors": 0
+      },
+      {
+        "run": 3,
+        "medianMs": 49.7,
+        "p95Ms": 59.8,
+        "maxMs": 129.6,
+        "transitionsOver100Ms": 1,
+        "transitions": 60,
+        "cpuThrottle": 4,
+        "navigationRequests": 0,
+        "consoleErrors": 0
+      }
+    ]
+  }
 }

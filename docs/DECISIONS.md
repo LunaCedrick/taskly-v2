@@ -218,7 +218,7 @@ and 1 simulated CLI startup-failure test. Build, lint, strict typecheck and revi
 Review route median/p95/max: 57.60/68.40/176.00, 53.85/69.20/162.50, 58.60/85.10/173.60 ms;
 1/1/3 transitions over 100 ms, 0 requests and 0 app console errors in each 60-transition run.
 
-The owner's fresh-worktree 90-second startup failure and successful whole-command rerun are
+The Claude Code review run's fresh-worktree 90-second startup failure and successful whole-command rerun are
 recorded in REVIEW.md; Playwright retries remain 0. The failed temp directory has config only,
 with no Firebase debug log. A pre-logging CLI stall is possible; cold-start/root cause is unresolved.
 Captured diagnostic/exit/review startups took 11.480/12.553/11.892 s, with first output at
@@ -226,6 +226,13 @@ Captured diagnostic/exit/review startups took 11.480/12.553/11.892 s, with first
 diagnostics are retained in `test-results/auth-emulator-*/`.
 
 Routine measurements/screenshots now go to `test-results/gate-1/`; updating committed artifacts
-requires `--record-evidence`, as selected by the owner. All 28 pre-existing committed JSON/PNG
+requires `--record-evidence`, designed by Codex in response to the Claude Code review findings. All 28 pre-existing committed JSON/PNG
 artifacts are byte-identical to `be43ece`. Follow-up results: `docs/qa/gate-1/review-followup.json`.
 Preview timings and console setup confirmations remain owner-reported, not independently verified.
+
+Runner-test correction (base `5690a7c`): a test-only child preload isolates port checks and
+readiness fetches; the real runner is unchanged. Added a 9099-occupied regression case.
+Build/lint/strict typecheck pass; normal unit suite 76/76 in 10 files (7.43 s), separate full suite
+with an external listener holding 9099 also 76/76 (7.40 s). Browser suite 24/24 (1.6 min);
+route p95 59.2/58.7/59.8 ms, 0 navigation requests/app errors. Attribution and stale tracker
+status corrections are recorded in REVIEW.md and review-followup.json.
