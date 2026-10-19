@@ -14,11 +14,13 @@
     "test:speed": "playwright test tests/e2e/speed.spec.ts --grep-invert @comparison",
     "measure:unvirtualized": "playwright test tests/e2e/speed.spec.ts --grep @comparison",
     "measure:bundle": "node scripts/measure-bundle.mjs",
+    "measure:auth-adapter": "node scripts/measure-auth-adapter.mjs",
     "lighthouse": "node scripts/lighthouse.mjs",
     "lighthouse:audit": "npx --yes lighthouse@13.5.0 http://127.0.0.1:4174 --chrome-flags=\"--headless --no-sandbox\" --only-categories=performance,accessibility --save-assets --output=json --output=html --output-path=test-results/lighthouse"
   },
   "dependencies": {
     "@tanstack/react-virtual": "^3.14.21",
+    "firebase": "13.0.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router": "^8.4.0",

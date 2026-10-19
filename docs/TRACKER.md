@@ -1,6 +1,6 @@
 # TASKLY v2: TRACKER.md
 
-Where we are: Phase B, Gate 1 next. Update this file after every step (tick the box, add a log line).
+Where we are: Phase B, Gate 1 in progress. Update this file after every step (tick the box, add a log line).
 Owners: **You** = Cedrick, **Claude** = planning, design, and review in chat, **Codex** = builds code.
 Targets for each gate are in `docs/PLAN.md` section 10 and in the gate's skill.
 
@@ -44,6 +44,7 @@ Offline sync, settings page, installable app, offline banner, custom calendar, U
 ## Log
 | Date | Step | Note |
 |---|---|---|
+| 2026-10-19 | G1 plan and adapter | Plan and `firebase@13.0.0` approved. Adapter-only matched-build increase: 27,972 bytes gzip (96,160 to 124,132), below the 50,000-byte stop threshold. No interface built at measurement time. `firebase.json` unchanged; remaining G1 work pending. |
 | 2026-10-19 | G0 merged | `gate-0-shell-speed` merged into `main` and G0 ticked. Final strict p95 < 100 ms runs: p95 55.9/62.8/67.7 ms, median about 44 ms, 0 requests, 1 of 60 transitions over 100 ms per run. Lighthouse mobile 93. |
 | 2026-10-18 | G0 review follow-ups | 60 transitions per run; median/p95/max recorded; 15 superseded JSON files removed. Build, lint, typecheck, 10 unit/component and 5 browser tests pass. p95 82.6/75.6/73.2 ms; 0 requests; JS 96,155 bytes gzip; Lighthouse 99, LCP 1.857 s. G0 remains unchecked for the owner to tick after merge. |
 | 2026-10-17 | G0 complete | Build, lint, strict typecheck, 10 unit/component and 5 browser tests pass. Final route p95 73.3/99.6/77.9 ms at 4x CPU; 0 requests. JS 96,155 bytes gzip. Lighthouse mobile 99, accessibility 100, LCP 1.856 s. Review and screenshot differences: `docs/qa/gate-0/REVIEW.md`. |

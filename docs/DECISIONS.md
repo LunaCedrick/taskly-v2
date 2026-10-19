@@ -87,3 +87,32 @@ ignored `test-results/` by `npm run lighthouse`; compact scores/configuration ar
 - The temporary favicon is `data:,`. Page title is `Taskly`, following the owner's Gate 0 instruction.
 - `vercel.json` rewrites every path to `/index.html`. No Cross-Origin-Opener-Policy header is configured.
 - Lighthouse runs through pinned `npx --yes lighthouse@13.5.0` in an npm script; it is not a dependency.
+
+## Gate 1 measurements
+
+2026-10-19: implementation plan and exact-pinned `firebase@13.0.0` approved by the owner.
+Keep `firebase.json` (including its emulators block) unchanged. Add no UI for missing/invalid
+configuration or sign-out failures. Gate 1 remains incomplete until every required target is verified.
+
+Adapter-only size check, before auth UI, store, guards, or bootstrap changes:
+`npm run measure:auth-adapter` builds the same scaffold twice in memory, retaining every adapter
+export in the second build so popup/sign-out code cannot be removed as unused. Both builds count
+every emitted JavaScript chunk using Node's default gzip settings. Firebase App/Auth imports only;
+no Firestore imports. Node 24.16.0, Vite 8.3.4.
+
+| Measurement | Bytes gzip |
+|---|---:|
+| Recorded Gate 0 baseline | 96,155 |
+| Matched scaffold baseline | 96,160 |
+| Scaffold plus complete Auth adapter | 124,132 |
+| Adapter increase against matched baseline | 27,972 |
+| Owner stop threshold (exceeded only above this value) | 50,000 |
+
+Result: pass. The matched baseline is 5 bytes above the recorded Gate 0 build. Evidence:
+`docs/qa/gate-1/auth-adapter-bundle.json`. The measurement exposes the adapter only in a temporary
+in-memory build; the application bootstrap and interface were unchanged at measurement time.
+
+Installation added 82 packages. `npm audit` reported 4 high advisories through the unimported
+Firestore/gRPC dependency chain. No dependency override, downgrade, or automatic fix was applied.
+Final production bundle, tests, navigation measurements, visual checks, and real-Google preview
+checks are pending.
