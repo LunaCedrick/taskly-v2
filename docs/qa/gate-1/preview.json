@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-19",
+  "url": "https://taskly-v2-git-gate-1-auth-lunacedricks-projects.vercel.app/",
+  "applicationCommit": "b3ffa18",
+  "deploymentStatus": "success",
+  "deploymentDescription": "Deployment has completed",
+  "access": "Redirected to Vercel login; local Vercel CLI has no authentication token",
+  "realGoogleSignIn": "UNVERIFIED",
+  "refreshPersistence": "UNVERIFIED",
+  "signOut": "UNVERIFIED",
+  "deepLinkReturn": "UNVERIFIED",
+  "requiredNetwork": "Slow 4G",
+  "requiredCpuThrottle": 4,
+  "runs": [
+    { "run": 1, "popupCloseToDashboardMs": null, "accountSelectionMs": null },
+    { "run": 2, "popupCloseToDashboardMs": null, "accountSelectionMs": null },
+    { "run": 3, "popupCloseToDashboardMs": null, "accountSelectionMs": null }
+  ],
+  "medianMs": null,
+  "status": "UNVERIFIED pending owner results"
+}

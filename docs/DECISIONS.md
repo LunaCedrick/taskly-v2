@@ -116,7 +116,58 @@ The measurement exposes all adapter exports only in an in-memory build.
 
 Installation added 82 packages. `npm audit` reported 4 high advisories through the unimported
 Firestore/gRPC dependency chain. No dependency override, downgrade, or automatic fix was applied.
-After the interface integration, build, lint, and strict typecheck pass; all 69 unit/component
-tests across 8 files pass (7.53 s). The production JavaScript is 126,209 bytes gzip, a 30,054-byte
-increase over Gate 0 and below 200,000 bytes. Browser/navigation measurements, visual checks,
-real-Google preview checks, and review are pending.
+Final build, lint, and strict typecheck pass. Unit/component tests: 72 across 8 files; exit run
+8.70 s, review rerun 6.67 s. Browser tests: 24 passed in the exit run (1.5 min) and again during
+review (1.8 min), including authenticated shell, keyboard/drawer behavior, and navigation speed.
+Production JavaScript: 126,224 bytes gzip (409,110 uncompressed), a 30,069-byte increase over
+Gate 0, below the 200,000-byte budget. All commands and hard-rule checks in the review skill passed.
+
+Navigation uses 1,000 fixture tasks, 60 trusted-click transitions per run, 4x CPU, fonts/auth
+settled before measuring, and no tracing. Timing still crosses the route commit and paint using
+the original two-animation-frame protocol. No samples or auth errors were excluded.
+
+| Run | Exit median / p95 / max ms | Review median / p95 / max ms | Review >100 ms | Requests / console errors |
+|---|---|---|---:|---|
+| 1 | 48.65 / 69.90 / 140.70 | 53.60 / 66.30 / 143.00 | 1 | 0 / 0 |
+| 2 | 48.05 / 59.50 / 136.50 | 56.15 / 78.20 / 199.40 | 2 | 0 / 0 |
+| 3 | 47.75 / 57.60 / 137.80 | 53.35 / 75.30 / 140.60 | 1 | 0 / 0 |
+
+Each exit run had one transition over 100 ms. All six runs pass strict p95 <100 ms; maxima
+remain above 100 ms. Review raw samples and machine details: `docs/qa/gate-1/speed-{1,2,3}.json`.
+Machine: DESKTOP-4HM6D76, AMD Ryzen 5 3400G, 8 logical CPUs, 13.94 GiB RAM, Windows 10.0.19045,
+Node 24.16.0, Chromium 156.0.8078.4, browser timezone Asia/Shanghai.
+Gate 0's DECISIONS.md p95 reference was 82.60 / 75.60 / 73.20 ms at the same 4x CPU setting.
+
+An earlier full run failed at p95 104.20 and 112.90 ms. Its three raw runs are retained under
+`docs/qa/gate-1/diagnostics/before-navigation-memo/`. Memoizing Navigation and Drawer avoids
+recomputing unchanged navigation/profile trees on each route; NavLink context and store selectors
+still update. Two complete post-fix runs passed. The sample count and failure threshold are unchanged.
+Emulator browser setup now waits for the popup widget's DOMContentLoaded event before clicking.
+Cancellation assertions allow the SDK's intentional eight-second auth-event grace period.
+
+Nineteen screenshots cover the shell/drawer and auth states at 390 and 1280 px. Visual comparison,
+phone adaptations, contrast ratios, scope checks, and proposed lessons are in `docs/qa/gate-1/REVIEW.md`.
+No horizontal overflow or keyboard/focus regressions were found. Auth text/background contrast
+pairs range from 4.71:1 to 13.79:1; focus targets are at least 44 px and outlines at least 3 px.
+
+Preview: https://taskly-v2-git-gate-1-auth-lunacedricks-projects.vercel.app/
+Normal `git push` published application commit `b3ffa18`; GitHub's Vercel status reports
+"Deployment has completed". This environment is redirected to Vercel sign-in; the Vercel CLI
+also has no authentication token. No external project settings were changed.
+
+| Required preview evidence | Status |
+|---|---|
+| Real Google sign-in | UNVERIFIED, pending owner results |
+| Refresh persistence with real Google | UNVERIFIED, pending owner results |
+| Real-provider sign-out | UNVERIFIED, pending owner results |
+| Return to a requested deep link with real Google | UNVERIFIED, pending owner results |
+| Slow 4G / 4x CPU popup-close-to-Dashboard run 1 | UNVERIFIED; duration and account-selection time not measured |
+| Slow 4G / 4x CPU popup-close-to-Dashboard run 2 | UNVERIFIED; duration and account-selection time not measured |
+| Slow 4G / 4x CPU popup-close-to-Dashboard run 3 | UNVERIFIED; duration and account-selection time not measured |
+| Preview timing median | UNVERIFIED; no measured runs |
+
+The owner will report browser/device and the separate popup-open/account-selection interval for
+each run. Emulator test durations do not establish the preview's under-three-second target.
+Owner console setup remains unverified: Google provider enabled, Preview/Production configuration,
+emulator flag absent there, and exact localhost/production/stable-branch authorized domains.
+G1 stays unchecked until the owner supplies all required preview results.

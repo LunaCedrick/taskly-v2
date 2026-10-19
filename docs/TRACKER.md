@@ -44,6 +44,7 @@ Offline sync, settings page, installable app, offline banner, custom calendar, U
 ## Log
 | Date | Step | Note |
 |---|---|---|
+| 2026-10-19 | G1 local checks and review | Build, lint, strict typecheck, 72 unit/component tests, and 24 emulator browser tests pass; review rerun passes. Review route p95 66.3/78.2/75.3 ms, 0 requests/errors, 1/2/1 transitions over 100 ms. JS 126,224 bytes gzip; adapter-only increase 27,972 bytes. Pushed normally through application commit `b3ffa18`; Vercel reports deployment complete. Real-Google preview checks and all three throttled timings/account-selection intervals remain UNVERIFIED pending owner results. G1 remains unchecked. See `docs/qa/gate-1/REVIEW.md`. |
 | 2026-10-19 | G1 session and interface | Steps 4–9 implemented: one store/observer, route guards, approved sign-in states, and shared profile/sign-out. Build, lint, strict typecheck, and 69 unit/component tests pass. Production JS: 126,209 bytes gzip. Emulator browser checks and preview verification pending. |
 | 2026-10-19 | G1 plan and adapter | Plan and `firebase@13.0.0` approved. Adapter-only matched-build increase: 27,972 bytes gzip (96,160 to 124,132), below the 50,000-byte stop threshold. No interface built at measurement time. `firebase.json` unchanged; remaining G1 work pending. |
 | 2026-10-19 | G0 merged | `gate-0-shell-speed` merged into `main` and G0 ticked. Final strict p95 < 100 ms runs: p95 55.9/62.8/67.7 ms, median about 44 ms, 0 requests, 1 of 60 transitions over 100 ms per run. Lighthouse mobile 93. |
