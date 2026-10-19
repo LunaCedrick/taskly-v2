@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises'
 import { test, expect, type Page } from '@playwright/test'
 import { openGooglePopup, signIn } from './fixtures/auth'
+import { QA_DIRECTORY } from './fixtures/qa'
 
 const errors = new WeakMap<Page, string[]>()
 test.beforeEach(async ({ page }) => {
@@ -8,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   errors.set(page, messages)
   page.on('pageerror', (error) => messages.push(error.message))
   page.on('console', (message) => { if (message.type() === 'error') messages.push(message.text()) })
-  await mkdir('docs/qa/gate-1', { recursive: true })
+  await mkdir(QA_DIRECTORY, { recursive: true })
 })
 test.afterEach(async ({ page }) => { expect(errors.get(page)).toEqual([]) })
 
@@ -76,7 +77,7 @@ for (const width of [390, 1280]) {
     expect(target.width).toBeGreaterThanOrEqual(44)
     expect(target.height).toBeGreaterThanOrEqual(44)
     expect(target.outline).toBeGreaterThanOrEqual(3)
-    await page.screenshot({ path: `docs/qa/gate-1/sign-in-${width}.png`, fullPage: true })
+    await page.screenshot({ path: `${QA_DIRECTORY}/sign-in-${width}.png`, fullPage: true })
   })
 
   for (const [name, code, message] of [
@@ -99,7 +100,7 @@ for (const width of [390, 1280]) {
       await expect(page.getByRole('alert')).toHaveText(message)
       await expect(button).toBeEnabled()
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-      await page.screenshot({ path: `docs/qa/gate-1/sign-in-${name}-${width}.png`, fullPage: true })
+      await page.screenshot({ path: `${QA_DIRECTORY}/sign-in-${name}-${width}.png`, fullPage: true })
       await button.click()
       await expect(page.getByRole('alert')).toHaveText(message)
       await expect(button).toBeEnabled()
@@ -122,7 +123,7 @@ for (const width of [390, 1280]) {
       await expect(page.getByRole('button', { name: 'Continue with Google' })).toHaveCount(0)
       await page.evaluate(() => document.fonts.ready)
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-      await page.screenshot({ path: `docs/qa/gate-1/session-check-${width}.png`, fullPage: true })
+      await page.screenshot({ path: `${QA_DIRECTORY}/session-check-${width}.png`, fullPage: true })
     } finally {
       release()
     }
@@ -140,7 +141,7 @@ test(`closing the Google popup announces cancellation and permits retry at ${wid
   // detecting window closure before rejecting with popup-closed-by-user.
   await expect(page.getByRole('alert')).toHaveText("Sign-in was cancelled. Try again when you're ready.", { timeout: 15_000 })
   await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeEnabled()
-  await page.screenshot({ path: `docs/qa/gate-1/sign-in-cancelled-${width}.png`, fullPage: true })
+  await page.screenshot({ path: `${QA_DIRECTORY}/sign-in-cancelled-${width}.png`, fullPage: true })
   const retry = await openGooglePopup(page)
   await retry.close()
   await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeEnabled({ timeout: 15_000 })

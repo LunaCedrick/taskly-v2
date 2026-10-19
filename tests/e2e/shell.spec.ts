@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures/auth'
 import { mkdir } from 'node:fs/promises'
+import { QA_DIRECTORY } from './fixtures/qa'
 
 for (const width of [390, 1280]) {
   test(`shell, routes, screenshots and keyboard at ${width}px`, async ({ page }) => {
@@ -8,14 +9,14 @@ for (const width of [390, 1280]) {
     page.on('pageerror', (error) => errors.push(error.message))
     page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
     page.on('response', (response) => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`) })
-    await mkdir('docs/qa/gate-1', { recursive: true })
+    await mkdir(QA_DIRECTORY, { recursive: true })
     for (const [name, route] of [['dashboard', '/'], ['my-tasks', '/tasks'], ['project', '/projects/project-1']]) {
       await page.goto(route)
       await page.evaluate(() => document.fonts.ready)
       await expect(page).toHaveTitle('Taskly')
       await expect(page.locator('[data-view]')).toBeVisible()
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-      await page.screenshot({ path: `docs/qa/gate-1/${name}-${width}.png`, fullPage: true })
+      await page.screenshot({ path: `${QA_DIRECTORY}/${name}-${width}.png`, fullPage: true })
     }
     await page.goto('/')
     await expect(page.locator('[data-view="dashboard"]')).toBeVisible()
@@ -52,7 +53,7 @@ for (const width of [390, 1280]) {
       await page.getByRole('button', { name: 'Projects', exact: true }).click()
       const dialog = page.getByRole('dialog', { name: 'Menu' })
       await expect(dialog).toBeVisible()
-      await page.screenshot({ path: 'docs/qa/gate-1/drawer-390.png' })
+      await page.screenshot({ path: `${QA_DIRECTORY}/drawer-390.png` })
       for (let index = 0; index < 14; index++) {
         await page.keyboard.press('Tab')
         expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true)

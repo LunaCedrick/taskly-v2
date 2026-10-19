@@ -2,6 +2,7 @@ import { type Page } from '@playwright/test'
 import { expect, test } from './fixtures/auth'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { cpus, hostname, platform, release, totalmem } from 'node:os'
+import { QA_DIRECTORY } from './fixtures/qa'
 
 // Browser tracing changes CPU-throttled timings; retain raw measurements instead.
 test.use({ trace: 'off' })
@@ -93,8 +94,8 @@ async function measureRoutes(page: Page, virtualize: boolean) {
 for (const run of [1, 2, 3]) {
   test(`route speed run ${run}: p95 < 100ms, no navigation requests`, async ({ page }, testInfo) => {
     const result = await measureRoutes(page, true)
-    await mkdir('docs/qa/gate-1', { recursive: true })
-    await writeFile(`docs/qa/gate-1/speed-${run}.json`, measurementJson(result))
+    await mkdir(QA_DIRECTORY, { recursive: true })
+    await writeFile(`${QA_DIRECTORY}/speed-${run}.json`, measurementJson(result))
     await testInfo.attach('measurement', { body: JSON.stringify(result), contentType: 'application/json' })
     console.log(`Run ${run} (${result.transitions.length} transitions): median ${result.median.toFixed(2)}ms; p95 ${result.p95.toFixed(2)}ms; max ${result.max.toFixed(2)}ms; over 100ms ${result.transitionsOver100Ms}; requests ${result.navigationRequests.length}`)
     expect(result.consoleErrors).toEqual([])
@@ -108,8 +109,8 @@ test('informational comparison: My Tasks without virtualization @comparison', as
   const myTasks = result.transitions.filter((item) => item.to === '/tasks').map((item) => item.milliseconds).sort((a, b) => a - b)
   const comparison = { ...result, myTasksMedian: median(myTasks),
     myTasksP95: myTasks[Math.ceil(myTasks.length * .95) - 1], myTasksMax: myTasks[myTasks.length - 1] }
-  await mkdir('docs/qa/gate-1', { recursive: true })
-  await writeFile('docs/qa/gate-1/speed-unvirtualized.json', measurementJson(comparison))
+  await mkdir(QA_DIRECTORY, { recursive: true })
+  await writeFile(`${QA_DIRECTORY}/speed-unvirtualized.json`, measurementJson(comparison))
   await testInfo.attach('comparison', { body: JSON.stringify(comparison), contentType: 'application/json' })
   console.log(`Virtualization off, My Tasks: median ${comparison.myTasksMedian}ms; p95 ${comparison.myTasksP95}ms; max ${comparison.myTasksMax}ms (informational)`)
   expect(result.navigationRequests).toEqual([])

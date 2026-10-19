@@ -92,7 +92,22 @@ ignored `test-results/` by `npm run lighthouse`; compact scores/configuration ar
 
 2026-10-19: implementation plan and exact-pinned `firebase@13.0.0` approved by the owner.
 Keep `firebase.json` (including its emulators block) unchanged. Add no UI for missing/invalid
-configuration or sign-out failures. Gate 1 remains incomplete until every required target is verified.
+configuration or sign-out failures. All required Gate 1 targets now have passing automated or
+owner-reported evidence, as recorded below; the tracker is ticked, pending owner review/merge.
+
+### Known gaps (no UI by owner decision)
+
+- Missing/invalid `VITE_FIREBASE_*`: `getFirebaseApp()` in `src/lib/firebase/client.ts`
+  throws for missing required values during `startSession()` in `src/main.tsx`, before React
+  renders. Missing values or other synchronous configuration/Auth failures leave a blank page
+  and a console error.
+- Sign-out failure: `signOutAction()` in `src/features/auth/auth-actions.ts` swallows the
+  error. The user stays signed in with no message and can retry.
+
+The E2E runner requires a globally installed `firebase-tools` on PATH (15.34.0 used here).
+It locates that installation's JavaScript entry point and does not install the CLI itself.
+
+### Bundle measurements
 
 Adapter-only size check, before auth UI, store, guards, or bootstrap changes:
 `npm run measure:auth-adapter` builds the same scaffold twice in memory, retaining every adapter
@@ -108,14 +123,20 @@ no Firestore imports. Node 24.16.0, Vite 8.3.4.
 | Adapter increase against matched baseline | 27,972 |
 | Owner stop threshold (exceeded only above this value) | 50,000 |
 
-Result: pass. The initial check, before building the interface, measured 96,160 to 124,132 bytes;
+Result: pass. The initial working-tree check, before building the interface, measured 96,160 to 124,132 bytes;
 its 27,972-byte increase is preserved in commit `983bd86`. The reproducibility check loads the
 committed Gate 0 scaffold (`6a99bb5`) in memory and reproduces the original 96,155-byte baseline,
 with the same 27,972-byte increase. Evidence: `docs/qa/gate-1/auth-adapter-bundle.json`.
-The measurement exposes all adapter exports only in an in-memory build.
+The measurement exposes all adapter exports only in an in-memory build. The initial working-tree
+pair and frozen-scaffold reproduction are distinct matched builds; both have the same 27,972-byte delta.
+Controlled env/no-env builds gave full JS 126,224/126,111 bytes and adapter increases 27,972/27,869;
+inlined env values explain roughly 100 bytes of gzip variation. No real env file was changed.
 
 Installation added 82 packages. `npm audit` reported 4 high advisories through the unimported
 Firestore/gRPC dependency chain. No dependency override, downgrade, or automatic fix was applied.
+Review follow-up: `npm audit --omit=dev` again reports 4 high and 0 other advisories; current
+Auth-only `dist` has 0 case-insensitive `grpc` matches. After the Gate 2 Firestore import and
+production build, repeat both `npm audit --omit=dev` and `rg -i "grpc" dist` before assessing exposure.
 Final build, lint, and strict typecheck pass. Unit/component tests: 72 across 8 files; exit run
 8.70 s, review rerun 6.67 s. Browser tests: 24 passed in the exit run (1.5 min) and again during
 review (1.8 min), including authenticated shell, keyboard/drawer behavior, and navigation speed.
@@ -188,3 +209,23 @@ Firebase/Vercel console settings and Production authentication were not directly
 agent; successful Preview behavior does not claim that separate audit. All required G1 targets
 now have passing automated or owner-provided evidence; G1 is marked complete in the tracker.
 The branch still awaits review and the owner's merge.
+
+### Review follow-up (base `be43ece`)
+
+Added 2 tests comparing the real `firebase.json` Auth/Firestore ports with the shared constants,
+and 1 simulated CLI startup-failure test. Build, lint, strict typecheck and review checks pass:
+75 unit/component tests in 10 files (7.56 s); browser exit/review runs each pass 24/24 (1.7/1.8 min).
+Review route median/p95/max: 57.60/68.40/176.00, 53.85/69.20/162.50, 58.60/85.10/173.60 ms;
+1/1/3 transitions over 100 ms, 0 requests and 0 app console errors in each 60-transition run.
+
+The owner's fresh-worktree 90-second startup failure and successful whole-command rerun are
+recorded in REVIEW.md; Playwright retries remain 0. The failed temp directory has config only,
+with no Firebase debug log. A pre-logging CLI stall is possible; cold-start/root cause is unresolved.
+Captured diagnostic/exit/review startups took 11.480/12.553/11.892 s, with first output at
+1.399/1.434/1.401 s. The deadline stays 90 seconds. stdout/stderr, debug logs and startup/probe
+diagnostics are retained in `test-results/auth-emulator-*/`.
+
+Routine measurements/screenshots now go to `test-results/gate-1/`; updating committed artifacts
+requires `--record-evidence`, as selected by the owner. All 28 pre-existing committed JSON/PNG
+artifacts are byte-identical to `be43ece`. Follow-up results: `docs/qa/gate-1/review-followup.json`.
+Preview timings and console setup confirmations remain owner-reported, not independently verified.

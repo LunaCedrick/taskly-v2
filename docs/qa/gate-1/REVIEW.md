@@ -21,15 +21,24 @@ Application commit: `b3ffa18`. Gate status: all required targets verified; branc
 | `npm run lint` | pass; 0 errors/warnings, including review rerun |
 | `npm run typecheck` | pass; strict app/tooling/tests, including review rerun |
 | `npm run test` | 72 tests across 8 files; exit 8.70 s, review 6.67 s |
-| `npm run e2e` | 24 tests; exit 1.5 min, review 1.8 min; 0 retries |
+| `npm run e2e` | 24 tests; exit 1.5 min, review 1.8 min; Playwright retries configured as 0; later owner review required one whole-command rerun after a startup timeout (below) |
 | `npm run measure:bundle` | 126,224 bytes gzip; +30,069 over Gate 0; <200,000 |
 | `npm run measure:auth-adapter` | +27,972 bytes gzip; below the 50,000-byte stop threshold |
 
 The adapter was measured before any auth interface/bootstrap integration, with every adapter
 export retained so unused popup/sign-out paths could not disappear. Commit `983bd86` preserves
-that initial result. The current script reconstructs scaffold revision `6a99bb5` in memory,
+that initial working-tree pair: 96,160 -> 124,132 bytes gzip (+27,972), measured before the UI.
+The current script reconstructs scaffold revision `6a99bb5` in memory,
 reproducing Gate 0's 96,155-byte baseline and an adapter-equipped 124,127-byte bundle.
 Production builds remain untouched by this measurement instrumentation.
+Figures vary by about 100 bytes with inlined `VITE_FIREBASE_*` values: controlled env/no-env
+builds differed by 113 bytes for the full bundle and 103 bytes for the adapter increase.
+
+Routine E2E screenshots/speed JSON and both bundle measurements now write to `test-results/gate-1/`;
+only an explicit `--record-evidence` updates committed snapshots in `docs/qa/gate-1/`.
+Use `npm run e2e -- --record-evidence`, `npm run measure:bundle -- --record-evidence`, or
+`npm run measure:auth-adapter -- --record-evidence` when intentionally replacing evidence.
+The original artifacts and tables above remain the historical application review results.
 
 ## Performance
 
@@ -127,15 +136,58 @@ Taskly. The agent did not independently inspect their call stacks. No app change
 was added. Automated app console checks passed as recorded above.
 
 Firebase/Vercel console settings and Production authentication were not directly audited by the
-agent. Passing Preview behavior does not claim that separate audit. All G1 targets now have
-passing evidence; the tracker is marked complete. This follow-up changes documentation only;
-the existing exit/review results apply to unchanged application code and were not rerun.
+agent. Preview timings and console setup confirmations are owner-reported, not independently
+verified. Passing Preview behavior does not claim that separate audit. All G1 targets now have
+passing evidence; the tracker is marked complete. That preview-evidence update changed documentation
+only. Subsequent test/tooling fixes and their checks are recorded below; app code remains unchanged.
+
+## Review follow-up
+
+The owner reported a fresh-worktree E2E startup timeout at 90 seconds, followed by a complete
+24/24 pass on the next command invocation. This was a whole-command retry, not a Playwright
+test retry. The corresponding temp directory contains `firebase.json` but no Firebase debug log.
+The missing log suggests a stall before CLI logging initialized; its exact cause, including
+whether this was a cold filesystem/module load, is **unresolved**, not a proven emulator download.
+The installed CLI's Auth emulator runs bundled Node code; no separate Auth binary is downloaded.
+
+The runner keeps the 90,000 ms deadline, captures and tees stdout/stderr, enables the Firebase
+debug log, records first-output/readiness timings and the last probe error, and retains diagnostics
+under `test-results/auth-emulator-*/`. A simulated CLI exit test checks output retention and
+early failure. The global `firebase-tools` PATH prerequisite is recorded in DECISIONS.md.
+Port-consistency tests read the real `firebase.json` and compare Auth/Firestore with the shared
+9099/8081 constants. Known startup/sign-out gaps remain unchanged by owner decision (DECISIONS.md).
+
+The env comparison uses unchanged source/dependencies with normal env loading versus an empty
+`envDir`; no owner env file was edited or values printed. Full bundle: 126,224 -> 126,111 bytes
+(+30,069 -> +29,956 against Gate 0); adapter: 124,127 -> 124,024 (+27,972 -> +27,869 against
+the same 96,155 baseline). The owner's independent no-env full bundle was 126,110, one byte
+below this in-memory comparison. Both comparisons confirm the roughly 100-byte env effect.
+
+Follow-up build, lint and strict typecheck pass; review unit/component run: 75 tests across
+10 files in 7.56 s. Browser exit and review runs each pass 24/24 in 1.7 and 1.8 minutes.
+Captured diagnostic/exit/review emulator readiness: 11.480 / 12.553 / 11.892 s; first output:
+1.399 / 1.434 / 1.401 s. None reproduced the timeout. No retry or deadline increase was added.
+
+| Run | Follow-up exit median / p95 / max ms | Follow-up review median / p95 / max ms | Exit / review >100 ms | Requests / app errors |
+|---|---|---|---:|---|
+| 1 | 55.65 / 72.00 / 192.40 | 57.60 / 68.40 / 176.00 | 1 / 1 | 0 / 0 |
+| 2 | 55.35 / 70.20 / 154.80 | 53.85 / 69.20 / 162.50 | 1 / 1 | 0 / 0 |
+| 3 | 56.20 / 74.90 / 160.40 | 58.60 / 85.10 / 173.60 | 1 / 3 | 0 / 0 |
+
+Same 1,000 tasks, 60 transitions/run, 4x CPU, machine and strict p95 <100 ms protocol as above;
+both follow-up suites pass, as did the earlier 66.30 / 78.20 / 75.30 ms review p95 values.
+Nineteen fresh screenshots were written locally; shell keyboard/overflow checks pass at both widths.
+Output flag checks passed in scratch fixtures. All 28 pre-existing committed JSON/PNG artifacts
+remain byte-identical to `be43ece`. Intentional follow-up summary: `review-followup.json`.
 
 ## Risks, open questions, and proposed lessons
 
 `npm audit` reports 4 high advisories through unimported Firestore/gRPC packages in Firebase's
 dependency tree. No automatic fix, override, or downgrade was applied to the approved exact pin.
-Review this chain before importing Firestore in Gate 2. No other implementation questions remain.
+`npm audit --omit=dev` still reports 4 high, 0 other advisories; current Gate 1 `dist` has 0
+case-insensitive `grpc` matches. After importing Firestore and rebuilding in Gate 2, rerun
+`npm audit --omit=dev` and `rg -i "grpc" dist`; today's Auth-only result does not establish that result.
+The historical startup timeout's root cause remains open; it was not reproduced in follow-up.
 No AGENTS.md or PLAN.md changes are proposed. The approved skill file was left untouched.
 
 Proposed lessons for the owner to record in the skill:
