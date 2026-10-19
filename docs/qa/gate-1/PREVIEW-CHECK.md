@@ -23,5 +23,8 @@ precision. A zero delay means Dashboard was already visible when closure was det
 Record blocked/cancelled attempts separately. A missing Dashboard after 10 seconds is a failed
 measurement; record that failure rather than silently replacing it with a faster run.
 
-All real-Google preview checks, three measurements, separate account-selection intervals, and
-their median remain **UNVERIFIED** pending owner results. G1 remains unchecked in TRACKER.md.
+Owner results received 2026-10-19: **PASS** for real Google sign-in, refresh persistence,
+sidebar/drawer sign-out, and deep-link return. Throttled sign-in runs: 198.1 / 43.4 / 101.1 ms;
+median 101.1 ms. Separate popup-open intervals: 15,896.2 / 6,069.8 / 6,021.3 ms.
+Environment, measurement limits, and owner-attributed console diagnostics are recorded in
+`preview.json` and `REVIEW.md`. All required G1 targets have passing evidence in TRACKER.md.

@@ -4,18 +4,42 @@
   "applicationCommit": "b3ffa18",
   "deploymentStatus": "success",
   "deploymentDescription": "Deployment has completed",
-  "access": "Redirected to Vercel login; local Vercel CLI has no authentication token",
-  "realGoogleSignIn": "UNVERIFIED",
-  "refreshPersistence": "UNVERIFIED",
-  "signOut": "UNVERIFIED",
-  "deepLinkReturn": "UNVERIFIED",
+  "access": "Owner used an authenticated browser; agent remains redirected to Vercel login and has no Vercel CLI authentication token",
+  "evidenceSource": "Owner-reported preview results; not independently repeated by the agent",
+  "environment": {
+    "browser": "Chrome 155.0.8059.84 (Official Build, 64-bit)",
+    "os": "Windows 11",
+    "device": "Desktop/laptop; model not recorded",
+    "profile": "Fresh Chrome profile, no extensions",
+    "functionalChecksThrottling": "Off"
+  },
+  "realGoogleSignIn": "PASS",
+  "refreshPersistence": "PASS: loading screen, then Dashboard; no sign-in form flash",
+  "signOut": "PASS: sidebar and phone drawer; protected content removed and refresh still requires sign-in",
+  "phoneSignOutViewport": "390x905 emulation",
+  "deepLinkReturn": "PASS: /projects/project-1?sort=due#task-2; Thesis project visible",
   "requiredNetwork": "Slow 4G",
   "requiredCpuThrottle": 4,
   "runs": [
-    { "run": 1, "popupCloseToDashboardMs": null, "accountSelectionMs": null },
-    { "run": 2, "popupCloseToDashboardMs": null, "accountSelectionMs": null },
-    { "run": 3, "popupCloseToDashboardMs": null, "accountSelectionMs": null }
+    { "run": 1, "popupCloseToDashboardMs": 198.1, "accountSelectionMs": 15896.2, "status": "PASS" },
+    { "run": 2, "popupCloseToDashboardMs": 43.4, "accountSelectionMs": 6069.8, "status": "PASS" },
+    { "run": 3, "popupCloseToDashboardMs": 101.1, "accountSelectionMs": 6021.3, "status": "PASS" }
   ],
-  "medianMs": null,
-  "status": "UNVERIFIED pending owner results"
+  "measurement": {
+    "start": "First observed Google popup closure after account selection",
+    "end": "Dashboard header h1 becomes visible in the shell",
+    "accountSelection": "Separate popup-open duration, including provider-page loading; excluded from sign-in interval",
+    "method": "Console-only preview-timing.js; 20 ms popup polling plus focus and DOM observation",
+    "wallClockTimestamps": "Not supplied in the owner report",
+    "limitMsExclusive": 3000
+  },
+  "medianMs": 101.1,
+  "consoleObservation": {
+    "message": "Cross-Origin-Opener-Policy policy would block the window.closed call",
+    "countPerRun": 4,
+    "attribution": "Owner attributes messages to measurement snippet polling popup.closed on Google's popup page, not Taskly; agent has not independently inspected their call stacks",
+    "applicationChange": "None; no Cross-Origin-Opener-Policy header added"
+  },
+  "consoleSettingsAudit": "Firebase/Vercel settings and Production authentication were not directly inspected by the agent",
+  "status": "PASS: all required real-Google preview checks and three throttled timings supplied by owner"
 }

@@ -1,6 +1,6 @@
 # TASKLY v2: TRACKER.md
 
-Where we are: Phase B, Gate 1 in progress. Update this file after every step (tick the box, add a log line).
+Where we are: Phase B, Gate 1 targets verified; branch awaits review and owner merge. Update this file after every step (tick the box, add a log line).
 Owners: **You** = Cedrick, **Claude** = planning, design, and review in chat, **Codex** = builds code.
 Targets for each gate are in `docs/PLAN.md` section 10 and in the gate's skill.
 
@@ -22,7 +22,7 @@ Gate rhythm: new session, plan first, build on a branch, run the exit commands, 
 | Gate | Pages delivered | Key targets | Status |
 |---|---|---|---|
 | G0 Shell and speed | App shell: sidebar, topbar, phone top bar, bottom tab bar, menu drawer; Floating Quick Add button (visible, not wired yet); Placeholder Dashboard, My Tasks, Project view rendering 1,000 fake tasks; ... | Median and 95th percentile route-change time recorded; 95th percentile under 100 ms with CPU throttled 4x; Zero network requests during navigation; ... | [x] |
-| G1 Authentication | Sign in (desktop, phone stacked); Session check screen (app start); Sign-in error state (popup blocked, network, cancelled); ... | Signed-out visit goes to /sign-in, then returns to the requested route after sign-in; A page refresh keeps the session; ... | [ ] |
+| G1 Authentication | Sign in (desktop, phone stacked); Session check screen (app start); Sign-in error state (popup blocked, network, cancelled); ... | Signed-out visit goes to /sign-in, then returns to the requested route after sign-in; A page refresh keeps the session; ... | [x] |
 | G2 Store and sync | Dashboard, My Tasks, Project view now read real data (read-only); States: loading skeleton, first run, empty project, load error | Exactly 3 Firestore listeners during navigation (automated test); A burst of 100 snapshot updates causes at most 1 render per frame; ... | [ ] |
 | G3 Projects, tasks, Quick Add | Task form: modal on desktop, bottom sheet on phone, add and edit; Dialogs: new project, rename project, delete task, delete project; Quick Add: floating button live, popover on desktop, sheet on phone, "More options" opens the full form; ... | Quick Add takes at most 3 steps: open, type, Enter; The new task appears under 100 ms after Enter (optimistic); ... | [ ] |
 | G4 Dashboard | Dashboard (desktop and phone): stat cards, Overdue, Today, Upcoming, Recent activity; Complete a task in place | Selectors unit-tested, including end of day, a set time, time zones, and empty data; The dashboard is derived from memory, with zero requests on navigation; ... | [ ] |
@@ -44,6 +44,7 @@ Offline sync, settings page, installable app, offline banner, custom calendar, U
 ## Log
 | Date | Step | Note |
 |---|---|---|
+| 2026-10-19 | G1 owner preview verification | Owner reports real Google sign-in, refresh persistence without form flash, sidebar and 390x905 drawer sign-out, and exact deep-link return PASS. Chrome 155 / Windows 11, fresh profile, no extensions; Slow 4G / 4x CPU timings 198.1/43.4/101.1 ms, median 101.1 ms (<3000); separate popup-open intervals 15,896.2/6,069.8/6,021.3 ms. Functional throttling off. Four COOP messages/run attributed by owner to measurement polling; no app change. All required targets verified; G1 ticked, branch awaits review/owner merge. See `docs/qa/gate-1/REVIEW.md` and `preview.json`. |
 | 2026-10-19 | G1 local checks and review | Build, lint, strict typecheck, 72 unit/component tests, and 24 emulator browser tests pass; review rerun passes. Review route p95 66.3/78.2/75.3 ms, 0 requests/errors, 1/2/1 transitions over 100 ms. JS 126,224 bytes gzip; adapter-only increase 27,972 bytes. Pushed normally through application commit `b3ffa18`; Vercel reports deployment complete. Real-Google preview checks and all three throttled timings/account-selection intervals remain UNVERIFIED pending owner results. G1 remains unchecked. See `docs/qa/gate-1/REVIEW.md`. |
 | 2026-10-19 | G1 session and interface | Steps 4–9 implemented: one store/observer, route guards, approved sign-in states, and shared profile/sign-out. Build, lint, strict typecheck, and 69 unit/component tests pass. Production JS: 126,209 bytes gzip. Emulator browser checks and preview verification pending. |
 | 2026-10-19 | G1 plan and adapter | Plan and `firebase@13.0.0` approved. Adapter-only matched-build increase: 27,972 bytes gzip (96,160 to 124,132), below the 50,000-byte stop threshold. No interface built at measurement time. `firebase.json` unchanged; remaining G1 work pending. |

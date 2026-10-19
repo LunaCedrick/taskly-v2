@@ -155,19 +155,36 @@ Normal `git push` published application commit `b3ffa18`; GitHub's Vercel status
 "Deployment has completed". This environment is redirected to Vercel sign-in; the Vercel CLI
 also has no authentication token. No external project settings were changed.
 
-| Required preview evidence | Status |
-|---|---|
-| Real Google sign-in | UNVERIFIED, pending owner results |
-| Refresh persistence with real Google | UNVERIFIED, pending owner results |
-| Real-provider sign-out | UNVERIFIED, pending owner results |
-| Return to a requested deep link with real Google | UNVERIFIED, pending owner results |
-| Slow 4G / 4x CPU popup-close-to-Dashboard run 1 | UNVERIFIED; duration and account-selection time not measured |
-| Slow 4G / 4x CPU popup-close-to-Dashboard run 2 | UNVERIFIED; duration and account-selection time not measured |
-| Slow 4G / 4x CPU popup-close-to-Dashboard run 3 | UNVERIFIED; duration and account-selection time not measured |
-| Preview timing median | UNVERIFIED; no measured runs |
+The owner supplied passing real-Google preview results on 2026-10-19; these were not independently
+repeated by the agent. Chrome 155.0.8059.84 (Official Build, 64-bit), Windows 11 desktop/laptop
+(model not recorded), fresh profile, no extensions. Timing conditions: Slow 4G and 4x CPU slowdown;
+functional checks used no throttling.
 
-The owner will report browser/device and the separate popup-open/account-selection interval for
-each run. Emulator test durations do not establish the preview's under-three-second target.
-Owner console setup remains unverified: Google provider enabled, Preview/Production configuration,
-emulator flag absent there, and exact localhost/production/stable-branch authorized domains.
-G1 stays unchecked until the owner supplies all required preview results.
+| Run | Popup close to visible Dashboard (ms) | Separate popup-open/account-selection interval (ms) | Result (<3000 ms) |
+|---|---:|---:|---|
+| 1 | 198.1 | 15,896.2 | PASS |
+| 2 | 43.4 | 6,069.8 | PASS |
+| 3 | 101.1 | 6,021.3 | PASS |
+| Median | 101.1 | Excluded from sign-in interval | PASS |
+
+Start: first observed Google popup closure after account selection. End: visible Dashboard
+`header h1` in the shell. The console-only snippet observes closure with 20 ms polling/focus and
+heading visibility with DOM observation/polling. Popup-open time includes provider-page loading.
+Wall-clock start/end timestamps were not supplied; no timestamps or device model were inferred.
+
+| Required preview evidence | Owner result |
+|---|---|
+| Real Google sign-in | PASS in all three timing runs |
+| Refresh persistence | PASS: loading screen, then Dashboard; no sign-in form flash |
+| Sidebar sign-out | PASS: protected content gone; refresh still requires sign-in |
+| Phone drawer sign-out | PASS at 390x905 emulation: protected content gone; refresh still requires sign-in |
+| Requested deep-link return | PASS: `/projects/project-1?sort=due#task-2`, Thesis project visible |
+
+The owner observed four `Cross-Origin-Opener-Policy policy would block the window.closed call`
+messages per timing run and attributed them to the measurement snippet's cross-origin popup
+polling, not Taskly. The agent did not independently inspect their call stacks. No app code or
+COOP header was changed. Raw structured evidence is in `docs/qa/gate-1/preview.json`.
+Firebase/Vercel console settings and Production authentication were not directly audited by the
+agent; successful Preview behavior does not claim that separate audit. All required G1 targets
+now have passing automated or owner-provided evidence; G1 is marked complete in the tracker.
+The branch still awaits review and the owner's merge.

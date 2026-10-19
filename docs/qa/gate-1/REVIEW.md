@@ -1,7 +1,7 @@
 # Gate 1 review — 2026-10-19
 
 Branch: `gate-1-auth`. Review skill: `.agents/skills/review/SKILL.md`.
-Application commit: `b3ffa18`. Gate status: incomplete pending owner preview evidence.
+Application commit: `b3ffa18`. Gate status: all required targets verified; branch awaits review and owner merge.
 
 ## Changed
 
@@ -87,28 +87,49 @@ mock the Auth adapter. Actual popup closure exercises cancellation and retry at 
 - Diff against main contains the approved skill commit and Gate 1 implementation, tests, and evidence.
 - No new UI for configuration/startup failures or sign-out failures, per owner instruction.
 
-## UNVERIFIED pending owner results
+## Owner preview verification
 
 Preview: https://taskly-v2-git-gate-1-auth-lunacedricks-projects.vercel.app/
 
 Normal push published `b3ffa18`; GitHub's Vercel status says deployment completed. This environment
-redirects to Vercel login; the CLI lacks an authentication token. The owner explicitly requested
-finishing local work without waiting and keeping G1 unchecked pending these results:
+redirects to Vercel login; the CLI lacks an authentication token. The owner supplied the remaining
+preview evidence on 2026-10-19. Results below are owner-reported, not independently repeated by
+the agent. Structured evidence is in `preview.json`.
 
-| Preview target | Status |
+| Preview target | Owner result |
 |---|---|
-| Real Google sign-in | UNVERIFIED |
-| Refresh persistence | UNVERIFIED |
-| Sign-out | UNVERIFIED |
-| Requested deep-link return | UNVERIFIED |
-| Slow 4G / 4x CPU popup-close-to-visible-Dashboard runs 1, 2, 3 | UNVERIFIED; no measured durations |
-| Separate popup-open/account-selection interval for each run | UNVERIFIED; no measured durations |
-| Median of the three preview sign-in measurements | UNVERIFIED |
+| Real Google sign-in | PASS in all three timing runs |
+| Refresh persistence | PASS: loading screen, then Dashboard; no sign-in form flash |
+| Sidebar sign-out | PASS: protected content gone; refresh still requires sign-in |
+| Phone drawer sign-out | PASS at 390x905 emulation: protected content gone; refresh still requires sign-in |
+| Requested deep-link return | PASS: `/projects/project-1?sort=due#task-2`; Thesis project visible |
 
-Record browser/device, settings, each start/end, each duration, median, and excluded account-selection
-interval. Emulator timings are not preview evidence. Owner-side Google provider, authorized domains,
-and Vercel Preview/Production variables remain unverified; the emulator flag must be absent there.
-The owner checklist and console-only measurement snippet are `PREVIEW-CHECK.md` and `preview-timing.js`.
+Chrome 155.0.8059.84 (Official Build, 64-bit), Windows 11 desktop/laptop (model not recorded),
+fresh Chrome profile, no extensions. Timing: Slow 4G / 4x CPU slowdown. Functional checks:
+throttling off. These manual conditions differ from the automated machine recorded above.
+
+| Run | Popup close to visible Dashboard (ms) | Separate popup-open/account-selection interval (ms) | Result (<3000 ms) |
+|---|---:|---:|---|
+| 1 | 198.1 | 15,896.2 | PASS |
+| 2 | 43.4 | 6,069.8 | PASS |
+| 3 | 101.1 | 6,021.3 | PASS |
+| Median | 101.1 | Excluded from sign-in interval | PASS |
+
+Start: first observed Google popup closure after account selection. End: Dashboard `header h1`
+becomes visible in the shell. `preview-timing.js` observes closure using 20 ms polling/window
+focus and heading visibility using DOM observation/polling. Popup-open time includes provider-page
+loading and is excluded from the measured sign-in interval. Wall-clock start/end timestamps
+were not supplied in the owner report; no timestamps or device model were inferred.
+
+The owner observed four `Cross-Origin-Opener-Policy policy would block the window.closed call`
+messages per run and attributed them to the measurement snippet polling Google's popup, not
+Taskly. The agent did not independently inspect their call stacks. No app change or COOP header
+was added. Automated app console checks passed as recorded above.
+
+Firebase/Vercel console settings and Production authentication were not directly audited by the
+agent. Passing Preview behavior does not claim that separate audit. All G1 targets now have
+passing evidence; the tracker is marked complete. This follow-up changes documentation only;
+the existing exit/review results apply to unchanged application code and were not rerun.
 
 ## Risks, open questions, and proposed lessons
 
