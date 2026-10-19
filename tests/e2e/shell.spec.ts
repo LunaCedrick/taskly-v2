@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/auth'
 import { mkdir } from 'node:fs/promises'
 
 for (const width of [390, 1280]) {
@@ -8,16 +8,17 @@ for (const width of [390, 1280]) {
     page.on('pageerror', (error) => errors.push(error.message))
     page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
     page.on('response', (response) => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`) })
-    await mkdir('docs/qa/gate-0', { recursive: true })
+    await mkdir('docs/qa/gate-1', { recursive: true })
     for (const [name, route] of [['dashboard', '/'], ['my-tasks', '/tasks'], ['project', '/projects/project-1']]) {
       await page.goto(route)
       await page.evaluate(() => document.fonts.ready)
       await expect(page).toHaveTitle('Taskly')
       await expect(page.locator('[data-view]')).toBeVisible()
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-      await page.screenshot({ path: `docs/qa/gate-0/${name}-${width}.png`, fullPage: true })
+      await page.screenshot({ path: `docs/qa/gate-1/${name}-${width}.png`, fullPage: true })
     }
     await page.goto('/')
+    await expect(page.locator('[data-view="dashboard"]')).toBeVisible()
     const controlCount = await page.evaluate(() => {
       const controls = [...document.querySelectorAll<HTMLElement>('a[href], button, [tabindex="0"]')]
         .filter((element) => element.getBoundingClientRect().width > 0)
@@ -42,6 +43,7 @@ for (const width of [390, 1280]) {
     }
     expect(reached.size).toBe(controlCount)
     await page.goto('/')
+    await expect(page.locator('[data-view="dashboard"]')).toBeVisible()
     await page.keyboard.press('Tab')
     await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused()
     await page.keyboard.press('Enter')
@@ -50,7 +52,7 @@ for (const width of [390, 1280]) {
       await page.getByRole('button', { name: 'Projects', exact: true }).click()
       const dialog = page.getByRole('dialog', { name: 'Menu' })
       await expect(dialog).toBeVisible()
-      await page.screenshot({ path: 'docs/qa/gate-0/drawer-390.png' })
+      await page.screenshot({ path: 'docs/qa/gate-1/drawer-390.png' })
       for (let index = 0; index < 14; index++) {
         await page.keyboard.press('Tab')
         expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true)

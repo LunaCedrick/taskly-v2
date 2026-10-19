@@ -8,8 +8,10 @@ const chunks = await Promise.all(files.map(async (file) => {
   return { file, bytes: buffer.length, gzipBytes: gzipSync(buffer).length }
 }))
 const gzipBytes = chunks.reduce((sum, chunk) => sum + chunk.gzipBytes, 0)
-const result = { chunks, gzipBytes, interimTargetBytes: 100_000, hardBudgetBytes: 200_000 }
-await mkdir('docs/qa/gate-0', { recursive: true })
-await writeFile('docs/qa/gate-0/bundle.json', JSON.stringify(result, null, 2) + '\n')
+const baseline = JSON.parse(await readFile('docs/qa/gate-0/bundle.json', 'utf8'))
+const result = { chunks, gzipBytes, gate0GzipBytes: baseline.gzipBytes,
+  increaseBytes: gzipBytes - baseline.gzipBytes, hardBudgetBytes: 200_000 }
+await mkdir('docs/qa/gate-1', { recursive: true })
+await writeFile('docs/qa/gate-1/bundle.json', JSON.stringify(result, null, 2) + '\n')
 console.log(JSON.stringify(result, null, 2))
 if (gzipBytes >= 200_000) process.exitCode = 1

@@ -20,7 +20,7 @@ export function initializeBrowserAuth() {
     if (app.options.projectId !== EMULATOR_PROJECT_ID) {
       throw new Error('Auth emulator requires the demo test project')
     }
-    connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${EMULATOR_PORTS.auth}`)
+    connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${EMULATOR_PORTS.auth}`, { disableWarnings: true })
   }
   browserAuth = auth
   return auth
