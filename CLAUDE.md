@@ -10,6 +10,7 @@
 ## Where things are
 - Gate skills are in .agents/skills/<name>/SKILL.md. They are Codex's folder and are not auto-loaded here; read them by path.
 - Plan, screens, design, decisions and tracker are in docs/. Gate evidence is in docs/qa/gate-N/.
+- At the start of a review session, read docs/CONTEXT.md for current status, constraints and carried risks; if it conflicts with the repo, the repo wins.
 
 ## Machine constraints
 - Port 8080 belongs to a company Oracle listener. Never stop or reconfigure it. Firestore emulator is 8081, Auth emulator is 9099.
