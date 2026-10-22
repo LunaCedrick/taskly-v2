@@ -7,7 +7,7 @@ This file is not loaded by Codex. Paste the prompts into a NEW Codex session. Re
 |---|---|---|
 | G0 | g0-shell-and-speed | gate-0-shell-speed |
 | G1 | g1-auth | gate-1-auth |
-| G2 | g2-store-and-sync | gate-2-store-sync |
+| G2 | g2-store-and-sync | gate-2-store-and-sync |
 | G3 | g3-projects-tasks | gate-3-projects-tasks |
 | G4 | g4-dashboard | gate-4-dashboard |
 | G5 | g5-search-alerts | gate-5-search-alerts |
