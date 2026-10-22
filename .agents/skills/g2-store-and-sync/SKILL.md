@@ -1,31 +1,226 @@
 ---
 name: g2-store-and-sync
-description: "Use to build Gate 2 of Taskly: the store, the three Firestore listeners, writes, and security rules."
+description: "Use to build Gate 2 of Taskly: the store, three Firestore listeners, read-only real-data views, and security rules."
 ---
+
 # Gate 2: Store and sync
 
-Status: outline. Before using it, expand it into a full skill (same layout as `g0-shell-and-speed`) and ask the owner to approve it.
+Status: Approved by the owner on 2026-10-22. The owner's answers to the OPEN questions are in docs/DECISIONS.md under 'G2 owner decisions' and override the recommendations in this skill. Implementation still requires approval of the step 1 plan.
 
-Read: PLAN.md sections 5, 6, 10 (G2), 13; SCREENS.md (States)
-Do not: change the rules in `AGENTS.md`; add anything outside the pages below; touch files outside this gate's feature folders without saying why.
+Goal: replace fixture-backed views with session-scoped Firestore data while keeping navigation entirely in memory.
+Read: `docs/PLAN.md` section 3 (Non-goals and Approved scope additions; the v0.2 offline boundary), section 4 (States row only), sections 5, 6, 10 (common requirements and G2 only), and 13; `docs/SCREENS.md` (States only). For the cited gate boundaries, consult only section 10's G3 write targets, G4 INP target, and G6 Project not found, Lighthouse/LCP, and deployment entries. `docs/CONTEXT.md` section 6 supplies existing deployment/port constraints.
+Visual references: `docs/design/states.png` (loading, first run, empty project, and load-error panels only).
+Do not: edit `AGENTS.md` or `docs/PLAN.md`; add G3 CRUD interfaces, forms, Quick Add behavior, optimistic-write targets, activity-writing workflows, or 500-write deletion batches; add G4 activity presentation, G5 search/alerts, G6 Project not found, collection-group queries, one-shot reads, persistent Firestore cache, or extra listeners. Never add a `Cross-Origin-Opener-Policy` header; it breaks the Google popup. No file over 300 lines.
+Use existing tokens, controls, selectors, and virtualization. Explain shared-file changes in the implementation plan. Keep the exact `firebase@13.0.0` pin and the checked-in `firebase.json`, including its emulators block, unchanged.
+OPEN means an owner decision, not permission to follow the recommendation. Do not create conditional files, implement a recommended policy, encode it in tests, or make it an exit condition until that decision is approved. Record the actual answer separately; never attribute an agent proposal to the owner.
 
 ## Pages and features
-- Dashboard, My Tasks, Project view now read real data (read-only)
-- States: loading skeleton, first run, empty project, load error
+
+- Dashboard, My Tasks, and Project view read real data from the existing store; navigation reads stored projects without losing G1 memoization.
+- Initial loading skeleton, first run, empty project, and load error with retry; view `dataReady` and partial-stream failure behavior follow the approved Q23 policy.
+- Exactly three session subscriptions, incremental updates batched per frame, memory-only Firestore cache, and owner-only validated rules. Product write adapters and profile permissions remain OPEN.
+- Local emulator verification and owner-operated rollout/real-Google preview verification; deployment timing and demonstration location remain OPEN.
 
 ## Targets (all must be met)
-- Exactly 3 Firestore listeners during navigation (automated test)
-- A burst of 100 snapshot updates causes at most 1 render per frame
-- 1,000 seeded tasks in the emulator still meet the route-change budget
-- Rules tests: another user cannot read or write; invalid fields rejected
-- No collection-group queries (search check)
-Common to every gate: route change 95th percentile under 100 ms (1,000 tasks, CPU throttled 4x); lint, typecheck, unit and end-to-end tests pass; no console errors; no horizontal scroll at 390 and 1280 px; the `review` skill is run.
+
+- Exactly three active Firestore listeners in a healthy signed-in session: projects, tasks, activity (latest 20). Start once; navigation never starts, stops, or replaces them. Zero after sign-out/disposal; explicit recovery must not duplicate healthy registrations.
+- Apply incremental `docChanges()`. A burst of 100 callbacks produces at most one store publication and one committed render per affected subscriber per frame. No-op effective data preserves row identity; queues stay bounded by document state when a hidden tab never receives a frame.
+- All three views use real emulator data; 1,000 seeded tasks and 4x CPU retain `p95 < 100 ms`, with no navigation data reset. Speed evidence lists every transition over 100 ms and counts by actual source/destination route pair. Navigation-request attribution follows the owner-approved Q21 rule.
+- Firestore loads through a dynamic import after sign-in, never in the entry's static-import/modulepreload graph. G1 ended at 126,224 bytes gzip, leaving 73,776 bytes to the 200,000-byte limit. Measure the adapter first; report initial/deferred/total bytes, signed-in startup transfer, and first-data latency at 4x CPU. The initial-JS definition and extra threshold remain Q01/Q02.
+- The 200,000-byte initial budget changes only through an owner-approved change to PLAN section 6, never by the agent. A failed measured budget stops integration; a proposed PLAN change belongs in the report, not an agent edit.
+- No partial-initial-data crash, false first-run from an unconfirmed empty cache snapshot, `NaN%` empty-project progress, or pre-load "Project preview" heading. Orphan, post-load unknown-project, clock, and cache-wait policies follow Q05–Q08.
+- Emulator rules tests prove signed-out/other-user denial, permitted owner access, and create/update validation under the approved document/profile contract. No broad allow may bypass validation.
+- Run the Java prerequisite; Auth stays 9099 and Firestore 8081 from the existing shared constant. Keep separate readiness timings, success/failure logs, and the shared 90-second emulator startup deadline unless a recorded explanation justifies a change.
+- Re-run `npm audit --omit=dev` and search every production chunk for `grpc`; record supported browser reachability in `docs/DECISIONS.md`. G1's Auth-only result does not establish G2 exposure.
+- Common checks: build, lint, strict typecheck, unit/rules/browser tests, no console errors, no horizontal scroll at 390/1280 px, keyboard access, and the `review` skill. INP belongs to G4; Lighthouse/LCP belong to G6, not G2 pass conditions. Optional reporting is Q09.
+
+## Steps
+
+1. Inspect the G1 integration points and propose the implementation plan; wait for approval before app coding. Name the files below, risks, tests, and decisions. `test:rules` and `measure:firestore-adapter` are new commands to create, not existing G1 commands. Present each OPEN question with its recommendation; unresolved answers must remain conditional throughout the plan:
+   - **OPEN Q01 — Initial JS:** Which assets count as initial JavaScript? Recommend the deduplicated entry + transitive static imports + HTML modulepreloads, summing each emitted asset's gzip bytes once; report deferred, total, and restored-session transfer separately. Do not adopt this accounting definition until approved.
+   - **OPEN Q02 — Extra threshold:** Retain, replace, or drop the draft's 50,000-byte initial-increase stop threshold now that Firestore must be lazy? Recommend dropping that extra threshold for the lazy path, retaining the measured 200,000-byte budget and the mandatory no-static-Firestore check. Do not apply 50,000 bytes as an approved G2 limit.
+   - **OPEN Q03 — Rules rollout:** Should the owner deploy reviewed owner-only rules during G2 for preview verification, or retain G6 deployment timing; does a successful deployed preview read block G2 completion? Recommend owner deployment for preview verification in G2 and production release verification in G6. Shared Firebase projects can share rules across preview/production: identify the actual project impact before the owner acts; the agent never deploys.
+   - **OPEN Q04 — Demo:** Is the populated G2 demonstration in the emulator or Vercel preview? Recommend the seeded emulator; a preview account with no Taskly data has no write UI until G3 and is expected to show first-run. Preview seeding would need separate explicit authorization; emulator scale tests remain required either way.
+   - **OPEN Q05 — Orphans:** After project readiness, should missing-project tasks be excluded with a data-integrity error, shown with an approved fallback, or block the affected view? Recommend retaining documents, excluding unsafe rows, keeping valid rows visible, and surfacing the existing error treatment; never silently delete or invent referential rules. Approve the presentation before selector/UI tests enforce it.
+   - **OPEN Q06 — Unknown project:** After initial loading, how should an unknown project ID render until the G6 Project not found page? Recommend the existing in-shell load-error treatment with an approved Dashboard navigation action. Before loading finishes, the skeleton is mandatory; post-load copy/action remains undecided.
+   - **OPEN Q07 — Real-session clock:** Where does `now` come from once fixtures are removed? Recommend one injected wall-clock value per store publication, leaving the minute tick to G5; keep unchanged row presentation/props stable instead of invalidating every row with a new raw timestamp. No fixture time or unapproved ticker.
+   - **OPEN Q08 — Empty cache:** What should an empty `metadata.fromCache === true` snapshot show, and what first-data deadline/start/reset/retry policy applies? Recommend unresolved loading until server confirmation, or load error if confirmation misses the owner-approved wait deadline. Do not choose a duration, confuse it with emulator startup's 90 seconds, or treat unconfirmed cache emptiness as first-run. Specify nonempty-cache readiness too.
+   - **OPEN Q09 — Optional metrics:** Should the existing Lighthouse script run as a non-blocking report in G2? Recommend optional reporting only, with no new responsiveness test or Lighthouse rewrite; INP/LCP/Lighthouse gate targets stay in their named later gates. Record the actual audited route and preserve earlier evidence if a report is requested.
+   - **OPEN Q10 — Write adapters:** Create `src/lib/firebase/writes.ts` and `tests/unit/firestore-writes.test.ts` in G2 or defer them? Recommend deferring both to G3 because G2 pages are read-only. Keep write SDK APIs retained only in the measurement harness unless product writes are explicitly approved; no optimistic-write/activity/batch workflow is implied.
+   - **OPEN Q11 — Rules shape:** Approve explicit validating collection matches instead of PLAN section 5's recursive owner-allow sketch? Recommend explicit matches with no overlapping broad allow. Proposed owner-edit wording: "Use explicit owner-only matches for approved documents under users/{uid}; validate create/update payloads in each allow condition, keep unmatched paths denied, and never add a recursive allow that bypasses validation." Do not edit PLAN yourself.
+   - **OPEN Q12 — Profile:** With no `users/{uid}` writer, should profile access stay denied, allow owner reads only, or allow validated owner writes now? Recommend denying profile access until a writer/contract is approved. No automatic profile creation; rules/tests follow the selected policy rather than assuming owner writes succeed.
+   - **OPEN Q13 — Timestamps:** Store dates as Firestore timestamps or numeric milliseconds, and which pending/null values are valid? Recommend Firestore timestamps on disk and numeric milliseconds in the UI, decoded structurally without a runtime `Timestamp` import. Approve pending-value handling before codecs/rules/fixtures encode it.
+   - **OPEN Q14 — Field presence:** Which section 5 fields are required, optional, or forbidden extras on each document? Recommend a strict known-field allowlist and a documented required set, distinguishing nullable fields from omitted ones; defer undocumented nonempty-name/title business rules to G3. Approve this matrix before validation tests.
+   - **OPEN Q15 — References:** May activity `taskId`/`projectId` be null, and is task `projectId` always a string even if the referenced project is missing? Recommend nullable activity references, required string task references, and handling absent documents via Q05 without adding referential writes/deletes. These are recommendations, not an inferred schema.
+   - **OPEN Q16 — Stored enums:** Which `activity.type` values are valid, and is stored task status `in-progress` (`src/lib/types.ts`) or `in progress` (PLAN section 3)? Recommend type-checking activity strings until G3 defines writers and retaining the existing task status/priority enums from `src/lib/types.ts`, including `in-progress`.
+   - **OPEN Q17 — Other validation:** What `colorIndex` range, string-length bounds, and immutable-field rules apply? Recommend the existing palette/type constraints, no invented string caps, and immutable `createdAt` once its timestamp contract is approved. Do not silently enforce these proposals or G3 duplicate-name behavior.
+   - **OPEN Q18 — First-run action:** Keep "Create your first project" visibly disabled, omit it until G3, or explicitly bring its workflow forward? Recommend the disabled existing-style action without a fake destination or added workflow; approve its accessible treatment.
+   - **OPEN Q19 — Empty-project action:** Keep "Add a task" visibly disabled, omit it until G3, or explicitly bring its workflow forward? Recommend the same disabled treatment as Q18; no automatic wiring of G3 behavior.
+   - **OPEN Q20 — Test dependency:** Approve a compatible `@firebase/rules-unit-testing` dev dependency for identity contexts, rules assertions, and `withSecurityRulesDisabled` seeding? Recommend approval; never add `firebase-admin`, change the exact Firebase pin, or install any dependency without approval. If declined, propose an alternative before dependent work.
+   - **OPEN Q21 — Navigation traffic:** Which requests count as a failure during the trusted-click-to-committed-paint window with Firestore transport already open? Recommend logging every request start in that window; route fetches/imports/new listens/reconnects fail, while pre-click open streams and independently evidenced idle transport traffic are reported separately. A new transport request inside the window needs attribution using stream/listener events and idle comparison; uncertain attribution is unverified, never a blanket Firestore exclusion. Approve this pass rule before tests encode it.
+   - **OPEN Q22 — Branch:** Keep current `gate-2-store-and-sync` or use `gate-2-store-sync` from `docs/PROMPTS.md`? Recommend the documented name. Both current HEAD and main are `b6f7921`, with zero commits ahead at this revision; do not rename the branch during this skill-only edit. Future work uses the owner-selected branch.
+   - **OPEN Q23 — Partial stream failure and activity gating:** Does slow/failed activity block task/project views despite no G2 activity UI? Does one failed stream show the full "We could not load your tasks" panel or preserve healthy views? Recommend projects+tasks gating the views; track/retry activity readiness/errors without blocking them. A projects or tasks failure shows the load-error panel; retry replaces only failed streams. Keep exactly three listeners and exactly three healthy handles after recovery, regardless of this decision.
+
+2. Check prerequisites and capture the G1 baseline.
+   - Run `java -version`; record Java, Node, and Firebase CLI versions. If Java is missing/incompatible, stop emulator-dependent work and tell the owner to install a Java 21 LTS JDK (for example, Eclipse Temurin 21), put its `bin` on PATH, reopen the terminal, and rerun the check. Confirm the selected CLI's Java requirement; do not install tooling automatically. See [Firestore emulator prerequisites](https://firebase.google.com/docs/emulator-suite/connect_firestore).
+   - Verify `src/lib/firebase/emulator-config.ts` supplies Auth 9099/Firestore 8081 to runtime/tooling and matches the actual `firebase.json`. Fail on mismatch; never use, stop, or reconfigure the unrelated service on 8080. Keep the checked-in config unchanged.
+   - Run `npm run build` and `npm run measure:bundle` on unchanged G1 app sources; freeze the exact baseline revision. Record actual gzip bytes beside 126,224 and explain environment/toolchain variation without exposing secrets or editing real env files.
+
+3. Build and measure only the lazy Firestore adapter before store/session/UI integration.
+   - Create `src/lib/firebase/firestore.ts` using the existing app client and explicit memory-only cache (`memoryLocalCache`); connect the emulator only with its explicit local flag. No `persistentLocalCache`, Firestore IndexedDB persistence, or v0.2 offline subsystem. Preserve G1 Auth persistence; this cache restriction concerns Firestore only. Product write files remain conditional on Q10.
+   - Plan the boundary, wired only after this measurement: `src/lib/subscriptions/index.ts` is the SDK-free start/stop facade that dynamically imports `./listeners` and `../firebase/firestore` only after sign-in resolves. `src/features/auth/session.ts`, every store module, `src/lib/firebase/firestore-codec.ts`, `src/lib/sync-changes.ts`, and `src/ui/DataState.tsx` import no runtime value from `firebase/firestore`; use `import type` or structural values, never its `Timestamp` class. The facade must not statically re-export lazy modules. Probe the lazy boundary in the in-memory harness before integrating the session.
+   - Create `scripts/measure-firestore-adapter.mjs` and the `measure:firestore-adapter` script. Match production builds against the frozen G1 scaffold, retaining every required adapter/read SDK export in the in-memory harness, including `onSnapshot`, `query`, `orderBy`, `limit`, `collection`, emulator connection, and memory-cache setup. Retain `setDoc`, `updateDoc`, `deleteDoc`, `writeBatch`, `serverTimestamp`, and `Timestamp` in a separate extended harness variant only; this does not authorize product writes.
+   - Reviewer probes are unmatched and indicative only: app alone 7,518 bytes gzip; read/subscribe probe 141,384 (+133,866); extended write probe 145,662 (+138,144, another 4,278). These exceed the 73,776-byte G1 headroom for eager imports; they are not matched G1 measurements. Dynamic loading is the baseline, not a fallback contingent on reproducing that result.
+   - Create `scripts/bundle-metrics.mjs`; extend `scripts/measure-bundle.mjs` and `vite.config.ts` to retain build-time chunk module IDs/import edges and HTML preloads for measurement. Under approved Q01 accounting, report initial, deferred, total, and adapter increases with identical toolchain/env/gzip settings. No UI/store/session integration may precede this adapter-only measurement.
+   - Independently of Q01's byte definition, make `measure:bundle` fail if the entry's transitive static imports or modulepreloads reach any module/chunk containing the Firestore runtime. Identify it by module graph, not guessed filenames. Add good/bad graph cases and the real production-graph assertion to `tests/unit/bundle-measurement.test.ts`; a shared/re-export/preloaded SDK must fail even when named differently.
+   - Before later integration, stop for an entry-boundary failure or measured initial total >=200,000 bytes under the approved definition; any extra threshold follows Q02 only. Record proposed budget changes for the owner to make in PLAN, never apply them yourself. After integration, step 13 also measures cold signed-out/restored-session request timing, signed-in startup transfer, and first-data latency at 4x CPU, including the lazy import; these costs must not disappear into navigation warmup.
+   - Save `docs/qa/gate-2/firestore-adapter-bundle.json` and record the method/results in `docs/DECISIONS.md`. Measurement retention hooks exist only in the harness; the separate e2e observation mechanism in step 12 must compile out of production.
+
+4. Define a pure document boundary under Q13–Q17's approved contract.
+   - Modify `src/lib/types.ts` for the section 5 activity/document types; create `src/lib/firebase/firestore-codec.ts` and `src/lib/sync-changes.ts`. Decode SDK values structurally to UI values without importing the runtime SDK; handle malformed documents as errors, not empty data. No non-null assertion may substitute for validation.
+   - Use `users/{uid}/projects/{id}`, `users/{uid}/tasks/{id}`, and `users/{uid}/activity/{id}`; profile handling follows Q12. Keep IDs/path ownership separate from document fields. No one-shot reads, collection-group queries, extra indexes, automatic profile writes, or unapproved product write layer.
+   - The change reducer compares decoded effective fields, including dates, to preserve identities for duplicate/no-op snapshots. This is effective-data equality rather than literal version comparison from PLAN section 13: no version field is defined, and `updatedAt` alone is not an approved monotonic version. Record that difference and its no-flicker justification in `docs/DECISIONS.md`; do not invent a version field or call it an owner decision.
+
+5. Integrate real data, readiness, and the approved clock into the existing store.
+   - Create `src/store/data-slice.ts` and `src/store/selectors.ts`; modify `src/store/index.ts` to remove product fixture initialization and integrate projects/tasks/activity, all three per-stream readiness/metadata/error states, session identity, and view `dataReady` under approved Q23. No task rows or missing-project decisions before that view gate qualifies; partial-failure presentation follows Q23.
+   - Readiness considers `metadata.fromCache`, not merely callback arrival or `docs.length`. An empty cache snapshot alone cannot prove first-run. Implement Q08's approved unresolved/error/confirmation and nonempty-cache rules; receive metadata-only changes so a later server-confirmed empty snapshot can complete loading even with zero `docChanges()`.
+   - Replace fixture-derived `now` with Q07's approved real-session clock, supplied at the orchestration boundary and injected into pure selectors. Do not silently add a minute tick. Preserve unchanged row presentation when time advances without a visible due-state change.
+   - Reuse/extend `src/lib/task-selectors.ts` for current groups, stats, safe task/project joins, and project progress. Publish derived data once per frame and preserve untouched references. Apply Q05's approved orphan policy to both initial and later missing references; keep source documents intact unless separately authorized.
+   - Keep `src/lib/fake-data.ts` for Node-side test/seed imports only; no product module imports it. Clear user data and queued work on sign-out/UID change, reject stale callbacks/import completions, and preserve data/subscriptions on same-UID Auth notifications and navigation.
+
+6. Start exactly three subscriptions and keep the frame queue bounded.
+   - Create the SDK-free `src/lib/subscriptions/index.ts` facade from step 3, lazy `src/lib/subscriptions/listeners.ts` for the three `onSnapshot` registrations, and `src/lib/subscriptions/frame-batch.ts` for the shared queue. All registrations live under `src/lib/subscriptions`; projects/tasks cover the owner collections, activity is ordered by `createdAt` descending with `limit(20)`. No profile/per-project listener.
+   - Request snapshot metadata changes for Q08 readiness, apply incremental adds/modifications/removals, and handle activity-window evictions. Distinguish data no-ops from meaningful readiness/error changes; metadata-only confirmation must not be lost.
+   - Coalesce pending changes by collection/document ID, not callback count: one effective pending state per ID, collapse add/remove pairs for previously absent documents, and retain only the current limited activity window. Hidden tabs may never run `requestAnimationFrame`; keep no unbounded event/history array or accumulated frames. Flush once when a frame occurs; stop clears all pending data/metadata/timers.
+   - Modify `src/features/auth/session.ts` to coordinate the one Auth observer with the SDK-free facade; preserve `src/main.tsx` as bootstrap/disposal owner. Make same-UID start idempotent, guard lazy imports with session identity/generation, and clean up on sign-out, StrictMode disposal, and hot reload.
+   - Put listener errors/retry state in the store. An explicit retry may replace failed subscriptions without duplicating healthy ones; route changes never trigger retry or clear available data. Return to exactly three healthy handles after recovery.
+
+7. Replace deny-all rules locally with the approved owner-only validation design.
+   - Modify `firestore.rules` under the Q11-approved shape; explicit per-collection matches are a proposed deviation from section 5's recursive sketch, not a settled PLAN change. Require non-null Auth and matching path UID for each permitted operation; never retain a broad owner allow alongside validating matches because overlapping allows are ORed.
+   - Validate full resulting create/update documents against approved Q13–Q17 field sets/types/enums/dates; separate delete checks from nonexistent `request.resource.data`. Profile permissions/validation follow Q12. No automatic profile writer, undocumented referential policy, string cap, activity enum, or G3 workflow.
+   - Record the proposed PLAN wording from Q11 in the implementation report for the owner; do not edit PLAN. Keep `firestore.indexes.json` unless the named queries demonstrably need a change and it is explained first. Rules deployment belongs to the owner under Q03, never the agent.
+
+8. Connect read-only views, safe rows, memoized navigation, and exact designed states.
+   - Modify `src/features/dashboard/Dashboard.tsx`, `src/features/tasks/TasksPage.tsx`, `src/features/projects/ProjectPage.tsx`, `src/ui/TaskList.tsx`, and, where needed for safe/stable row props, `src/ui/TaskRow.tsx`. Replace fixture wording and unsafe `projects.find(...)!` joins; no missing project reaches `TaskRow` unchecked. Follow Q05 without choosing a fallback, filtering rule, or integrity-error policy beforehand.
+   - Gate initial task/project content on view `dataReady` under approved Q23. A pre-load project deep link shows the skeleton, never G0's "Project preview" heading. Apply Q06 only after the view qualifies. Project progress is exactly 0% for zero tasks, never division by zero/`NaN%`; test it via a pure selector and the view.
+   - Modify `src/app/Navigation.tsx` to select stable projects only, preserving G1's memoized Navigation and `src/app/Drawer.tsx`. Create `src/app/ProjectNavigationItem.tsx` for narrow primitive count/progress subscriptions so task snapshots never rerender the Navigation/Drawer parent; count children may update when their displayed values change. Gate initial counts on `dataReady`; never call `.filter` on an absent task list. Keep route/keyboard behavior and the speed test as regression guards.
+   - Create `src/ui/DataState.tsx` and `src/ui/DataState.module.css`; reuse tokens, skeleton rows, and controls. Do not flash loading over already available data on navigation. Match only the four named `states.png` panels; leave G4 activity presentation and G6 Project not found for their gates.
+   - Use exact frame copy: first run "Nothing here yet" / "Create a project to start organizing your tasks." / "Create your first project"; empty project "No tasks in {project}" / "Add the first task to get this project moving." / "Add a task"; error "We could not load your tasks" / "Check your connection and try again." / "Try again". Copy is specified; only Q18/Q19's action treatment is OPEN.
+   - Distinguish unresolved, confirmed empty, error, and Q05/Q06's approved edge policies. Keep error announcements, keyboard access, visible focus, 44 px targets, AA contrast, reduced motion, and existing focus-return behavior.
+
+9. Write unit/component tests against approved policies, not recommendations.
+   - Create `tests/unit/firestore-adapter.test.ts` for one lazy instance, explicit memory-only cache, emulator-flag/port handling, unchanged Auth persistence, and no accidental runtime SDK import into the facade/entry graph; mock SDK boundaries without contacting a real service.
+   - Create `tests/unit/firestore-codec.test.ts` for the approved field/date contract, structural decoding, malformed data, and effective equality; `tests/unit/sync-changes.test.ts` for incremental adds/modifies/removes, no-ops, activity eviction, and stable references.
+   - Create `tests/unit/data-store.test.ts` for Q23's approved view gate/partial-failure policy, tasks arriving before projects, slow/failed activity, empty `fromCache:true`, server-confirmed empty, metadata-only confirmation with zero changes, failures/retry, Q07's clock, UID reset, and stale-work rejection. Empty cache must never silently become confirmed first-run; test Q08's selected timeout/retry policy explicitly.
+   - Create `tests/unit/subscriptions.test.ts` for owner paths/activity limit, metadata options, exactly three registrations, duplicate start, stop, pending-import races, errors/retry, and no stale account callbacks; mock only SDK boundaries.
+   - Create `tests/unit/snapshot-batching.test.tsx`: 100 callbacks before one controlled frame yield correct final data, one publication, at most one committed render per affected subscriber, and unchanged-row stability. Also withhold frames indefinitely while repeatedly updating the same IDs and adding/removing transient IDs; assert bounded effective queue state, one eventual flush, and complete cleanup without a frame.
+   - Create `tests/unit/real-data-edges.test.tsx`: tasks-before-projects cannot crash TaskList/Dashboard/TaskRow; post-readiness orphans follow Q05; an empty project renders 0%; pre-load deep links render skeleton; post-load missing IDs follow Q06. Create `tests/unit/navigation-store.test.tsx` proving task snapshots leave Navigation/Drawer parent render counts unchanged while appropriate count children update.
+   - Create `tests/unit/data-states.test.tsx` for exact designed copy, Q23's approved gating/partial-error presentation, metadata-aware emptiness, errors/retry, approved CTA behavior, and no navigation loading flash/reset. Extend `tests/unit/data.test.ts`, `tests/unit/components.test.tsx`, and `tests/unit/auth-session.test.ts` for explicit seeds/clock/session cleanup; preserve other G0/G1 coverage.
+   - Create `tests/unit/bundle-measurement.test.ts` as in step 3, including accidental runtime codec imports, static re-exports, shared chunks, and modulepreloads. `tests/unit/firestore-writes.test.ts` exists only if Q10 explicitly approves its scope; do not prescribe write behavior otherwise.
+
+10. Extend the shared emulator runner without hiding startup failures.
+    - Create `scripts/emulator-runner.mjs` for Java/CLI/port checks, process ownership, readiness, and diagnostics; modify `scripts/run-e2e.mjs` to start Auth and Firestore for the existing shared demo project, build/serve the emulator-connected e2e app, and run Playwright. Use no live-project fallback.
+    - Generate only a temporary CLI config with absolute rules/index paths and shared ports; preserve the checked-in emulators block unchanged. A disabled UI in temporary test config is allowed. Never reuse/terminate an unrelated occupied-port service; respect COOP for the build/server path.
+    - Modify `.env.example` to document explicit `VITE_USE_FIRESTORE_EMULATOR` alongside the Auth flag; runner builds set both locally. Never infer emulator use from development alone or put the flags in Vercel. Do not edit real env files.
+    - Measure CLI spawn-to-first-output and separate usable Auth/Firestore readiness against one shared 90,000 ms startup deadline. Record Java/CLI versions, response probes, exit/errors, and download activity; arbitrary open ports do not prove readiness. Keep Playwright retries at zero and do not silently restart the whole command.
+    - Keep stdout/stderr, Firebase/Firestore debug logs, generated config, and `startup.json` in unique `test-results/gate-2/emulator-<run-id>/` directories for success/failure/timeout; retain failed runs and preserve exit/review evidence under `docs/qa/gate-2/`. Sanitize secrets, not diagnostic facts.
+    - Compare G1 Auth startup 11.480/12.553/11.892 seconds. The earlier 90-second timeout remains unexplained; a passing rerun is not a root cause. Do not raise the deadline without first recording evidence, suspected/proven cause, and justification in `docs/DECISIONS.md`.
+    - Extend `tests/unit/e2e-runner.test.ts` and `tests/unit/firebase-config.test.ts` for missing/incompatible Java, actual config/constant equality, both readiness probes, Firestore port collision, early CLI exit, timeout logs, and cleanup that leaves unrelated processes alive. Use controlled clocks/subprocesses rather than real 90-second waits.
+
+11. Add emulator-backed rules tests after Q20's dependency approval.
+    - Create `vitest.rules.config.ts` with Node environment and `tests/rules/**/*.test.ts`; create `scripts/run-rules.mjs` using the shared runner and add `test:rules` to `package.json`. Keep unit/rules configurations separate. Change `package-lock.json` only for approved tooling; preserve exact `firebase@13.0.0`.
+    - Create `tests/rules/fixtures.ts` using `@firebase/rules-unit-testing` identity contexts and `withSecurityRulesDisabled` for emulator-only setup/cleanup. Assertions use the tested client identity with actual `firestore.rules`, never a privileged client. Missing emulator configuration fails.
+    - Create `tests/rules/ownership.test.ts`: signed-out/other-user get/list/create/update/delete fail across the three subcollections; allowed valid owner operations and the three actual subscription queries succeed. Profile assertions follow Q12 exactly. Top-level `users` listing and unknown paths stay denied.
+    - Create `tests/rules/validation.test.ts`: approved valid documents and partial updates succeed; forbidden extras, missing required fields, bad types/enums/nullability/timestamps fail on create/update. Cover deletes separately and every applicable collection/profile policy. Owner success must not bypass validation. Emulator-only rules tests do not authorize product write adapters.
+
+12. Seed 1,000 tasks and verify browser sync, states, metadata, and instrumentation.
+    - Create `tests/e2e/fixtures/firestore.ts` using the Q20-approved `@firebase/rules-unit-testing` setup and `withSecurityRulesDisabled` in the Node test process. Reuse `src/lib/fake-data.ts` there to seed isolated owner projects/1,000 tasks and >20 activity documents via the existing Firebase client SDK; bounded setup batches may seed fixtures without implementing G3 product deletion. Never add `firebase-admin` or change the Firebase pin. Share only safe fixture utilities with `tests/rules/fixtures.ts`.
+    - Modify `tests/e2e/fixtures/auth.ts` for seeded/empty users and `tests/e2e/fixtures/qa.ts` for G2 artifact paths; wait for persisted-session resolution, fonts, and the shared readiness gate before shell assertions. Preserve the real browser Google-provider emulator flow and G1 popup handling.
+    - Create `src/lib/subscriptions/test-observer.ts` with test-only handle/event counts and deterministic callback/failure controls. Load it only inside `if (import.meta.env.MODE === 'e2e')` dynamic branches; runner builds use `--mode e2e`. Only that compiled-out mechanism may expose `window.__TASKLY_G2_SYNC_TEST__`; it never registers a listener or bypasses rules. Default production builds must contain neither its marker nor module. Verify the production graph and `rg -n '__TASKLY_G2_SYNC_TEST__|test-observer' dist` (exit 1/no matches passes; exit 2 is an error).
+    - Create `tests/e2e/sync.spec.ts` for data across all three routes, exactly three handles/registrations through navigation/project switches, external add/update/delete propagation, latest-20 storage, refresh, and sign-out/account-switch isolation. Count subscription handles/events, not WebChannel socket counts.
+    - Create `tests/e2e/data-states.spec.ts` for initial loading, confirmed first-run, empty project, approved orphan/missing-project behavior, and Q23's partial-failure/error/retry policy. Include a fresh memory-cache case with Firestore emulator traffic blocked while Auth/app remain usable, then restored; capture actual SDK snapshot metadata and verify it cannot falsely confirm emptiness. Test Q08's approved deadline separately from startup.
+    - Verify the installed SDK's real metadata sequence against the emulator, including empty cache/server confirmation and metadata-only delivery; do not assume an offline callback or listener error always occurs. A controlled observation seam supplements, not replaces, this evidence. Retain observations if behavior differs from the proposed sequence.
+    - Modify `tests/e2e/shell.spec.ts`, `tests/e2e/auth.spec.ts`, and `tests/e2e/speed.spec.ts` for explicit data fixtures and preserved G0/G1 assertions. Capture populated views and the four G2 states at 390/1280 px; check console errors, overflow, keyboard/focus, and announcements against `states.png`.
+
+13. Measure navigation, deferred loading, and final bundle size.
+    - Keep three speed runs, at least 60 trusted-click transitions each, 1,000 emulator tasks, 4x CPU, tracing off, and two animation frames spanning commit/paint. Before cached-navigation timing, settle Auth, all initial streams, fonts, and lazy modules; measure first-data latency separately at the same CPU throttle.
+    - Retain every `{ from, to, milliseconds }` sample; report median/p95/max, all >100 ms samples, counts by route pair, machine/browser settings, and unchanged listener registrations. Keep `p95 < 100` exactly; no sample exclusion or relaxed threshold.
+    - Record requests/stream state before each trusted click, every request start inside its click-to-paint window, in-flight pre-click streams, and outside-window/idle traffic for attribution. Apply only the Q21-approved pass rule; do not blanket-filter Firestore URLs or declare ambiguous requests harmless. Route changes must never cause fetches/new listeners/reconnects.
+    - Run the production build and `npm run measure:bundle`; apply Q01 accounting and mandatory entry-graph rejection, reporting initial/deferred/total bytes, signed-in startup transfer, adapter comparison, and first-data latency. Use a normal production build for SDK-boundary/test-observer absence checks, not the e2e build.
+    - Q09 alone determines an optional existing Lighthouse report. Do not create `tests/e2e/responsiveness.spec.ts`, rewrite `scripts/lighthouse.mjs`, or make Lighthouse/INP/LCP G2 exits. If requested, run existing tooling in isolation to preserve G0 evidence, report the actual audited page (a sign-in redirect is not the shell), and label the result non-blocking.
+
+14. Reassess dependency exposure after the first Firestore production build.
+    - Run `npm audit --omit=dev`; retain output/exit status, current counts, affected versions, and advisory identifiers. G1's four high Firestore/gRPC advisories are historical, not an assumed current count. Never run automatic fixes/overrides/downgrades or change the exact Firebase pin.
+    - Run `rg -i "grpc" dist`, including deferred chunks; preserve matches or the zero-match result. Exit 1 means no matches; exit 2 is a search error. Trace the affected chain, browser export resolution, and actual production module/chunk contents: neither lockfile presence nor zero string matches alone proves browser reachability/absence.
+    - Record whether affected code reaches the browser, including lazy chunks, with supporting module evidence in `docs/DECISIONS.md`; save `docs/qa/gate-2/dependency-audit.txt` and `docs/qa/gate-2/grpc-search.txt`. If unresolved, report unverified; if vulnerable code ships, stop and present evidence/remediation before completion. A nonzero audit finding is assessed explicitly, never reported as a clean audit.
+
+15. Owner setup and rollout, with timing controlled by Q03.
+    - The owner confirms the Firestore database exists in the intended Firebase project; checked-in `firebase.json` names `(default)` at `nam5`, which is configuration evidence, not proof the live database exists. The owner deploys reviewed owner-only `firestore.rules` at the approved time. The agent never deploys rules, changes console settings, or uses test-mode rules.
+    - The owner confirms `VITE_USE_FIRESTORE_EMULATOR` is unset in Vercel Preview and Production; the existing Auth emulator flag must also remain unset. Preserve Google provider/authorized-domain setup and G1's no-COOP constraint. List missing setup without claiming inaccessible console/Vercel settings were checked.
+    - Until rules are deployed, preview and production show load error: CONTEXT section 6 records live deny-all rules, while PLAN G6 lists deployment. Changing the local rules file does not change those deployments. Resolve the rollout/completion conflict through Q03; do not invent a G2 deployment decision.
+
+16. Verify the Vercel preview when owner setup permits.
+    - With reviewed rules deployed by the owner, use real Google sign-in on the Vercel preview with an account with no Taskly data (the owner's own account qualifies while rules have been deny-all); verify first-run and zero console errors. Successful completion of all three empty queries demonstrates that deployed rules allow that owner's reads; emulator results do not prove preview access.
+    - There is no product write UI until G3, so an account without Taskly data can only reach first-run in this G2 check. Do not claim a populated real-data preview demo, create profile documents, or seed a live account without separate explicit authorization. The populated demo's location follows Q04.
+    - Record URL, deployment/project identity if visible, browser, conditions, state, and console result in `docs/DECISIONS.md`/`docs/qa/gate-2/REVIEW.md`. If preview is unavailable, access-protected, or rules remain deny-all, report the specific preview result as unverified/blocked; Q03 determines whether rollout blocks G2 completion. Do not mark it passed from emulator evidence.
+
+17. Run exit commands, fix failures, and run the `review` skill.
+    - During implementation, record measurements/approved answers in `docs/DECISIONS.md` and progress in `docs/TRACKER.md`; retain G2 bundle/speed/startup/metadata/visual evidence and write `docs/qa/gate-2/REVIEW.md`. This skill-only revision edits none of those files.
+    - Report the rule-shape and effective-equality differences from PLAN, OPEN decisions, command results, rollout status, and what remains unverified. Preserve G0/G1 evidence and no-secrets discipline; do not edit AGENTS/PLAN or attribute an owner decision without the actual instruction/approval.
+    - Explain extra file changes before implementation; stop if a fix fails twice. Complete only the owner-approved G2 scope/exit conditions. Later-gate metrics and unapproved recommendations must not become hidden requirements through the review.
 
 ## Exit commands
-`npm run lint && npm run typecheck && npm run test && npm run e2e` plus the targets above that are automated. Record manual checks in the report.
+
+Run `java -version` first. After approved implementation scripts/dependencies exist, require success for:
+
+```text
+npm run measure:firestore-adapter
+npm run build
+npm run lint
+npm run typecheck
+npm run test
+npm run test:rules
+npm run e2e
+npm run measure:bundle
+```
+
+The adapter measurement is also mandatory in step 3 before integration. `e2e` includes authenticated shell, sync/states/metadata, and three speed runs. Rules tests use Firestore 8081. Report a missing command; do not guess an invocation. No Lighthouse/INP/LCP command is a G2 pass condition.
+
+Run `npm audit --omit=dev` and `rg -i "grpc" dist`; assess findings/exit codes as in step 14. Run these source/production searches and inspect their matches:
+
+```text
+rg -n 'collectionGroup' src
+rg -n 'onSnapshot' src
+rg -n 'getDocs?\b|getCountFromServer' src
+rg -n 'fake-data' src --glob '!fake-data.ts'
+rg -n 'persistentLocalCache|enableIndexedDbPersistence|enableMultiTabIndexedDbPersistence' src
+rg -n '__TASKLY_G2_SYNC_TEST__|test-observer' dist
+```
+
+Expect no collection-group/one-shot reads, product fake-data imports, persistent Firestore cache, or test-observer production matches. For the dist test-observer search, `rg` exit 1 (no matches) is the expected pass; exit 2 is an error. Runtime listener registrations appear only under `src/lib/subscriptions`. Search results supplement the production graph check rejecting Firestore in entry static imports/modulepreloads. Verify memory-only cache through adapter tests too; grep alone is insufficient.
+
+Run `review` after the gate checks pass, retaining its speed/layout checks without importing G4/G6 pass conditions. Report numbers, failed/unverified checks, Q03's actual rollout completion requirement, and unresolved audit findings accurately. No OPEN decision is silently resolved by running an exit command.
 
 ## Report
-Command results with numbers, each target met or not, what was not done, proposed `AGENTS.md` changes.
+
+- Changed files/behavior and test counts/durations; each approved target met, failed, or unverified; no app changes claimed for this draft revision.
+- Matched adapter evidence versus indicative reviewer probe; approved initial-JS definition/threshold; initial/deferred/total bytes, signed-in startup transfer, and first-data latency at 4x CPU.
+- Listener lifecycle, metadata readiness, orphan/deep-link/zero-task behavior, hidden-tab queue bounds, render counts, and Navigation/Drawer memoization results.
+- Every speed run's median/p95/max and slow route pairs/counts, raw request windows and approved attribution rule, CPU/machine conditions, and retained evidence paths.
+- Java/CLI versions, separate Auth/Firestore startup timing, retained logs/failures, and any justified deadline proposal; never claim the historical timeout is explained without evidence.
+- Current audit/advisories, `grpc` search and module evidence, browser-reachability conclusion; real-Google preview read/first-run/console result or explicit unverified status, and owner rollout/demo decisions.
+- Layout/keyboard evidence at both widths, optional metrics labeled non-blocking, what was not done, every OPEN question, and proposed AGENTS/PLAN wording only. No commit, push, branch rename, app code, or other file edit in this revision.
 
 ## Lessons
-(none yet)
+
+### Carried lessons (do not count against the five G2 lessons)
+
+- G0: tracing off for CPU-throttled speed tests; measure across two animation frames spanning commit/paint; keep thresholds exactly as written, with owner attribution only when supported.
+- G0: native dialogs need explicit Tab wrapping, dismissal/focus return, and target-size checks. Optional Lighthouse uses pinned npx with Playwright's `CHROME_PATH`; retain failed evidence and keep unvirtualized comparison informational.
+- G0: reuse row geometry/Intl formatters and seed the virtualizer's initial rectangle; preserve the existing scaffold/package file rather than replacing it.
+- G1 REVIEW: freeze the scaffold revision and retain all adapter exports for adapter-only size; await persisted-session resolution before enumerating keyboard targets.
+- G1 REVIEW: await the emulator popup widget's `DOMContentLoaded` before clicking; popup cancellation includes an intentional 8-second auth-event grace, not a new unexplained timeout.
+
+### G2 lessons
+
+(none yet; append up to five dated implementation lessons after the gate)
