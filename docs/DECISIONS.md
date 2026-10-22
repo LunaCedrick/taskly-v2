@@ -236,3 +236,35 @@ Build/lint/strict typecheck pass; normal unit suite 76/76 in 10 files (7.43 s), 
 with an external listener holding 9099 also 76/76 (7.40 s). Browser suite 24/24 (1.6 min);
 route p95 59.2/58.7/59.8 ms, 0 navigation requests/app errors. Attribution and stale tracker
 status corrections are recorded in REVIEW.md and review-followup.json.
+
+## G2 owner decisions (2026-10-22)
+
+G2 owner decisions:
+Q01 Initial JS = entry + transitive static imports + modulepreloads, deduplicated, under 200,000 B gzip. Report deferred and total next to it. Only an owner-approved PLAN change can alter the budget.
+Q02 Drop the 50,000 B threshold for the lazy path.
+Q03 I deploy firestore.rules myself after review and before merge. The agent never deploys. I verify first-run on the preview before merge, and Production after merge. Mark these UNVERIFIED until I report. My preview check blocks marking G2 complete.
+Q04 The populated demo runs on the seeded emulator.
+Q05 Orphan tasks are excluded from all views and counts. Expose orphanCount in store state for tests. No new UI. Cover with tests.
+Q06 Unknown project id after load: "Project not found" with a Dashboard link, no retry button. Skeleton before load.
+Q07 `now` is the publication-time wall clock. The minute tick is left to G5.
+Q08 An empty snapshot from cache stays on the skeleton. If no server confirmation arrives within 10 s, show the load-error state with "Try again". Retry restarts the wait. Timers are cleared on stop and sign-out. Verify in the emulator.
+Q09 Non-blocking Lighthouse report using the existing script. No G2 Lighthouse, LCP or INP pass conditions.
+Q10 Defer both write files to G3.
+Q11 Approve explicit validating matches. Propose the PLAN §5 wording.
+Q12 No profile access until its contract is approved.
+Q13 Firestore timestamps on disk, numeric ms in the UI, decoded structurally. Confirm this matches PLAN §5 before building.
+Q14 Explicit field allowlist and a required-field matrix. Show me the matrix in the plan.
+Q15 Nullable activity references; required string project reference on tasks.
+Q16 Activity type is a string until G3 defines the writers.
+Q17 No string length caps. colorIndex is bounded by the existing palette. createdAt is immutable.
+Q18/Q19 State what G0 Quick Add does. Use the same treatment for the first-run and empty-project actions.
+Q20 Approve @firebase/rules-unit-testing as a dev dependency if its peer range accepts firebase@13.0.0, the pin stays exact, and the lockfile diff is dev-only. Seed with withSecurityRulesDisabled in batches of at most 500.
+Q21 Fail any navigation-caused request or new Firestore channel in the click-to-paint window. Record established transport traffic separately. Mark uncertain attribution UNVERIFIED, not passed.
+Q22 The branch is gate-2-store-and-sync. PROMPTS.md is fixed to match.
+Q23 Projects and tasks gate the views. Activity readiness and errors are tracked and exposed in the store but never block G2 views. A projects or tasks failure replaces the views with the states.png load-error panel; the store keeps already-loaded data so a successful retry restores the views without a skeleton flash. "Try again" replaces only the failed streams. An activity-only failure shows no UI in G2: it stays visible in store state and is retried by the next explicit retry or a reload. The three-listener and exactly-three-after-recovery targets are unchanged.
+A The Firestore cache is memory-only in G2. No persistent cache, no IndexedDB persistence.
+B Load-error copy is exactly as written in states.png, and follows Q23.
+C A "Carried lessons" block (dated, condensed from G0 and G1, no new content) is allowed outside the five-lesson cap.
+D Emulator startup keeps one shared 90 s deadline, unchanged. Reuse demo-taskly-auth and record that the name is now a misnomer.
+E The approved skill lands on main through a docs branch first. The gate branch is created from the updated main afterwards.
+F Status uses the string already in src/lib/types.ts, with no mapping layer. Title is required and non-empty.
