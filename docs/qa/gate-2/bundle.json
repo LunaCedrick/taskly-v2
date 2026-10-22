@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-22T03:01:17.562Z",
+  "initialDefinition": "Entry + transitive static imports + HTML modulepreloads; each emitted JS asset gzipped once",
+  "gate1GzipBytes": 126224,
+  "initialIncreaseBytes": -1,
+  "hardBudgetBytes": 200000,
+  "chunks": [
+    {
+      "fileName": "assets/index-bUZJVBSx.js",
+      "rawBytes": 409113,
+      "gzipBytes": 126223,
+      "initial": true,
+      "firestore": false,
+      "firestoreModuleIds": []
+    }
+  ],
+  "roots": [
+    "assets/index-bUZJVBSx.js"
+  ],
+  "staticEdges": [],
+  "dynamicEdges": [],
+  "initial": {
+    "rawBytes": 409113,
+    "gzipBytes": 126223,
+    "files": [
+      "assets/index-bUZJVBSx.js"
+    ]
+  },
+  "deferred": {
+    "rawBytes": 0,
+    "gzipBytes": 0,
+    "files": []
+  },
+  "total": {
+    "rawBytes": 409113,
+    "gzipBytes": 126223,
+    "files": [
+      "assets/index-bUZJVBSx.js"
+    ]
+  },
+  "firestoreChunks": [],
+  "initialFirestoreChunks": [],
+  "boundaryPassed": true,
+  "passed": true
+}
