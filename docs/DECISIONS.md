@@ -282,7 +282,7 @@ P6 Initial readiness waits for server confirmation, even if a non-empty cache sn
 P7 A timeout error recovers automatically if the server later confirms (the listener is still registered; handle count stays 3). An error from the listener's own error callback needs "Try again". Test both.
 P8 Approved: effective-data equality. Add the PLAN §13 clarification ("compare decoded effective data; no version field exists") to the proposed PLAN wording.
 
-Owner setup requirements recorded with that approval:
+Setup requirements from the approved plan (agent-authored owner-actions table, not owner statements):
 - Check the live Firestore database and its permanent location in the Firebase console before creating or changing setup. Leave an existing database alone. If no database exists, the owner checks a suitable location and its Spark-plan availability. The checked-in `nam5` is not proof of the live location. A different selected location requires owner-provided wording because the skill freezes `firebase.json`; the agent does not change it.
 - Before the preview check, add the exact host of the gate branch's stable Vercel alias to Firebase Auth authorized domains, following the G1 pattern. Never authorize all of `vercel.app`.
 - Identify whether Preview and Production share a Firebase project before the owner deploys rules. A shared-project rules deployment affects both; G1 Production currently has no Firestore imports.
