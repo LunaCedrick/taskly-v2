@@ -268,3 +268,33 @@ C A "Carried lessons" block (dated, condensed from G0 and G1, no new content) is
 D Emulator startup keeps one shared 90 s deadline, unchanged. Reuse demo-taskly-auth and record that the name is now a misnomer.
 E The approved skill lands on main through a docs branch first. The gate branch is created from the updated main afterwards.
 F Status uses the string already in src/lib/types.ts, with no mapping layer. Title is required and non-empty.
+
+### Implementation-plan approval — owner, 2026-10-22
+
+The owner approved the implementation plan with these answers. The following P1–P8 statements are the owner's words:
+
+P1 Yes: dates are stored as Firestore timestamps and the UI keeps numeric ms. PLAN §5 is silent on storage types, so add this as a fourth proposed PLAN wording (do not edit PLAN.md). Carry to G3: a locally pending serverTimestamp reads as null, so the G3 codec must handle pending writes (for example serverTimestamps: "estimate"). Record this in DECISIONS.md.
+P2 Yes, these are the intended exceptions: the PLAN wording changes, Q06's minimal not-found state, F's title rule and the literal in-progress status. Do not expand any other G3 or G6 scope.
+P3 Field matrix approved as proposed. Note in the tests that colorIndex 0-5 is tied to the palette size.
+P4 Title must contain at least one non-whitespace character. Reject whitespace-only titles and never rewrite stored text. Test a multi-line title.
+P5 The 10 s wait starts at listener registration; each retried stream gets a fresh deadline. Verify the SDK's real offline behavior in the emulator tests rather than assuming it.
+P6 Initial readiness waits for server confirmation, even if a non-empty cache snapshot arrives first.
+P7 A timeout error recovers automatically if the server later confirms (the listener is still registered; handle count stays 3). An error from the listener's own error callback needs "Try again". Test both.
+P8 Approved: effective-data equality. Add the PLAN §13 clarification ("compare decoded effective data; no version field exists") to the proposed PLAN wording.
+
+Owner setup requirements recorded with that approval:
+- Check the live Firestore database and its permanent location in the Firebase console before creating or changing setup. Leave an existing database alone. If no database exists, the owner checks a suitable location and its Spark-plan availability. The checked-in `nam5` is not proof of the live location. A different selected location requires owner-provided wording because the skill freezes `firebase.json`; the agent does not change it.
+- Before the preview check, add the exact host of the gate branch's stable Vercel alias to Firebase Auth authorized domains, following the G1 pattern. Never authorize all of `vercel.app`.
+- Identify whether Preview and Production share a Firebase project before the owner deploys rules. A shared-project rules deployment affects both; G1 Production currently has no Firestore imports.
+- Live database existence/location, preview authorized-domain setup, shared-project identity, rules deployment, Preview verification, and Production verification remain UNVERIFIED until the owner reports them.
+- This approval authorizes steps 2–3 only for this work session. Stop after the adapter measurement and report sizes, import-graph evidence, and the decision record before any later implementation.
+
+### Proposed PLAN wording for the owner (not applied)
+
+1. Section 6 — Initial JavaScript: "Initial JavaScript is the combined gzip size of the entry JavaScript, its transitive static-import chunks, and HTML modulepreload chunks, counting each asset once. It must remain under 200,000 bytes. Report deferred JavaScript and total JavaScript alongside it. Changing this budget requires an owner-approved PLAN change."
+2. Section 10 — G2 rollout/G6 verification: "In G2, after review and before merge, the owner deploys reviewed owner-only Firestore rules and verifies first-run on the Vercel preview with real Google sign-in. The preview check blocks marking G2 complete. The owner verifies Production after merge. These checks remain UNVERIFIED until the owner reports them. The agent never deploys rules. G6 retains final deployment verification."
+3. Section 5 — Rules: "Use explicit validating matches for projects, tasks, and activity under users/{uid}. Each permitted operation requires authenticated ownership of the path UID. Create and update conditions validate the full resulting document against the approved field contract, including immutable createdAt. Profile access remains denied until its contract is approved. Keep unmatched paths denied and add no recursive owner allow that bypasses validation."
+4. Section 5 — Date storage: "Store date fields as Firestore timestamps, allowing null only where the approved document contract permits it. Decode timestamps structurally to numeric milliseconds for the UI. This specifies storage types previously left unstated in this section."
+5. Section 13 — Duplicate snapshots: "Compare decoded effective data; no version field exists. Preserve unchanged object references without treating updatedAt as a monotonic version."
+
+G3 carry-over from P1: the G2 read-only codec contract must not be mistaken for complete pending-write support. G3 must handle locally pending `serverTimestamp()` values, for example by reading with `serverTimestamps: "estimate"`, with tests for pending values and server confirmation.
