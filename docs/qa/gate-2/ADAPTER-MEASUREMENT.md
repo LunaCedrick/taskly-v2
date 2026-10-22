@@ -37,6 +37,8 @@ node_modules/firebase/firestore/dist/esm/index.esm.js
 
 A deliberate eager-import control fails the production build with `Firestore runtime reaches initial JavaScript`. Automated actual-Vite fixtures also reject an eager import and an HTML modulepreload of an otherwise deferred SDK chunk. Unit graph cases cover static closures, re-exports/shared chunks, HTML roots, deduplication, and unknown edges. Both the build and `measure:bundle` enforce the boundary; the latter verifies the emitted chunk hashes before trusting graph metadata.
 
+Checkpoint review fix (2026-10-23): a normal build saves the graph to gitignored `test-results/gate-2/bundle-graph.json`, outside `dist`; no graph asset is deployed. Both measurement commands reject missing graphs and mismatched chunk/HTML hashes with an instruction to rebuild. In-memory adapter builds capture their own graphs without overwriting the saved production graph. Regenerated adapter evidence normalizes local paths to `<root>` and strips ANSI formatting; all recorded raw/gzip sizes and emitted chunk hashes match `a6088c3` exactly. The new regression tests include actual build output and both commands' missing/stale failure paths.
+
 The future product boundary remains `src/lib/subscriptions/index.ts`, dynamically loading listeners and the adapter after resolved sign-in. It is not implemented in this stage. No measurement retention hook was added to product sources: the Auth-gated namespace-retention hook exists only in the harness's in-memory build transform.
 
 ## Measurement method and limits

@@ -4,6 +4,10 @@ import { createHash } from 'node:crypto'
 import { resolve } from 'node:path'
 import { build, version as viteVersion } from 'vite'
 import { analyzeBundle } from './bundle-metrics.mjs'
+import { normalizeBundleEvidence, readBundleGraph, validateBundleGraph } from './bundle-graph.mjs'
+
+// Both measurement commands require the saved graph to match the normal build first.
+await readBundleGraph()
 
 const scaffoldRevision = '9a111e7'
 const qaDirectory = process.argv.includes('--record-evidence') ? 'docs/qa/gate-2' : 'test-results/gate-2'
@@ -48,11 +52,15 @@ function mainProbe(strategy) {
 }
 
 async function measure(strategy, extended = false) {
+  let graphPlugin
   const result = await build({
     mode: 'production', logLevel: 'silent',
     build: { write: false, reportCompressedSize: false },
     plugins: [{
       name: 'taskly-frozen-g1-adapter-measurement', enforce: 'pre',
+      configResolved(config) {
+        graphPlugin = config.plugins.find((plugin) => plugin.name === 'taskly-bundle-graph')
+      },
       resolveId(id) { if (id === 'taskly:firestore-measurement') return virtualProbe },
       load(id) {
         if (id === virtualProbe) return probeSource(extended)
@@ -66,10 +74,8 @@ async function measure(strategy, extended = false) {
     }],
   })
   const outputs = (Array.isArray(result) ? result : [result]).flatMap((item) => item.output)
-  const graph = analyzeBundle(outputs)
-  const metadata = outputs.find((item) => item.type === 'asset' && item.fileName === 'bundle-graph.json')
-  if (!metadata) throw new Error('Build did not emit module-ID evidence')
-  const modules = JSON.parse(String(metadata.source))
+  const modules = graphPlugin?.api?.getGraph()
+  const graph = analyzeBundle(validateBundleGraph(modules, outputs))
   return { ...graph, moduleEvidence: modules.chunks.map((chunk) => ({
     fileName: chunk.fileName, sha256: chunk.sha256, modules: chunk.modules,
   })) }
@@ -91,7 +97,7 @@ if (!eagerControlRejected) throw new Error('Production boundary failed to reject
 
 const passed = [baseline, adapterOnly, extendedAdapterOnly].every((measurement) =>
   measurement.boundaryPassed && measurement.initial.gzipBytes < 200_000)
-const result = {
+const result = normalizeBundleEvidence({
   schemaVersion: 1, capturedAt: new Date().toISOString(), scaffoldRevision,
   firebaseVersion, nodeVersion: process.version, viteVersion,
   adapterSha256: createHash('sha256').update(await readFile(adapterPath)).digest('hex'),
@@ -109,7 +115,7 @@ const result = {
   },
   eagerControlRejected, eagerControlMessage, passed,
   runtimeMeasurements: 'UNVERIFIED: signed-in network transfer and 4x CPU first-data latency require later session/listener integration; this harness only builds',
-}
+})
 await mkdir(qaDirectory, { recursive: true })
 // Keep each top-level evidence value on one line, including complete module-ID arrays.
 await writeFile(`${qaDirectory}/firestore-adapter-bundle.json`, '{\n'
