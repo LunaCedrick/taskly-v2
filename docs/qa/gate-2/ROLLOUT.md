@@ -4,17 +4,43 @@ Local checks do not complete G2. Q03 makes the owner's deployed-preview check a 
 
 | When | Owner action | Current status |
 |---|---|---|
-| Before database setup/deployment | Confirm intended Firebase project and whether Preview/Production share it. Check the existing Firestore database and permanent location in the console; leave an existing database alone. | UNVERIFIED |
-| Only if no database exists | Check a suitable location's Spark availability. `firebase.json` says `(default)` / `nam5`; it does not prove a live database exists. A different selection needs owner wording before any config change. | UNVERIFIED; checked-in config unchanged |
-| Before preview sign-in | Confirm the stable branch alias below in Vercel; add its exact host to Firebase Auth authorized domains. Never authorize all of `vercel.app`. Preserve Google provider setup and no COOP header. | UNVERIFIED |
-| Before preview/Production checks | Confirm `VITE_USE_FIRESTORE_EMULATOR` and `VITE_USE_AUTH_EMULATOR` are unset in both Vercel environments. | UNVERIFIED |
+| Database setup | Existing Firestore `(default)` database in `asia-southeast1`; leave it alone. Owner authorized only the matching location correction in `firebase.json`; emulators block unchanged. | VERIFIED by owner, 2026-10-23 |
+| Vercel setup | Preview and Production checked in Vercel. | VERIFIED by owner, 2026-10-23 |
+| Firebase Auth setup | G2 branch alias host is authorized. Never authorize all of `vercel.app`; preserve Google provider setup and no COOP header. | VERIFIED by owner, 2026-10-23 |
+| Emulator flags | Both emulator flags are unset in Preview and Production. | VERIFIED by owner, 2026-10-23 |
+| Before rules deployment | Confirm intended Firebase project ID and whether Preview/Production share it; the setup facts above do not establish that relationship. | UNVERIFIED |
 | After rules review, before merge | Owner deploys the reviewed `firestore.rules` to the intended project. A shared-project deployment affects Preview and Production; identify that relationship first. | UNVERIFIED; agent never deploys |
+| Immediately after rules deployment | Confirm the published ruleset's timestamp and complete text in the console Rules tab match the reviewed commit. | UNVERIFIED |
 | After rules deployment, before merge | Real Google sign-in on the G2 preview, with an account containing no Taskly data: first-run state and zero console errors. Report the result; this blocks G2 completion. | UNVERIFIED |
 | After merge | Owner verifies Production sign-in and first-run/console behavior. | UNVERIFIED |
 
 Expected stable alias: https://taskly-v2-git-gate-2-store-and-sync-lunacedricks-projects.vercel.app/
 
-Read-only HEAD on 2026-10-23 returned HTTP 302 to `vercel.com`, consistent with deployment protection. The agent did not authenticate past that protection or verify the deployed app/project/commit. Confirm the alias in Vercel before authorizing its host.
+Read-only HEAD on 2026-10-23 returned HTTP 302 to `vercel.com`, consistent with deployment protection. The agent did not authenticate past that protection or verify the deployed app/project/commit. The owner subsequently reported the setup facts explicitly marked VERIFIED above; app sign-in, deployed rules and rollout results remain UNVERIFIED.
+
+## Owner deployment and published-rules confirmation
+
+After reviewing `firestore.rules` at `a7afb5d` (unchanged by these fixes), use the intended Firebase project ID in place of `<id>` and run from this gate checkout:
+
+```text
+firebase deploy --only firestore:rules --project <id>
+```
+
+Use exactly `--only firestore:rules`. A plain `firestore` deploy (for example `--only firestore`) also pushes the empty `firestore.indexes.json`, and the CLI may offer to delete existing indexes. No index deployment or deletion is part of this handoff.
+
+In the Firebase console, select the same project and Firestore `(default)` database, open the **Rules** tab and inspect the published ruleset. Check its deployment timestamp against this deployment and compare the complete published text with `firestore.rules` from reviewed commit `a7afb5d`. A CLI success message alone does not replace that check. Record the project ID, timestamp and match result; published-rules confirmation remains **UNVERIFIED** until the owner reports it.
+
+## Owner rollback
+
+Rollback is **UNVERIFIED** and has not been performed. Redeploy pre-G2 main's deny-all `firestore.rules` using the same rules-only command. Main at this review is `9a111e7e2cf6187610be80059706fd2d2c5a6144`; its rule is `allow read, write: if false`. Use an isolated checkout so the reviewed gate file is not overwritten:
+
+```text
+git worktree add --detach ../taskly-g2-rules-rollback 9a111e7e2cf6187610be80059706fd2d2c5a6144
+cd ../taskly-g2-rules-rollback
+firebase deploy --only firestore:rules --project <id>
+```
+
+Inspect that checkout's deny-all file before deploying. Use the pinned pre-G2 commit even if main later contains G2. Confirm the rollback's published timestamp/text in the console Rules tab too. Deny-all blocks all client Firestore reads/writes: if Preview and Production share this project, rollback affects **both immediately**. A deployed G2 app shows load error; existing G1 Production has no Firestore imports. It does not roll back Auth or the Vercel app. The agent runs none of these deployment/rollback commands.
 
 A G2 build against live deny-all rules displays load error until reviewed rules are deployed. Current G1 Production has no Firestore import; deploying reviewed rules before the G2 merge does not introduce a Firestore call into that existing app. A local rules edit never deploys itself.
 
