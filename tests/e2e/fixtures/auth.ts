@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { test as base, expect, type Page } from '@playwright/test'
+import { seedUser } from './firestore'
 
 export { expect }
 
@@ -14,7 +15,7 @@ export async function openGooglePopup(page: Page) {
   return popup
 }
 
-export async function signIn(page: Page, destination = '/') {
+export async function signIn(page: Page, destination = '/', { seed = true } = {}) {
   await page.goto(destination)
   await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible()
   const popup = await openGooglePopup(page)
@@ -24,8 +25,15 @@ export async function signIn(page: Page, destination = '/') {
   await popup.locator('#sign-in').click()
   await closed
   await expect(page.locator('[data-view]')).toBeVisible()
+  await page.waitForFunction(() => !!window.__TASKLY_G2_SYNC_TEST__?.snapshot().uid)
+  const uid = await page.evaluate(() => window.__TASKLY_G2_SYNC_TEST__!.snapshot().uid!)
+  if (seed) await seedUser(uid)
+  await page.waitForFunction((count) => {
+    const state = window.__TASKLY_G2_SYNC_TEST__?.snapshot()
+    return state?.dataReady && (!count || state.tasks === 1000) && state.activeHandles === 3
+  }, seed)
   await page.evaluate(() => document.fonts.ready)
-  await page.waitForLoadState('networkidle')
+  return uid
 }
 
 export const test = base.extend<{ authenticated: void }>({
