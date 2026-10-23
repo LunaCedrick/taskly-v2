@@ -33,4 +33,11 @@ export const TaskRow = memo(function TaskRow({ task, project, now, position, tot
     </span>}
     <span className="sr-only">Status: {task.status.replace('-', ' ')}</span>
   </div>
+}, (previous, next) => {
+  if (previous.task !== next.task || previous.project !== next.project
+    || previous.position !== next.position || previous.total !== next.total
+    || previous.tabIndex !== next.tabIndex) return false
+  if (previous.now === next.now) return true
+  return dueGroup(next.task, previous.now) === dueGroup(next.task, next.now)
+    && dueLabel(next.task, previous.now) === dueLabel(next.task, next.now)
 })
