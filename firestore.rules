@@ -1,7 +1,76 @@
-rules_version='2'
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function exactFields(data, fields) {
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields);
+    }
+
+    function nullableTimestamp(value) {
+      return value == null || value is timestamp;
+    }
+
+    function nullableString(value) {
+      return value == null || value is string;
+    }
+
+    function validProject(data) {
+      return exactFields(data, ['name', 'colorIndex', 'createdAt', 'updatedAt'])
+        && data.name is string
+        // The approved six-color palette has indices 0 through 5.
+        && data.colorIndex is int && data.colorIndex >= 0 && data.colorIndex < 6
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    function validTask(data) {
+      return exactFields(data, [
+          'projectId', 'title', 'description', 'category', 'dueDate', 'dueHasTime',
+          'priority', 'status', 'createdAt', 'updatedAt', 'completedAt'
+        ])
+        && data.projectId is string && data.title is string
+        // ECMAScript trim whitespace, explicit to avoid engine-specific shorthand classes.
+        && data.title.matches('(?s).*[^\\x{0009}-\\x{000D}\\x{0020}\\x{00A0}\\x{1680}\\x{2000}-\\x{200A}\\x{2028}\\x{2029}\\x{202F}\\x{205F}\\x{3000}\\x{FEFF}].*')
+        && data.description is string && data.category is string
+        && nullableTimestamp(data.dueDate) && data.dueHasTime is bool
+        && data.priority in ['none', 'low', 'medium', 'high']
+        && data.status in ['todo', 'in-progress', 'done']
+        && data.createdAt is timestamp && data.updatedAt is timestamp
+        && nullableTimestamp(data.completedAt);
+    }
+
+    function validActivity(data) {
+      return exactFields(data, ['type', 'taskId', 'projectId', 'text', 'createdAt'])
+        && data.type is string && nullableString(data.taskId)
+        && nullableString(data.projectId) && data.text is string
+        && data.createdAt is timestamp;
+    }
+
+    match /users/{uid}/projects/{id} {
+      allow read, delete: if isOwner(uid);
+      allow create: if isOwner(uid) && validProject(request.resource.data);
+      allow update: if isOwner(uid) && validProject(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    match /users/{uid}/tasks/{id} {
+      allow read, delete: if isOwner(uid);
+      allow create: if isOwner(uid) && validTask(request.resource.data);
+      allow update: if isOwner(uid) && validTask(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    match /users/{uid}/activity/{id} {
+      allow read, delete: if isOwner(uid);
+      allow create: if isOwner(uid) && validActivity(request.resource.data);
+      allow update: if isOwner(uid) && validActivity(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    // Profile documents and every unmatched path remain denied.
     match /{document=**} {
       allow read, write: if false;
     }
