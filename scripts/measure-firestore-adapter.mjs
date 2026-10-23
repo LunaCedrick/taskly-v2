@@ -4,10 +4,9 @@ import { createHash } from 'node:crypto'
 import { resolve } from 'node:path'
 import { build, version as viteVersion } from 'vite'
 import { analyzeBundle } from './bundle-metrics.mjs'
-import { normalizeBundleEvidence, readBundleGraph, validateBundleGraph } from './bundle-graph.mjs'
+import { normalizeBundleEvidence, validateBundleGraph } from './bundle-graph.mjs'
 
-// Both measurement commands require the saved graph to match the normal build first.
-await readBundleGraph()
+// Each write:false build validates its own in-memory graph; no saved dist is required.
 
 const scaffoldRevision = '9a111e7'
 const qaDirectory = process.argv.includes('--record-evidence') ? 'docs/qa/gate-2' : 'test-results/gate-2'

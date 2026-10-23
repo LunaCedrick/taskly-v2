@@ -62,12 +62,11 @@ it('rejects a graph that refers to an absent output', async () => {
   await expect(readBundleGraph(dist, graphPath)).rejects.toThrow('Bundle graph does not match current dist')
 })
 
-it.each(['measure-bundle.mjs', 'measure-firestore-adapter.mjs'])(
-  '%s fails clearly for both missing and stale graphs before measuring', async (script) => {
+it('measure:bundle fails clearly for both missing and stale graphs before measuring', async () => {
     const { directory, dist, graphPath } = await fixture()
     const graph = await readFile(graphPath, 'utf8')
     await rm(graphPath)
-    const command = resolve('scripts', script)
+    const command = resolve('scripts/measure-bundle.mjs')
     const missing = spawnSync(process.execPath, [command], { cwd: directory, encoding: 'utf8' })
     expect(missing.status).toBe(1)
     expect(missing.stderr).toContain('Bundle graph missing')
@@ -79,5 +78,4 @@ it.each(['measure-bundle.mjs', 'measure-firestore-adapter.mjs'])(
     expect(stale.stderr).toContain('Bundle graph does not match current output')
     expect(stale.stderr).toContain('Run npm run build before measuring')
     expect(await readFile(join(dist, 'entry.js'), 'utf8')).toBe('different build, same filename')
-  }, 20_000,
-)
+  }, 20_000)
