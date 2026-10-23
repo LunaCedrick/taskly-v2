@@ -8,7 +8,7 @@ Local checks do not complete G2. Q03 makes the owner's deployed-preview check a 
 | Vercel setup | Preview and Production checked in Vercel. | VERIFIED by owner, 2026-10-23 |
 | Firebase Auth setup | G2 branch alias host is authorized. Never authorize all of `vercel.app`; preserve Google provider setup and no COOP header. | VERIFIED by owner, 2026-10-23 |
 | Emulator flags | Both emulator flags are unset in Preview and Production. | VERIFIED by owner, 2026-10-23 |
-| Before rules deployment | Confirm intended Firebase project ID and whether Preview/Production share it; the setup facts above do not establish that relationship. | UNVERIFIED |
+| Before rules deployment | Preview and Production use the same Firebase project ID (`VITE_FIREBASE_PROJECT_ID` is identical in both). The rules deploy and any rollback affect both environments. | VERIFIED by owner, 2026-10-23 |
 | After rules review, before merge | Owner deploys the reviewed `firestore.rules` to the intended project. A shared-project deployment affects Preview and Production; identify that relationship first. | UNVERIFIED; agent never deploys |
 | Immediately after rules deployment | Confirm the published ruleset's timestamp and complete text in the console Rules tab match the reviewed commit. | UNVERIFIED |
 | After rules deployment, before merge | Real Google sign-in on the G2 preview, with an account containing no Taskly data: first-run state and zero console errors. Report the result; this blocks G2 completion. | UNVERIFIED |
