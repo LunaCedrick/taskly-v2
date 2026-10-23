@@ -1,20 +1,11 @@
 import { create } from 'zustand'
-import { makeFakeData } from '../lib/fake-data'
-import { dashboardGroups, taskStats, tasksByProject } from '../lib/task-selectors'
 import { initialAuthState } from './auth-slice'
+import { initialDataState, publishData, type DataPublication } from './data-slice'
 import type { AuthProfile } from '../lib/firebase/auth'
-
-const fixture = makeFakeData()
-const projectTasks = Object.fromEntries(fixture.projects.map((project) => [
-  project.id, tasksByProject(fixture.tasks, project.id),
-]))
 
 export const useStore = create(() => ({
   ...initialAuthState,
-  ...fixture,
-  projectTasks,
-  groups: dashboardGroups(fixture.tasks, fixture.now),
-  stats: taskStats(fixture.tasks),
+  ...initialDataState(),
   drawerOpen: false,
   bannerDismissed: false,
   virtualize: true,
@@ -24,10 +15,22 @@ export const useStore = create(() => ({
 export const setDrawerOpen = (drawerOpen: boolean) => useStore.setState({ drawerOpen })
 export const dismissBanner = () => useStore.setState({ bannerDismissed: true })
 
-export const applySession = (authUser: AuthProfile | null) => useStore.setState({
+export const applySession = (authUser: AuthProfile | null) => useStore.setState((state) => ({
   authUser, sessionStatus: authUser ? 'signed-in' : 'signed-out', authError: null,
-  ...(!authUser ? { drawerOpen: false } : {}),
-})
+  ...(state.dataUid !== (authUser?.uid ?? null) ? initialDataState(authUser?.uid ?? null) : {}),
+  ...(!authUser ? { drawerOpen: false, focusedRows: {}, bannerDismissed: false } : {}),
+}))
+
+export function resetData(uid: string | null) {
+  if (useStore.getState().dataUid !== uid) useStore.setState(initialDataState(uid))
+}
+
+export function publishSessionData(uid: string, publication: DataPublication, now = Date.now()) {
+  const current = useStore.getState()
+  if (current.dataUid !== uid) return
+  const next = publishData(current, publication, now)
+  if (next !== current) useStore.setState(next)
+}
 
 // Kept out of the product UI; the benchmark switches this through Playwright only.
 export const setVirtualize = (virtualize: boolean) => useStore.setState({ virtualize })

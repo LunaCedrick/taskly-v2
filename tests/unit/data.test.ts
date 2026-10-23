@@ -3,6 +3,7 @@ import { FIXTURE_NOW, makeFakeData } from '../../src/lib/fake-data'
 import { dueGroup, dueInstant, dueLabel, endOfDay } from '../../src/lib/dates'
 import { dashboardGroups, taskStats, tasksByProject } from '../../src/lib/task-selectors'
 import { useStore } from '../../src/store'
+import { seedStore } from './data-fixtures'
 
 describe('deterministic fixture', () => {
   it('creates 1,000 unique tasks with stable values and valid project references', () => {
@@ -67,6 +68,7 @@ describe('pure selectors', () => {
   })
   it('computes counts and keeps derived selector references stable on UI-only changes', () => {
     expect(taskStats(tasks)).toEqual({ total: 1000, completed: 200, inProgress: 200 })
+    seedStore()
     const before = useStore.getState()
     useStore.setState({ drawerOpen: true })
     const after = useStore.getState()

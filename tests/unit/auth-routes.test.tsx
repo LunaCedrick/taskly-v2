@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { AppRoutes } from '../../src/app/routes'
 import { applySession, useStore } from '../../src/store'
 import { observeSession } from '../../src/lib/firebase/auth'
+import { seedStore } from './data-fixtures'
 
 vi.mock('../../src/lib/firebase/auth', () => ({
   observeSession: vi.fn(), signInWithGoogle: vi.fn(), signOutSession: vi.fn(),
@@ -47,13 +48,14 @@ describe('store-backed route guards', () => {
       expect(screen.queryByText('Welcome to Taskly')).not.toBeInTheDocument()
     },
   )
-  it('removes protected content on sign-out without replacing data', () => {
-    applySession(profile)
+  it('removes protected content and account data on sign-out', () => {
+    seedStore(5, Date.now(), profile.uid)
     const tasks = useStore.getState().tasks
     const { container } = visit('/tasks')
     act(() => applySession(null))
     expect(container.querySelector('[data-view]')).toBeNull()
     expect(screen.getByRole('button', { name: 'Continue with Google' })).toBeVisible()
-    expect(useStore.getState().tasks).toBe(tasks)
+    expect(useStore.getState().tasks).not.toBe(tasks)
+    expect(useStore.getState().tasks).toEqual([])
   })
 })

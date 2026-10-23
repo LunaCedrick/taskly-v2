@@ -6,6 +6,7 @@ import { makeFakeData } from '../../src/lib/fake-data'
 import { TaskRow } from '../../src/ui/TaskRow'
 import { Dashboard } from '../../src/features/dashboard/Dashboard'
 import { useStore } from '../../src/store'
+import { seedStore } from './data-fixtures'
 
 describe('task row', () => {
   it('skips an unchanged render and updates when the task reference changes', () => {
@@ -25,6 +26,7 @@ describe('task row', () => {
 
 describe('dashboard placeholder', () => {
   it('uses full-data selector counts and renders only two previews per group', () => {
+    seedStore()
     const groups = useStore.getState().groups
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
     expect(screen.getAllByRole('listitem')).toHaveLength(6)

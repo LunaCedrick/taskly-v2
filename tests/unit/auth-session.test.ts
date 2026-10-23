@@ -3,6 +3,12 @@ import { observeSession, signInWithGoogle, signOutSession, type AuthProfile } fr
 import { startSession, stopSession } from '../../src/features/auth/session'
 import { signInAction, signOutAction } from '../../src/features/auth/auth-actions'
 import { applySession, useStore } from '../../src/store'
+import { seedStore } from './data-fixtures'
+import { startSubscriptions, stopSubscriptions } from '../../src/lib/subscriptions'
+
+vi.mock('../../src/lib/subscriptions', () => ({
+  startSubscriptions: vi.fn(async () => {}), stopSubscriptions: vi.fn(),
+}))
 
 vi.mock('../../src/lib/firebase/auth', () => ({
   observeSession: vi.fn(), signInWithGoogle: vi.fn(), signOutSession: vi.fn(),
@@ -38,16 +44,24 @@ describe('app session observer', () => {
     startSession()
     expect(observeSession).toHaveBeenCalledTimes(2)
   })
-  it('retains every fixture/selector reference across auth updates and closes the signed-out drawer', () => {
-    const before = useStore.getState()
+  it('retains data for same-UID notifications and clears it on sign-out', () => {
     startSession()
     notify(profile)
+    seedStore(5, Date.now(), profile.uid)
+    const before = useStore.getState()
+    notify({ ...profile, displayName: 'Updated name' })
+    const sameUser = useStore.getState()
+    for (const key of ['tasks', 'projects', 'projectTasks', 'groups', 'stats'] as const) {
+      expect(sameUser[key]).toBe(before[key])
+    }
+    expect(startSubscriptions).toHaveBeenCalledWith(profile.uid)
     useStore.setState({ drawerOpen: true })
     notify(null)
     const after = useStore.getState()
-    for (const key of ['tasks', 'projects', 'projectTasks', 'groups', 'stats'] as const) {
-      expect(after[key]).toBe(before[key])
-    }
+    expect(after.tasks).toEqual([])
+    expect(after.projects).toEqual([])
+    expect(after.dataUid).toBeNull()
+    expect(stopSubscriptions).toHaveBeenCalled()
     expect(after.drawerOpen).toBe(false)
   })
 })
