@@ -27,7 +27,8 @@ export function startSubscriptions(uid: string): Promise<void> {
         import('./listeners'), import('../firebase/firestore'), testing,
       ])
       if (session !== current || token !== generation) return
-      const observer = observerModule?.installTestObserver(startedAt)
+      let observer: import('./listeners').ListenerObserver | undefined
+      if (import.meta.env.MODE === 'e2e') observer = observerModule?.installTestObserver(startedAt)
       current.controller = listeners.createListenerSession(adapter.initializeBrowserFirestore(), uid, { observer })
     } catch (error) {
       if (session !== current || token !== generation) return

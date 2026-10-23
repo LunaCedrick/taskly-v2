@@ -113,3 +113,17 @@ it.each(['static', 'preload'] as const)(
     await expect(buildFixture(strategy)).rejects.toThrow('Firestore runtime reaches initial JavaScript:')
   }, 20_000,
 )
+
+it('eliminates the observer module, marker and installer call from real production chunks', async () => {
+  const result = await build({ mode: 'production', logLevel: 'silent',
+    build: { write: false, reportCompressedSize: false } })
+  const outputs = (Array.isArray(result) ? result : [result]).flatMap((item) => {
+    if (!('output' in item)) throw new Error('Expected completed production build')
+    return item.output
+  })
+  for (const output of outputs) {
+    if (output.type !== 'chunk') continue
+    expect(output.code).not.toMatch(/__TASKLY_G2_SYNC_TEST__|test-observer|installTestObserver/)
+    expect(Object.keys(output.modules).some((id) => id.includes('/subscriptions/test-observer'))).toBe(false)
+  }
+}, 20_000)
