@@ -1,0 +1,13 @@
+{
+  "archives": [
+    {"run":"emulator-4kpHnX","archiveBytes":184857,"status":"failed","firstOutputMs":2413,"authReadyMs":70520,"firestoreReadyMs":null,"failure":"Services did not start within shared 90000 ms deadline; auth: HTTP 200; valid service response; firestore: HTTP 400; unexpected service response"},
+    {"run":"emulator-lEThB8","archiveBytes":36018,"status":"ready","firstOutputMs":1221,"authReadyMs":12298,"firestoreReadyMs":6664,"failure":"Process exited 1 (signal null)"},
+    {"run":"emulator-ntJvD0","archiveBytes":5213,"status":"failed","firstOutputMs":41417,"authReadyMs":null,"firestoreReadyMs":null,"failure":"Services did not start within shared 90000 ms deadline; auth: ECONNREFUSED; firestore: ECONNREFUSED"},
+    {"run":"emulator-OHvvmZ","archiveBytes":11704,"status":"ready","firstOutputMs":1219,"authReadyMs":12179,"firestoreReadyMs":5966,"failure":"Process exited 1 (signal null)"},
+    {"run":"emulator-QeLQ1z","archiveBytes":506,"status":"failed","firstOutputMs":null,"failure":"spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"},
+    {"run":"emulator-rsVPsK","archiveBytes":11819,"status":"ready","firstOutputMs":1704,"authReadyMs":16872,"firestoreReadyMs":8674,"failure":null},
+    {"run":"emulator-sjRIRT","archiveBytes":5156,"status":"failed","firstOutputMs":67273,"authReadyMs":null,"firestoreReadyMs":null,"failure":"Services did not start within shared 90000 ms deadline; auth: ECONNREFUSED; firestore: ECONNREFUSED"},
+    {"run":"emulator-tTNNLP","archiveBytes":189570,"status":"ready","firstOutputMs":1692,"authReadyMs":15185,"firestoreReadyMs":8025,"failure":null},
+    {"run":"emulator-VehQSm","archiveBytes":11674,"status":"ready","firstOutputMs":1428,"authReadyMs":13236,"firestoreReadyMs":6799,"failure":null}
+  ]
+}

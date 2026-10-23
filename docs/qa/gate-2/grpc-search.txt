@@ -1,0 +1,31 @@
+Command: rg -i "grpc" dist
+Exit: 0 (matches, not a zero-match claim).
+Matched asset: assets/index.esm-DKuKsFc-.js, the deferred Firestore browser chunk.
+Thirteen case-insensitive occurrences: grpcFlowControlWindow configuration properties
+and "GRPC error has no .code" browser status mapping. These strings do not establish
+that the Node grpc-js implementation is bundled.
+
+Actual production module graph: zero module IDs matching @grpc, proto-loader,
+protobufjs, or Firestore index.node. Firestore browser index.esm/common ESM modules
+are present in that deferred asset. Neither affected getAuthContext code nor the
+Node server-handler implementation appears in the browser module graph.
+
+The graph is private at test-results/gate-2/bundle-graph.json and validated against
+the hashes of every current dist JavaScript chunk and index.html. bundle.json keeps
+the Firestore module IDs/import edges; this report keeps the advisory interpretation.
+No bundle-graph.json is emitted into dist.
+
+Literal matched contexts from current dist (bounded to avoid copying the whole minified SDK):
+index.esm-DKuKsFc-.js:219553: piKey=u,this._customHeaders=d,this.grpcFlowControlWindow=f}},Hn=`(default)`,Un=class e{constructor(e,t){this.projectId=e,this
+index.esm-DKuKsFc-.js:259879: tion La(e){if(e===void 0)return j(`GRPC error has no .code`),I.UNKNOWN;switch(e){case Ia.OK:return I.OK;case Ia.CANCELLED:ret
+index.esm-DKuKsFc-.js:298080: UsingEmulator,r,i._customHeaders,i.grpcFlowControlWindow)}var Vs={didRun:!1,sequenceNumbersCollected:0,targetsRemoved:0,docum
+index.esm-DKuKsFc-.js:305642: FetchStreams=!!e.useFetchStreams,e.grpcFlowControlWindow!==void 0){if(typeof e.grpcFlowControlWindow!=`number`||e.grpcFlowCon
+index.esm-DKuKsFc-.js:305686: ontrolWindow!==void 0){if(typeof e.grpcFlowControlWindow!=`number`||e.grpcFlowControlWindow<=0||e.grpcFlowControlWindow>21474
+index.esm-DKuKsFc-.js:305721: grpcFlowControlWindow!=`number`||e.grpcFlowControlWindow<=0||e.grpcFlowControlWindow>2147483647||!Number.isInteger(e.grpcFlow
+index.esm-DKuKsFc-.js:305749: er`||e.grpcFlowControlWindow<=0||e.grpcFlowControlWindow>2147483647||!Number.isInteger(e.grpcFlowControlWindow))throw new L(I
+index.esm-DKuKsFc-.js:305803: ow>2147483647||!Number.isInteger(e.grpcFlowControlWindow))throw new L(I.INVALID_ARGUMENT,`grpcFlowControlWindow must be a pos
+index.esm-DKuKsFc-.js:305858: w))throw new L(I.INVALID_ARGUMENT,`grpcFlowControlWindow must be a positive integer and cannot exceed 2147483647`);this.grpcF
+index.esm-DKuKsFc-.js:305943: nd cannot exceed 2147483647`);this.grpcFlowControlWindow=e.grpcFlowControlWindow}}isEqual(e){return this.host===e.host&&this.
+index.esm-DKuKsFc-.js:305967: 647`);this.grpcFlowControlWindow=e.grpcFlowControlWindow}}isEqual(e){return this.host===e.host&&this.ssl===e.ssl&&this.creden
+index.esm-DKuKsFc-.js:306504: hStreams===e.useFetchStreams&&this.grpcFlowControlWindow===e.grpcFlowControlWindow&&function(e,t){if(e===t)return!0;if(!e||!t
+index.esm-DKuKsFc-.js:306530: ms&&this.grpcFlowControlWindow===e.grpcFlowControlWindow&&function(e,t){if(e===t)return!0;if(!e||!t)return!1;let n=Object.key

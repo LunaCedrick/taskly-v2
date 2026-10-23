@@ -223,4 +223,5 @@ Run `review` after the gate checks pass, retaining its speed/layout checks witho
 
 ### G2 lessons
 
-(none yet; append up to five dated implementation lessons after the gate)
+- 2026-10-23: Firestore rejects reserved double-underscore collection IDs; readiness probes must use a valid collection and validate its response, not just an open port.
+- 2026-10-23: Rules regex whitespace differs from JavaScript `trim`; use the explicit approved whitespace set and emulator cases for every code point, multiline text, and non-whitespace controls.
