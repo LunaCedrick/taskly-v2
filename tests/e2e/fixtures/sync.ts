@@ -112,14 +112,18 @@ export async function signOut(page: Page) {
   await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible()
 }
 
-export async function signInAnotherAccount(page: Page): Promise<string> {
+export async function signInAnotherAccount(page: Page, { confirmed = true } = {}): Promise<string> {
   const popup = await openGooglePopup(page)
   await popup.locator('#email-input').fill(`taskly-switch-${randomUUID()}@example.test`)
   await popup.locator('#display-name-input').fill('Second Taskly Owner')
   const closed = popup.waitForEvent('close')
   await popup.locator('#sign-in').click()
   await closed
-  await waitForSync(page, { dataReady: true, activeHandles: 3 })
+  if (confirmed) await waitForSync(page, { dataReady: true, activeHandles: 3 })
+  else await page.waitForFunction(() => {
+    const state = window.__TASKLY_G2_SYNC_TEST__?.snapshot()
+    return state?.uid && state.activeHandles === 3
+  })
   const uid = (await syncSnapshot(page)).uid
   if (!uid) throw new Error('The second Google account did not resolve')
   return uid

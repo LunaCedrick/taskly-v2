@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { EMULATOR_PORTS } from '../../src/lib/firebase/emulator-config'
 import { signIn } from './fixtures/auth'
 import { collectDiagnostics, signInAnotherAccount, signOut, syncSnapshot, waitForSync } from './fixtures/sync'
 import { activity, enqueue, network, observation, project, saveExperiment, serverExists,
@@ -74,4 +75,53 @@ test('Q11 experiment: closing a tab loses its memory-only offline task queue', a
     stages.push({ stage: 'new tab with restored Auth and fresh memory cache', ...await observation(restored),
       serverExists: false })
   } finally { await saveExperiment(info, 'q11-tab-close', { stages }) }
+})
+
+test('Experiment 5: sign B in while Firestore remains offline, then reconnect', async ({ page }, info) => {
+  const stages: unknown[] = []
+  const diagnostics = collectDiagnostics(page)
+  const authRequests: string[] = []
+  page.context().on('request', (request) => {
+    if (new URL(request.url()).port === String(EMULATOR_PORTS.auth)) authRequests.push(new URL(request.url()).pathname)
+  })
+  try {
+    const uid = await signIn(page, '/', { seed: false })
+    const email = (await writeSnapshot(page)).email!
+    await network(page, false) // SDK disableNetwork: only Firestore; Auth and browser stay online.
+    await enqueue(page, 'offline-A', [project('cp-offline-A'),
+      activity('cp-offline-A-event', 'project.created', 'Created the project cp-offline-A', 'cp-offline-A')])
+    await page.evaluate(() => window.__TASKLY_G3_WRITES_TEST__!.wait('offline-A-waiter'))
+    await expect.poll(async () => (await writeSnapshot(page)).projects.length).toBe(1)
+    stages.push({ stage: 'A queued with Firestore network disabled', ...await observation(page),
+      serverExists: await serverExists(uid, 'projects', 'cp-offline-A') })
+    await signOut(page)
+    const authBeforeB = authRequests.length
+    const other = await signInAnotherAccount(page, { confirmed: false })
+    expect(other).not.toBe(uid)
+    expect((await writeSnapshot(page)).projects).toEqual([])
+    expect((await syncSnapshot(page)).dataReady).toBe(false)
+    stages.push({ stage: 'B authenticated BEFORE Firestore reconnect', ...await observation(page),
+      browserOnline: await page.evaluate(() => navigator.onLine),
+      authRequestsDuringBSignIn: authRequests.slice(authBeforeB), firestoreNetwork: 'disabled',
+      oldServerExists: await serverExists(uid, 'projects', 'cp-offline-A') })
+    expect(authRequests.length).toBeGreaterThan(authBeforeB)
+    await network(page, true)
+    await waitForSync(page, { uid: other, dataReady: true, activeHandles: 3 })
+    await page.waitForTimeout(1500) // Bounded observation, never a product acknowledgement timeout.
+    stages.push({ stage: 'reconnected as B, after 1500 ms', ...await observation(page),
+      oldServerExists: await serverExists(uid, 'projects', 'cp-offline-A') })
+    expect((await writeSnapshot(page)).projects).toEqual([])
+    await signOut(page)
+    await signInEmail(page, email)
+    expect((await writeSnapshot(page)).uid).toBe(uid)
+    await expect.poll(async () => (await writeSnapshot(page)).operations['offline-A'].status,
+      { timeout: 15000 }).not.toBe('pending')
+    stages.push({ stage: 'returned to A', ...await observation(page),
+      oldServerExists: await serverExists(uid, 'projects', 'cp-offline-A') })
+    expect(diagnostics.filter((row) => row.kind === 'pageerror')).toEqual([])
+  } finally {
+    await saveExperiment(info, 'q11-offline-account-switch', {
+      simulation: 'Firestore SDK disableNetwork, not browser/context offline; Auth remains reachable',
+      stages, diagnostics, authRequests })
+  }
 })
