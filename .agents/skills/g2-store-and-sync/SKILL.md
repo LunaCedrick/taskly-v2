@@ -136,7 +136,7 @@ OPEN means an owner decision, not permission to follow the recommendation. Do no
 12. Seed 1,000 tasks and verify browser sync, states, metadata, and instrumentation.
     - Create `tests/e2e/fixtures/firestore.ts` using the Q20-approved `@firebase/rules-unit-testing` setup and `withSecurityRulesDisabled` in the Node test process. Reuse `src/lib/fake-data.ts` there to seed isolated owner projects/1,000 tasks and >20 activity documents via the existing Firebase client SDK; bounded setup batches may seed fixtures without implementing G3 product deletion. Never add `firebase-admin` or change the Firebase pin. Share only safe fixture utilities with `tests/rules/fixtures.ts`.
     - Modify `tests/e2e/fixtures/auth.ts` for seeded/empty users and `tests/e2e/fixtures/qa.ts` for G2 artifact paths; wait for persisted-session resolution, fonts, and the shared readiness gate before shell assertions. Preserve the real browser Google-provider emulator flow and G1 popup handling.
-    - Create `src/lib/subscriptions/test-observer.ts` with test-only handle/event counts and deterministic callback/failure controls. Load it only inside `if (import.meta.env.MODE === 'e2e')` dynamic branches; runner builds use `--mode e2e`. Only that compiled-out mechanism may expose `window.__TASKLY_G2_SYNC_TEST__`; it never registers a listener or bypasses rules. Default production builds must contain neither its marker nor module. Verify the production graph and `rg -n '__TASKLY_G2_SYNC_TEST__|test-observer' dist` (exit 1/no matches passes; exit 2 is an error).
+    - Create `src/lib/subscriptions/test-observer.ts` with test-only handle/event counts and deterministic callback/failure controls. Load it only inside `if (import.meta.env.MODE === 'e2e')` dynamic branches; runner builds use `--mode e2e`. Only that compiled-out mechanism may expose `window.__TASKLY_G2_SYNC_TEST__`; it never registers a listener or bypasses rules. Default production builds must contain neither its marker nor module. Verify the production graph and `rg -n '__TASKLY_G2_SYNC_TEST__|test-observer|installTestObserver' dist` (exit 1/no matches passes; exit 2 is an error).
     - Create `tests/e2e/sync.spec.ts` for data across all three routes, exactly three handles/registrations through navigation/project switches, external add/update/delete propagation, latest-20 storage, refresh, and sign-out/account-switch isolation. Count subscription handles/events, not WebChannel socket counts.
     - Create `tests/e2e/data-states.spec.ts` for initial loading, confirmed first-run, empty project, approved orphan/missing-project behavior, and Q23's partial-failure/error/retry policy. Include a fresh memory-cache case with Firestore emulator traffic blocked while Auth/app remain usable, then restored; capture actual SDK snapshot metadata and verify it cannot falsely confirm emptiness. Test Q08's approved deadline separately from startup.
     - Verify the installed SDK's real metadata sequence against the emulator, including empty cache/server confirmation and metadata-only delivery; do not assume an offline callback or listener error always occurs. A controlled observation seam supplements, not replaces, this evidence. Retain observations if behavior differs from the proposed sequence.
@@ -155,7 +155,7 @@ OPEN means an owner decision, not permission to follow the recommendation. Do no
     - Record whether affected code reaches the browser, including lazy chunks, with supporting module evidence in `docs/DECISIONS.md`; save `docs/qa/gate-2/dependency-audit.txt` and `docs/qa/gate-2/grpc-search.txt`. If unresolved, report unverified; if vulnerable code ships, stop and present evidence/remediation before completion. A nonzero audit finding is assessed explicitly, never reported as a clean audit.
 
 15. Owner setup and rollout, with timing controlled by Q03.
-    - The owner confirms the Firestore database exists in the intended Firebase project; checked-in `firebase.json` names `(default)` at `nam5`, which is configuration evidence, not proof the live database exists. The owner deploys reviewed owner-only `firestore.rules` at the approved time. The agent never deploys rules, changes console settings, or uses test-mode rules.
+    - The owner confirms the Firestore database exists in the intended Firebase project; checked-in `firebase.json` names `(default)` at `asia-southeast1`, which is configuration evidence, not proof the live database exists. The owner deploys reviewed owner-only `firestore.rules` at the approved time. The agent never deploys rules, changes console settings, or uses test-mode rules.
     - The owner confirms `VITE_USE_FIRESTORE_EMULATOR` is unset in Vercel Preview and Production; the existing Auth emulator flag must also remain unset. Preserve Google provider/authorized-domain setup and G1's no-COOP constraint. List missing setup without claiming inaccessible console/Vercel settings were checked.
     - Until rules are deployed, preview and production show load error: CONTEXT section 6 records live deny-all rules, while PLAN G6 lists deployment. Changing the local rules file does not change those deployments. Resolve the rollout/completion conflict through Q03; do not invent a G2 deployment decision.
 
@@ -194,7 +194,7 @@ rg -n 'onSnapshot' src
 rg -n 'getDocs?\b|getCountFromServer' src
 rg -n 'fake-data' src --glob '!fake-data.ts'
 rg -n 'persistentLocalCache|enableIndexedDbPersistence|enableMultiTabIndexedDbPersistence' src
-rg -n '__TASKLY_G2_SYNC_TEST__|test-observer' dist
+rg -n '__TASKLY_G2_SYNC_TEST__|test-observer|installTestObserver' dist
 ```
 
 Expect no collection-group/one-shot reads, product fake-data imports, persistent Firestore cache, or test-observer production matches. For the dist test-observer search, `rg` exit 1 (no matches) is the expected pass; exit 2 is an error. Runtime listener registrations appear only under `src/lib/subscriptions`. Search results supplement the production graph check rejecting Firestore in entry static imports/modulepreloads. Verify memory-only cache through adapter tests too; grep alone is insufficient.
@@ -223,4 +223,5 @@ Run `review` after the gate checks pass, retaining its speed/layout checks witho
 
 ### G2 lessons
 
-(none yet; append up to five dated implementation lessons after the gate)
+- 2026-10-23: Firestore rejects reserved double-underscore collection IDs; readiness probes must use a valid collection and validate its response, not just an open port.
+- 2026-10-23: Rules regex whitespace differs from JavaScript `trim`; use the explicit approved whitespace set and emulator cases for every code point, multiline text, and non-whitespace controls.

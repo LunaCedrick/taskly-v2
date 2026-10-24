@@ -2,6 +2,14 @@ import { expect, test } from './fixtures/auth'
 import { mkdir } from 'node:fs/promises'
 import { QA_DIRECTORY } from './fixtures/qa'
 
+async function ready(page: import('@playwright/test').Page) {
+  await page.waitForFunction(() => {
+    const state = window.__TASKLY_G2_SYNC_TEST__?.snapshot()
+    return state?.dataReady && state.tasks === 1000 && state.activeHandles === 3
+  })
+  await page.evaluate(() => document.fonts.ready)
+}
+
 for (const width of [390, 1280]) {
   test(`shell, routes, screenshots and keyboard at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 })
@@ -12,13 +20,14 @@ for (const width of [390, 1280]) {
     await mkdir(QA_DIRECTORY, { recursive: true })
     for (const [name, route] of [['dashboard', '/'], ['my-tasks', '/tasks'], ['project', '/projects/project-1']]) {
       await page.goto(route)
-      await page.evaluate(() => document.fonts.ready)
+      await ready(page)
       await expect(page).toHaveTitle('Taskly')
       await expect(page.locator('[data-view]')).toBeVisible()
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
       await page.screenshot({ path: `${QA_DIRECTORY}/${name}-${width}.png`, fullPage: true })
     }
     await page.goto('/')
+    await ready(page)
     await expect(page.locator('[data-view="dashboard"]')).toBeVisible()
     const controlCount = await page.evaluate(() => {
       const controls = [...document.querySelectorAll<HTMLElement>('a[href], button, [tabindex="0"]')]
@@ -44,6 +53,7 @@ for (const width of [390, 1280]) {
     }
     expect(reached.size).toBe(controlCount)
     await page.goto('/')
+    await ready(page)
     await expect(page.locator('[data-view="dashboard"]')).toBeVisible()
     await page.keyboard.press('Tab')
     await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused()

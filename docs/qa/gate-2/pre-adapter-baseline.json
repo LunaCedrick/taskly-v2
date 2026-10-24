@@ -1,0 +1,13 @@
+{
+  "chunks": [
+    {
+      "file": "index-bUZJVBSx.js",
+      "bytes": 409113,
+      "gzipBytes": 126223
+    }
+  ],
+  "gzipBytes": 126223,
+  "gate0GzipBytes": 96155,
+  "increaseBytes": 30068,
+  "hardBudgetBytes": 200000
+}

@@ -1,18 +1,19 @@
-import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises'
-import { gzipSync } from 'node:zlib'
+import { readFile, mkdir, writeFile } from 'node:fs/promises'
+import { analyzeBundle } from './bundle-metrics.mjs'
+import { readBundleGraph } from './bundle-graph.mjs'
 
-const qaDirectory = process.argv.includes('--record-evidence') ? 'docs/qa/gate-1' : 'test-results/gate-1'
-// All routes are eagerly bundled. Count every emitted JS chunk so shared chunks cannot be omitted.
-const files = (await readdir('dist/assets')).filter((file) => file.endsWith('.js'))
-const chunks = await Promise.all(files.map(async (file) => {
-  const buffer = await readFile(`dist/assets/${file}`)
-  return { file, bytes: buffer.length, gzipBytes: gzipSync(buffer).length }
-}))
-const gzipBytes = chunks.reduce((sum, chunk) => sum + chunk.gzipBytes, 0)
-const baseline = JSON.parse(await readFile('docs/qa/gate-0/bundle.json', 'utf8'))
-const result = { chunks, gzipBytes, gate0GzipBytes: baseline.gzipBytes,
-  increaseBytes: gzipBytes - baseline.gzipBytes, hardBudgetBytes: 200_000 }
+const qaDirectory = process.argv.includes('--record-evidence') ? 'docs/qa/gate-2' : 'test-results/gate-2'
+const { outputs } = await readBundleGraph()
+const graph = analyzeBundle(outputs)
+const reference = JSON.parse(await readFile('docs/qa/gate-1/bundle.json', 'utf8'))
+const result = { schemaVersion: 1, capturedAt: new Date().toISOString(),
+  initialDefinition: 'Entry + transitive static imports + HTML modulepreloads; each emitted JS asset gzipped once',
+  gate1GzipBytes: reference.gzipBytes, initialIncreaseBytes: graph.initial.gzipBytes - reference.gzipBytes,
+  hardBudgetBytes: 200_000, ...graph,
+  passed: graph.boundaryPassed && graph.initial.gzipBytes < 200_000 }
 await mkdir(qaDirectory, { recursive: true })
 await writeFile(`${qaDirectory}/bundle.json`, JSON.stringify(result, null, 2) + '\n')
-console.log(JSON.stringify(result, null, 2))
-if (gzipBytes >= 200_000) process.exitCode = 1
+console.log(JSON.stringify({ initialGzipBytes: graph.initial.gzipBytes,
+  deferredGzipBytes: graph.deferred.gzipBytes, totalGzipBytes: graph.total.gzipBytes,
+  initialFirestoreChunks: graph.initialFirestoreChunks, passed: result.passed }, null, 2))
+if (!result.passed) process.exitCode = 1

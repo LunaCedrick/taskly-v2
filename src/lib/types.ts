@@ -23,3 +23,20 @@ export interface Task {
   updatedAt: number
   completedAt: number | null
 }
+
+export interface Activity {
+  id: string
+  type: string
+  taskId: string | null
+  projectId: string | null
+  text: string
+  createdAt: number
+}
+
+export interface StreamDocuments {
+  projects: Project
+  tasks: Task
+  activity: Activity
+}
+
+export type StreamName = keyof StreamDocuments

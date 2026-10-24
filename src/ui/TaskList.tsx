@@ -14,11 +14,14 @@ export function TaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
 function useRows(listId: string, tasks: readonly Task[]) {
   const projects = useStore((state) => state.projects)
   const now = useStore((state) => state.now)
-  const active = useStore((state) => state.focusedRows[listId] ?? 0)
+  const focused = useStore((state) => state.focusedRows[listId] ?? 0)
+  const active = Math.min(focused, Math.max(0, tasks.length - 1))
   const row = (index: number) => {
     const task = tasks[index]
-    return <TaskRow key={task.id} task={task} project={projects.find((project) => project.id === task.projectId)!}
+    const project = projects.find((item) => item.id === task.projectId)
+    return project ? <TaskRow key={task.id} task={task} project={project}
       now={now} position={index + 1} total={tasks.length} tabIndex={index === active ? 0 : -1} />
+      : null
   }
   const onFocus = (event: FocusEvent<HTMLDivElement>) => {
     const item = (event.target as HTMLElement).closest<HTMLElement>('[data-task-id]')
@@ -29,6 +32,7 @@ function useRows(listId: string, tasks: readonly Task[]) {
 }
 
 function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
+  if (count === 0) return
   const indexes: Record<string, number> = {
     ArrowDown: Math.min(count - 1, active + 1), ArrowUp: Math.max(0, active - 1),
     Home: 0, End: count - 1,

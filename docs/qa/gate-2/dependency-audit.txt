@@ -1,0 +1,28 @@
+G2 production dependency assessment — 2026-10-23
+
+Command: npm audit --omit=dev --json
+Exit: 1 (findings; not a clean audit). Full registry response: dependency-audit.json.
+Counts: 4 high package entries, 0 critical/moderate/low entries.
+Installed: firebase 13.0.0; @firebase/firestore 4.18.0;
+@firebase/firestore-compat 0.4.15; @grpc/grpc-js 1.9.16.
+
+Underlying advisories:
+- GHSA-m9gg-hp2v-232j (high): getAuthContext may accept unauthorized certificates;
+  affected @grpc/grpc-js <1.13.6.
+- GHSA-f596-whhp-79r4 (low): server handler errors can leak through status messages;
+  affected @grpc/grpc-js <1.13.6.
+The four high package entries are the grpc-js entry and propagated findings through
+Firestore, Firestore compat and Firebase, not four distinct high advisories.
+
+Browser reachability: affected grpc-js code DOES NOT reach this production build,
+including deferred chunks. Firestore itself does reach the deferred browser chunk.
+Proof: the captured production module graph selects @firebase/firestore/dist/index.esm.js
+and common-D9UYuXJO.esm.js, plus firebase/firestore/dist/esm/index.esm.js.
+No @grpc, proto-loader, protobufjs, or Firestore index.node module occurs in any chunk.
+Installed Firestore exports select index.esm.js for browser/import and index.node.mjs
+for node/import. Only the latter imports @grpc/grpc-js and @grpc/proto-loader (lines 11–12).
+See grpc-search.txt and bundle.json for emitted chunk evidence.
+
+No audit fix, override, dependency downgrade, production dependency or pin change applied.
+The installed Node dependency remains vulnerable and the audit remains nonzero;
+excluding it from the browser does not repair the installed dependency.
