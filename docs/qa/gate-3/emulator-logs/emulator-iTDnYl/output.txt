@@ -1,0 +1,8 @@
+[+66894 ms stdout] [2026-10-24T11:09:13.401Z] ----------------------------------------------------------------------
+[+66897 ms stdout] [2026-10-24T11:09:13.405Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Cedrick\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only auth,firestore --project demo-taskly-auth --config <root>\test-results\gate-3\emulator-iTDnYl\firebase.json --non-interactive --debug
+[2026-10-24T11:09:13.405Z] CLI Version:   15.34.0
+[2026-10-24T11:09:13.406Z] Platform:      win32
+[2026-10-24T11:09:13.406Z] Node Version:  v24.16.0
+[2026-10-24T11:09:13.406Z] Detected Agent: codex_cli
+[+66898 ms stdout] [2026-10-24T11:09:13.407Z] Time:          Sat Oct 24 2026 19:09:13 GMT+0800 (China Standard Time)
+[2026-10-24T11:09:13.408Z] ----------------------------------------------------------------------

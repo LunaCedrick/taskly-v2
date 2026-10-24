@@ -1,0 +1,16 @@
+
+> taskly-v2@0.0.0 test
+> vitest run
+
+
+ RUN  v5.0.5 <root>
+
+
+ Test Files  24 passed (24)
+      Tests  199 passed (199)
+   Start at  19:06:23
+   Duration  77.51s (environment 60%, setup 19%, tests 17%, import 3%, transform 1%)
+
+Environment  jsdom was created 24 times · 42.49s total, 60% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
