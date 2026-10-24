@@ -8,7 +8,7 @@ A decision may change when a measurement says so. Write the change in the curren
 | File | Covers | Status |
 |---|---|---|
 | [decisions/g0-g2.md](decisions/g0-g2.md) | G0–G2 history: early decisions, Gate 0–2 measurements, G2 owner decisions and rollout records | Frozen. Byte-identical move of the former `docs/DECISIONS.md`; line numbers preserved |
-| `decisions/g3.md` | G3 records | Created at G3 approval |
+| [decisions/g3.md](decisions/g3.md) | G3 records | Owner-approved, 2026-10-24 |
 
 ## Rules
 
