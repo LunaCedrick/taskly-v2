@@ -1,0 +1,1 @@
+{"environment":"production; empty envDir; all VITE_* removed from child process; no local .env","measurements":{"main":{"initial":127712,"deferred":137164,"total":264876,"boundaryPassed":true},"branch":{"initial":127804,"deferred":141228,"total":269032,"boundaryPassed":true}}}

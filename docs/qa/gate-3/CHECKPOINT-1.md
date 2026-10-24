@@ -1,6 +1,6 @@
 # G3 checkpoint 1
 
-Status: READY FOR OWNER REVIEW at checkpoint 1. Implementation stops here.
+Status: checkpoint-1 CHANGES NEEDED review revision; step 5 remains stopped.
 Owner authorized implementation through steps 3–4 only on 2026-10-24.
 Baseline app revision: `d16fe58` (main); owner answers first committed as `213f134`.
 Implementation committed and pushed as `3b6c6df`; evidence measured that working source.
@@ -16,7 +16,8 @@ Production measurement, or later-gate feature is authorized by this checkpoint.
 - [baseline-bundle.json](baseline-bundle.json) and [baseline-production-graph.json](baseline-production-graph.json)
   are from the unchanged app with G3 artifact routing, before mutation integration.
 - G2 final baseline: initial 127,820 / deferred 137,162 / total 264,982 B gzip.
-  Fresh baseline: 127,820 / 137,170 / 264,990 B; deltas 0 / +8 / +8 B.
+  Fresh baseline with local `.env` Firebase config inlined: 127,820 / 137,170 / 264,990 B;
+  deltas 0 / +8 / +8 B. The carried G2 record is not a matched config-free rebuild.
   Initial graph contains no Firestore runtime. Only initial has a byte cap: strictly <200,000 B.
 - Historical G2 evidence mismatch: `docs/qa/gate-2/bundle.json` lists the final four chunks,
   including entry `index-BEzxPrzy.js`; `production-bundle-graph.json` instead describes a
@@ -26,8 +27,9 @@ Production measurement, or later-gate feature is authorized by this checkpoint.
 - G2 retained 18 speed runs: 17 passed, one p95 104.8 ms failure. Thin margins include
   `/tasks` and repeat project visits; cause remains unproven. Retain all G3 runs, per-pair
   counts and every transition >100 ms; never rerun unchanged code until it passes.
-- Production populated first-data latency remains unverified and deferred by owner Q10
-  until after G3 merges. G2's 8,035 ms emulator result is measurement-only.
+- Production populated first-data latency remains unverified. Q10 says: “Defer populated
+  Production first-data measurement until genuine G3 data exists. I will decide after G3
+  merges.” These are separate conditions/statements. G2's 8,035 ms is measurement-only.
 
 ## Accepted limits and deferred behavior
 
@@ -49,7 +51,8 @@ Production measurement, or later-gate feature is authorized by this checkpoint.
 - AGENTS: add the existing no-COOP rule; Google popup sign-in breaks with that header.
 - PLAN: for G3, task row mutations are live only on Project view, overriding “from any
   screen”; global Quick Add, topbar add, and project creation remain available (owner P1).
-- PLAN G3 rollout addition, owner-requested 2026-10-24: “In G3, after review and before
+- PLAN G3 rollout addition: proposed wording from the approved G3 skill (not owner wording):
+  “In G3, after review and before
   merge, the owner deploys reviewed owner-only Firestore rules if changed and verifies the
   approved G3 write flows on the Vercel preview with real Google sign-in. The preview and
   manual second-device checks block marking G3 complete. The owner verifies Production
@@ -67,10 +70,17 @@ Production measurement, or later-gate feature is authorized by this checkpoint.
   It is low-level transport; entity planning, store coordination, and interfaces are later.
 - Listeners request `serverTimestamps: 'estimate'` before structural decoding. Required
   confirmed null timestamps still fail; the reader still accepts arbitrary activity strings.
-- Production graph: 127,922 / 141,229 / 269,151 B gzip; G2 deltas +102 / +4,067 / +4,169 B.
+- Production graph, local `.env` Firebase config inlined (not a config-free comparison):
+  127,922 / 141,229 / 269,151 B gzip; G2 deltas +102 / +4,067 / +4,169 B.
   Initial headroom 72,078 B. No runtime Firestore static/preload reachability; both test
   control modules and markers are absent. [Bundle](checkpoint-1-bundle.json),
   [hash-matched graph](checkpoint-1-production-graph.json).
+- Controlled config-free rebuild in this review: empty envDir and all `VITE_*` removed
+  in the child process, mode production. Main 127,712 / 137,164 / 264,876 B; branch
+  127,804 / 141,228 / 269,032 B; deltas +92 / +4,064 / +4,156 B. Both initial graphs
+  exclude Firestore. [Matched measurements](bundle-no-env-Du9USx/measurements.json).
+  This independently reproduces the reviewer's initial-byte comparison. No `.env` was
+  edited, renamed, printed or used by those builds. Earlier local-config results remain.
 - Node 24.16.0, TypeScript 6.0.3, Vite 8.3.4, Firebase 13.0.0, Temurin Java 21.0.12.1.
   No install, dependency/lockfile change, Firebase pin change, or emulator deadline change.
 - Build, lint and typecheck pass. Unit checks: 199/199 in 24 files, 77.51 s.
@@ -101,7 +111,8 @@ Evidence: [pending timestamps](emulator-zRVuYK/pending-timestamps.json),
 - Offline queued write → sign-out: store clears, handles drop to zero; the write commit
   stays pending. `waitForPendingWrites` rejects with `cancelled` because the user changed.
   This is NOT cancellation of the underlying write.
-- Reconnect while anonymous (1,500 ms observation) leaves the old operation pending and
+- Earlier test used a DIFFERENT ORDER from planned experiment 5: reconnect while anonymous
+  BEFORE B signs in online. That sequence (1,500 ms observation) leaves the old operation pending and
   absent on the server. Another account writes successfully with no old-user rows in
   its store. Returning to the original account acknowledges the old write and creates
   its original-path server document. The facade marks that old result currentSession=false.
@@ -109,8 +120,8 @@ Evidence: [pending timestamps](emulator-zRVuYK/pending-timestamps.json),
   Auth and server data but neither pending document exists in the store or on the server.
 - These are measured SDK 13.0.0 emulator outcomes, not a promise that all network/in-flight
   races behave identically. Guards remain unimplemented pending owner review (P5).
-- [Activity contract and visual comparison](ACTIVITY-CONTRACT.md): approved “Completed
-  {task}” differs from dashboard.png's “You completed {task}”. Approved copy is unchanged.
+- [Activity contract and visual comparison](ACTIVITY-CONTRACT.md): Q16 keeps “Completed
+  {task}”. The “You completed” frame is a known design deviation for G4; unchanged in G3.
 
 ## Retained startup failure
 
@@ -121,7 +132,7 @@ Evidence: [pending timestamps](emulator-zRVuYK/pending-timestamps.json),
   Pub/Sub 28,420 ms. Inclusive intervals overlap. This localizes CLI bootstrap delay;
   underlying cause remains unproven. Later warmed success does not erase the cold failure.
 
-## Final checkpoint checks
+## Prior checkpoint checks (at a05cffc; retained)
 
 | Check | Result |
 |---|---|
@@ -140,9 +151,60 @@ Its three SDK experiments also pass, independently of the earlier traced diagnos
 Existing shell/auth/data/sync checks pass at 390/1280 px. These screenshots are existing
 views; they are not evidence of a new G3 interface. [Navigation measurements](SPEED-CHECKPOINT-1.md)
 retain 180/180 samples, all nine transitions >100 ms, and request windows. p95 values
-97.8 / 93.6 / 94.9 ms pass the strict per-run `<100 ms` rule. The 2.2 ms smallest margin
+97.8 / 93.6 / 94.9 ms satisfy the numeric `<100 ms` rule but lack Q15's same-session
+passing main baseline and do not establish qualified acceptance. The 2.2 ms smallest margin
 and repeat-project slow sample are carried risks; G2's underlying cause remains unproven.
 [All actual emulator starts, including failure](emulator-logs/README.md).
+
+## Checkpoint-1 review revision (2026-10-25)
+
+Q15/Q16 are appended verbatim in `docs/decisions/g3.md`, after the unchanged P1–P9
+and original owner block. No other new statement is attributed to the owner.
+This revision edits only G3 docs/evidence and tests. App source, rules, dependencies,
+AGENTS, PLAN, CONTEXT and the approved skill remain unchanged. Step 5 is not started.
+
+| Review item | Ran / changed | Only read or not run |
+|---|---|---|
+| 1 Speed | Predeclared 6 A/B pairs, 6 C runs; 1,080 samples; 120- and 600-click profiles; 3 analysis unit tests | Skill §13, both speed specs, build/subscription integration; reviewer numbers are reported, not remeasured historic runs |
+| 2 Experiment 5 | All 3 unsynced-write browser tests pass (16.7 s), including the corrected order below | Existing probe/Auth and ownership rules inspected; no guard, rule edit or rules-suite rerun |
+| 3 Bundle environment | Matched no-env production builds on main and branch, linked above | Firebase config inlining source read; local `.env` values not read/printed/changed |
+| 4 Q10 | Corrected prose to quote both statements separately | Owner Q10 read; no populated Production latency measurement |
+| 5 Rollout attribution | Labeled quote as proposed wording from approved skill | Skill Report wording read; no PLAN edit or owner rollout action |
+| 6 Fixed baseline output | Main A1–A6 copied immediately into separate directories; freshness checked | Main QA path read; original repository's G2 evidence untouched |
+
+Reviewer-reported aggregates and all new raw samples are indexed in
+[SPEED-CHECKPOINT-1.md](SPEED-CHECKPOINT-1.md). Pooled diagnostics: main 9.17% >100 ms,
+p95/p99 107.6/155.4 ms; branch 9.72%, 106.2/155.6 ms; eight slow repeat task→project
+transitions each. Strong session drift and C's later order limit causal conclusions.
+The extended profile captures a 118.9 ms repeat transition with a 75 ms long task;
+no GC in that window. Findings/proposals are reported, with no app optimization applied.
+These diagnostics replace no acceptance runs and claim no Q15 acceptance pass/fail.
+
+### Corrected experiment 5
+
+[Evidence](emulator-coxPzs/q11-offline-account-switch.json): A queued offline → sign out
+→ sign in B STILL OFFLINE → reconnect as B → observe → return to A. Earlier evidence
+reconnected anonymously before B signed in online; it was a different order and remains.
+“Offline” here means Firestore SDK `disableNetwork`, not browser/context offline.
+`navigator.onLine` remained true. Auth was reachable: the popup handler, signInWithIdp,
+and account lookup requests were captured while Firestore remained disabled.
+
+B's initial streams were fromCache/uncorroborated, with no A project in B's store.
+After `enableNetwork` and a bounded 1,500 ms observation, A's commit was still pending,
+its server document absent, and B's confirmed store empty. No permission-denied outcome
+was observed; this is NOT evidence of a rules rejection or write cancellation.
+Returning to A acknowledged the write and created A's server document; the stale
+facade result was marked currentSession=false. waitForPendingWrites had rejected with
+cancelled on the user change. Exactly three active listeners per signed-in session.
+Server presence checks use a separate Node emulator fixture with rules disabled for
+observation; they do not reconnect the browser's Firestore or exercise a live project.
+Only expected aborted Listen requests were recorded; no page/console errors.
+
+Current checks: typecheck and lint pass; three diagnostic-analysis tests pass; the three
+unsynced-write browser tests pass; both bounded profile tests pass. The earlier profiling
+trace declaration failed typecheck once and was corrected before measurement. The first
+review emulator startup failed at 90 s before samples; it is retained. Prior 199-unit/
+116-rules/full-e2e results above are historical, not rerun claims for this docs/test revision.
 
 ## Stopped work and next approval
 

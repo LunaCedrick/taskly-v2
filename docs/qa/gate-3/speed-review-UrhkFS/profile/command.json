@@ -1,0 +1,1 @@
+{"code":0,"output":"\nRunning 1 test using 1 worker\n\n(node:16548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n  ok 1 tests\\diagnostics\\profile.spec.ts:10:1 › diagnostic timeline: 60 repeat tasks/project cycles, never acceptance (21.2s)\n\n  1 passed (22.9s)\n"}

@@ -40,5 +40,5 @@ Viewed `docs/design/dashboard.png` directly on 2026-10-24:
 | Created the project Personal | Created the project {name} | Matches |
 
 The frame supplies no examples for project movement, rename, or deletion. Their approved
-plan copy remains unchanged. Completion wording is reported for the owner's decision;
-it is not silently replaced with the frame wording. No G4 activity UI is implemented.
+plan copy remains unchanged. Owner Q16 keeps “Completed {task}”; the “You completed”
+frame is a known design deviation for G4 and is not changed in G3. No G4 UI is implemented.
