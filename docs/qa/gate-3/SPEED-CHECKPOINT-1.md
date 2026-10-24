@@ -1,6 +1,11 @@
 # Checkpoint 1 navigation measurements
 
-## Review diagnostic protocol (written before new measurements, 2026-10-24)
+## Review diagnostic protocol (2026-10-24)
+
+This protocol and the follow-up profile declaration were first committed with the
+results in `5df3502` (2026-10-25 00:29 +08), after A1–C6 ran from 2026-10-24
+15:55:29Z to 16:00:21Z. There is no prior committed protocol for these runs.
+Future diagnostic protocols must be committed before the runs.
 
 These are diagnostics, not replacement acceptance runs. A = unchanged main at `d16fe58`;
 B = reviewed branch at `a05cffc`; C = that branch e2e build with test-only write probe
@@ -11,7 +16,7 @@ Use an isolated main checkout, leave its speed spec unchanged, and immediately c
 fixed `test-results/gate-2/speed-*.json` outputs into separate G3 per-run directories.
 Retain original files as well as derived summaries; no run is overwritten or discarded.
 
-Predeclared reading: for each side, pool ALL diagnostic samples and report the share
+Interpretation: for each side, pool ALL diagnostic samples and report the share
 strictly over 100 ms, nearest-rank pooled p95 and p99, and the count of slow repeat
 `/tasks` → `/projects/project-1` transitions (destination visited earlier in that run).
 Also keep run-level p95/median/max, route-pair counts and every slow transition.
@@ -46,7 +51,7 @@ Reported medians match at 69–80 ms. Of 32 slow branch samples, 15 were `/tasks
 project, including 11 repeats; main had 1 of 7 slow samples on that route pair.
 These are owner-supplied review results; raw reviewer samples were not supplied here.
 
-Follow-up profile declaration, before running it (2026-10-25): the first fixed 120-click
+Follow-up profile declaration (2026-10-25): the first fixed 120-click
 trace captured no >100 ms repeat project transition (59 repeats; max 84.9 ms). Keep it.
 Run ONE additional fixed 600-click B profile at the same 4× CPU, without app changes,
 forced GC, synthetic CPU contention or threshold changes. Its test timeout allows the
@@ -89,7 +94,7 @@ All runs are DIAGNOSTIC ONLY: no Q15 acceptance pass/fail is claimed for the bra
 Per-pair total/slow counts over six runs: A `/→tasks` 120/19, `tasks→project` 120/11,
 `project→/` 120/3; B 120/18, 120/12, 120/5 respectively; C 120/1, 120/0, 120/0.
 A1–A4 main baselines exceed the threshold. A5–A6 being faster does not erase them.
-Six runs per side meet the predeclared minimum, but their samples are clustered and
+Six runs per side meet the protocol's minimum, but their samples are clustered and
 nonstationary. Main and branch tails are close here; the reviewer's concentration of
 extra branch repeat-project outliers was not reproduced in this interleaved session.
 This does NOT prove absence of a regression.
@@ -103,11 +108,14 @@ fake demo Firebase variables and empty envDir, with the same existing dependenci
 
 ### Separately traced repeat-project profiles
 
+Both profiles alternate `/tasks` and `/projects/project-1` only; the speed test uses
+the three-route loop `/` → `/tasks` → `/projects/project-1` → `/`.
+
 First: [120 windows](speed-review-UrhkFS/profile/summary.json), 59 repeat project visits,
-maximum 84.9 ms; no slow repeat was captured. Complete [Chrome trace](speed-review-UrhkFS/profile/timeline.json.gz).
-The single predeclared longer profile retained [600 windows](profile-review-TQtYai/profile/summary.json)
+maximum 84.9 ms; no slow repeat task → project transition was captured. Complete [Chrome trace](speed-review-UrhkFS/profile/timeline.json.gz).
+The single fixed longer profile retained [600 windows](profile-review-TQtYai/profile/summary.json)
 and its complete [Chrome trace](profile-review-TQtYai/profile/timeline.json.gz).
-It captured one slow repeat: sequence 298 (project visit 149), **118.9 ms**, overlapping
+It captured one slow repeat task → project transition: sequence 298 (project visit 149), **118.9 ms**, overlapping
 a **75 ms Long Tasks API entry** and a **75.551 ms renderer RunTask** in the trace.
 
 For that marker-bounded window, exclusive recognized spans were 20.399 ms scripting,
@@ -119,6 +127,9 @@ measurement is retained, not normalized away. Unclassified time includes work/wa
 outside the selected event categories; it is NOT proof of idle time or an OS cause.
 The trace establishes a long main-thread task, not the responsible component or the
 cause of the earlier reviewer/session tail. No optimization has been applied.
+
+The other slow window was **#57**, a repeat `/projects/project-1` → `/tasks`
+transition at **184.1 ms**, overlapping a **54 ms Long Tasks API entry**.
 
 Propose, for review only: balanced/randomized B/C order with main controls, and a bounded
 CPU-sampling/scheduler profile when a slow baseline reproduces, to resolve unclassified
@@ -174,7 +185,7 @@ number; the initial Dashboard is already visited once when timing starts.
 | 3 | 44 | /tasks → /projects/project-1 | 15 | 120.90 |
 
 The smallest p95 margin is 2.2 ms. Repeat-project latency above 100 ms still occurs;
-these passes do not prove the cause of G2's retained 104.8 ms p95 failure or remove
+these numeric results do not prove the cause of G2's retained 104.8 ms p95 failure or remove
 the carried risk. No sample was discarded or pooled to hide a failure.
 
 If the strict gate fails later, preserve that run first. Separately label diagnostic

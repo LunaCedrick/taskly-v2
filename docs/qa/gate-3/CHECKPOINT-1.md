@@ -142,7 +142,7 @@ Evidence: [pending timestamps](emulator-zRVuYK/pending-timestamps.json),
 | npm run typecheck | PASS; strict app and test types |
 | npm run test | PASS; 199 tests / 24 files, 77.51 s (corrected run) |
 | npm run test:rules | PASS; 116 tests / 2 files, 23.49 s; rules unchanged |
-| npm run e2e -- --record-evidence | PASS; 34 tests, 4.6 min; retries 0 |
+| npm run e2e -- --record-evidence | PASS; 34 tests, 4.6 min; retries 0; reviewer's later e2e run at `a05cffc` failed all three speed tests (p95 114.1/106.8/106.7 ms), recorded in [reviewer results](SPEED-CHECKPOINT-1.md#reviewer-reported-results-not-measured-by-this-agent) |
 | npm run measure:bundle | PASS; sizes and graph above |
 | npm audit --omit=dev | Exit 1; four carried high findings, browser reachability above |
 
@@ -165,7 +165,7 @@ AGENTS, PLAN, CONTEXT and the approved skill remain unchanged. Step 5 is not sta
 
 | Review item | Ran / changed | Only read or not run |
 |---|---|---|
-| 1 Speed | Predeclared 6 A/B pairs, 6 C runs; 1,080 samples; 120- and 600-click profiles; 3 analysis unit tests | Skill §13, both speed specs, build/subscription integration; reviewer numbers are reported, not remeasured historic runs |
+| 1 Speed | 6 A/B pairs, 6 C runs; 1,080 samples; 120- and 600-click profiles; 3 analysis unit tests | Skill §13, both speed specs, build/subscription integration; reviewer numbers are reported, not remeasured historic runs |
 | 2 Experiment 5 | All 3 unsynced-write browser tests pass (16.7 s), including the corrected order below | Existing probe/Auth and ownership rules inspected; no guard, rule edit or rules-suite rerun |
 | 3 Bundle environment | Matched no-env production builds on main and branch, linked above | Firebase config inlining source read; local `.env` values not read/printed/changed |
 | 4 Q10 | Corrected prose to quote both statements separately | Owner Q10 read; no populated Production latency measurement |

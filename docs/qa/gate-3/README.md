@@ -2,7 +2,7 @@
 
 - [Checkpoint 1 and review revision](CHECKPOINT-1.md): scope, per-item ran/read record,
   SDK outcomes, environment-specific bundles and owner stop points.
-- [Speed interpretation and results](SPEED-CHECKPOINT-1.md): preregistered diagnostics,
+- [Speed interpretation and results](SPEED-CHECKPOINT-1.md): diagnostic protocol and provenance,
   reviewer-reported numbers, all sessions, per-side pooled statistics and trace findings.
 - [Activity contract](ACTIVITY-CONTRACT.md): Q16 keeps “Completed {task}”; known G4
   design deviation remains in the frame.
