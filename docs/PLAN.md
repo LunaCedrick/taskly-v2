@@ -107,6 +107,8 @@ users/{uid}/tasks/{id}          projectId, title, description, dueDate | null, d
                                 category, status, createdAt, updatedAt, completedAt | null
 users/{uid}/activity/{id}       type, taskId, projectId, text, createdAt   (latest 20 shown)
 ```
+Store date fields as Firestore timestamps, allowing null only where the approved document contract permits it. Decode timestamps structurally to numeric milliseconds for the UI. This specifies storage types previously left unstated in this section.
+
 Why flat: one listener returns all of a user's tasks. There are no collection-group queries, no
 extra indexes, and no per-project listeners. Project views, progress, and the dashboard are
 computed from memory. (v1 used a collection-group query that needed an index and special rules.)
@@ -125,8 +127,8 @@ User action -> Firestore write (optimistic via local cache) -> listener updates 
 - One delegated event approach for lists (handlers by `data-` attributes or stable callbacks), never handlers recreated per render.
 
 ### Security rules
-Owner-only: `match /users/{uid}/{document=**} { allow read, write: if request.auth.uid == uid; }`
-plus field validation on create and update. Rules are unit-tested with the emulator.
+Use explicit validating matches for projects, tasks, and activity under users/{uid}. Each permitted operation requires authenticated ownership of the path UID. Create and update conditions validate the full resulting document against the approved field contract, including immutable createdAt. Profile access remains denied until its contract is approved. Keep unmatched paths denied and add no recursive owner allow that bypasses validation.
+Rules are unit-tested with the emulator.
 
 ### Folder structure
 ```
@@ -150,7 +152,7 @@ logic (dates, filtering, grouping) lives in pure, tested functions.
 | Route change (click to next paint), 1,000 tasks, throttled CPU 4x | under 100 ms |
 | Interaction to Next Paint (p75) | 200 ms or better |
 | Largest Contentful Paint, mid phone, 4G | under 2.5 s |
-| Initial JavaScript (gzip) | under 200 KB (measure, then adjust) |
+| Initial JavaScript (gzip) | Initial JavaScript is the combined gzip size of the entry JavaScript, its transitive static-import chunks, and HTML modulepreload chunks, counting each asset once. It must remain under 200,000 bytes. Report deferred JavaScript and total JavaScript alongside it. Changing this budget requires an owner-approved PLAN change. |
 | Active Firestore listeners during navigation | constant (3) |
 | Renders per snapshot | at most 1 per frame |
 | Lighthouse mobile performance | 90 or higher |
@@ -231,6 +233,8 @@ Targets:
 - No collection-group queries (search check)
 Demo: Real data appears on all three screens and navigation stays instant.
 
+In G2, after review and before merge, the owner deploys reviewed owner-only Firestore rules and verifies first-run on the Vercel preview with real Google sign-in. The preview check blocks marking G2 complete. The owner verifies Production after merge. These checks remain UNVERIFIED until the owner reports them. The agent never deploys rules. G6 retains final deployment verification.
+
 ### G3: Projects, tasks, Quick Add
 Pages:
 - Task form: modal on desktop, bottom sheet on phone, add and edit
@@ -305,7 +309,7 @@ branch gets a preview URL.
 | Risk | Mitigation |
 |---|---|
 | Free-plan Firestore read quota with one listener over all tasks | Keep done-task history bounded (archive older than 30 days in v0.2). Check current quotas in the Firebase console. |
-| Optimistic UI and duplicate snapshots cause flicker | Compare versions before applying. Cover with tests. |
+| Optimistic UI and duplicate snapshots cause flicker | Compare decoded effective data; no version field exists. Preserve unchanged object references without treating updatedAt as a monotonic version. Cover with tests. |
 | Push is unavailable without a backend | Documented in section 3. In-app alerts first. |
 | Scope growth | Slices and gates. New ideas go to the v0.2 and v0.3 lists. |
 
