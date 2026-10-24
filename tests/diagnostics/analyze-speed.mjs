@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 
 export const quantile = (values, percentile) => [...values].sort((a, b) => a - b)[Math.ceil(values.length * percentile) - 1]
-function decorate(run) {
+export function decorate(run) {
   const visits = new Map([['/', 1]])
   return run.transitions.map((sample, index) => {
     const visit = (visits.get(sample.to) ?? 0) + 1

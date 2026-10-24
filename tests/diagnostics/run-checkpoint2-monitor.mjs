@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, copyFile, readFile, writeFile, stat } from 'node:fs/pro
 import { resolve, join } from 'node:path'
 import { preview } from 'vite'
 import { startEmulatorHarness } from '../../scripts/emulator-runner.mjs'
-import { summarize } from './analyze-speed.mjs'
+import { decorate, summarize } from './analyze-speed.mjs'
 
 const root = process.cwd()
 const main = resolve('test-results/gate-3/review-main')
@@ -70,7 +70,7 @@ try {
   await writeFile(join(directory, 'summary.json'), JSON.stringify({ diagnostic: true, summary,
     runs: runs.filter((run) => run.samples).map(({ label, samples }) => ({ label, median: samples.median,
       p95: samples.p95, max: samples.max, ...summarize([samples]),
-      over100Samples: samples.transitions.filter((sample) => sample.milliseconds > 100) })) }) + '\n')
+      over100Samples: decorate(samples).filter((sample) => sample.milliseconds > 100) })) }) + '\n')
   console.log(JSON.stringify(summary))
 } catch (error) {
   await writeFile(join(directory, 'failure.json'), JSON.stringify({ error: String(error), runs }) + '\n')

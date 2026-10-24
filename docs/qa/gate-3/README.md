@@ -1,5 +1,10 @@
 # G3 evidence
 
+- [Checkpoint 2](CHECKPOINT-2.md): integrated CRUD, Q17 pending-only guard, ran/read
+  record, proposed rules diff and owner handoff. Rules remain unchanged.
+- [Paired checkpoint-2 monitor](checkpoint2-monitor-VNDDJq/summary.json): all 360
+  samples retained; diagnostic monitor only, not Q15 acceptance. Protocol committed
+  in `4181103` before runs. [Rollout actions (a)–(f)](ROLLOUT.md) remain owner-UNVERIFIED.
 - [Checkpoint 1 and review revision](CHECKPOINT-1.md): scope, per-item ran/read record,
   SDK outcomes, environment-specific bundles and owner stop points.
 - [Speed interpretation and results](SPEED-CHECKPOINT-1.md): diagnostic protocol and provenance,

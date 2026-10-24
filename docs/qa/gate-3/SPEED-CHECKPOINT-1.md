@@ -27,6 +27,57 @@ either way under the earlier six-run diagnostic reading rule. This smaller monit
 is expressly owner-requested and is neither acceptance nor evidence of no regression.
 Acceptance stays at the end of G3 under Q15, without changing strict p95 <100 ms.
 
+## Checkpoint 2 monitor results (2026-10-25)
+
+Protocol was committed/pushed as `4181103` before this session. [Manifest](checkpoint2-monitor-VNDDJq/manifest.json):
+unchanged main `d16fe58`, integrated branch `fdb9a2f`, A1 B1 A2 B2 A3 B3.
+One session, no replacement run, no profile or no-probe variant. All 360 raw samples
+and command outputs are retained in separate run directories. [Derived summary](checkpoint2-monitor-VNDDJq/summary.json)
+adds sequence/destination-visit annotations to the older main format without changing
+its raw samples. The monitor helper now emits those annotations directly too.
+
+| Side | Runs / samples | >100 ms / pooled share | Pooled p95 ms | Pooled p99 ms | Slow repeat tasks→project |
+|---|---:|---:|---:|---:|---:|
+| A: unchanged main | 3 / 180 | 3 / 1.67% | 70.6 | 145.6 | 2 |
+| B: integrated branch | 3 / 180 | 2 / 1.11% | 72.9 | 100.9 | 0 |
+
+| Pair | A median / p95 / max ms | B median / p95 / max ms | A / B >100 ms |
+|---|---|---|---:|
+| 1 | 51.35 / 90.6 / 274.4 | 52.10 / 69.8 / 99.1 | 2 / 0 |
+| 2 | 49.75 / 56.8 / 93.0 | 54.00 / 72.3 / 100.9 | 0 / 1 |
+| 3 | 51.95 / 67.0 / 104.6 | 55.55 / 79.5 / 121.9 | 1 / 1 |
+
+Per-route-pair total / slow counts (all three runs on each side):
+
+| Route pair | Main | Branch |
+|---|---:|---:|
+| / → /tasks | 60 / 1 | 60 / 2 |
+| /tasks → /projects/project-1 | 60 / 2 | 60 / 0 |
+| /projects/project-1 → / | 60 / 0 | 60 / 0 |
+
+Every transition >100 ms:
+
+| Run | Sequence | Route pair | Destination visit | ms |
+|---|---:|---|---:|---:|
+| A1 | 50 | /tasks → /projects/project-1 | 17 (repeat) | 274.4 |
+| A1 | 53 | /tasks → /projects/project-1 | 18 (repeat) | 145.6 |
+| B2 | 1 | / → /tasks | 1 | 100.9 |
+| A3 | 1 | / → /tasks | 1 | 104.6 |
+| B3 | 1 | / → /tasks | 1 | 121.9 |
+
+Reading: mixed, not clearly worse for the branch in this session. Branch pooled p95
+is 2.3 ms higher and medians are slightly higher; pooled p99, >100 ms share and slow
+repeat-project count are lower. Pairs also differ, so there is no consistent branch
+tail increase. Three runs per side cannot establish a regression or its absence.
+All commands met their numeric p95 check, but this is NOT acceptance under Q15.
+The retained G2/reviewer failures and thin-margin risk remain. No app optimization or
+additional diagnostic was made from these results. Navigation-attributed requests
+remain zero, and listener registrations/active handles stay three in all six runs.
+Final functional corrections `2a71db0` followed this monitor (recovered edit identity,
+pending project scope and native-picker Enter behavior); see CHECKPOINT-2.md. These
+timings cover `fdb9a2f`, not the final corrections. No additional timing session was run;
+final-head acceptance and no-regression conclusions remain unestablished.
+
 ## Review diagnostic protocol (2026-10-24)
 
 This protocol and the follow-up profile declaration were first committed with the
