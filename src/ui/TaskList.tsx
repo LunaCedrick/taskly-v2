@@ -1,9 +1,20 @@
-import { useRef, type KeyboardEvent, type FocusEvent } from 'react'
+import { useLayoutEffect, useRef, type KeyboardEvent, type FocusEvent } from 'react'
 import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual'
 import type { Task } from '../lib/types'
 import { useStore, setFocusedRow } from '../store'
 import { TaskRow } from './TaskRow'
 import styles from './TaskList.module.css'
+import { openOverlay, toggleTask, writesReady } from '../store/write-actions'
+
+function rowClick(event: React.MouseEvent<HTMLDivElement>) {
+  const action = (event.target as HTMLElement).closest<HTMLElement>('[data-row-action]')
+  const taskId = action?.closest<HTMLElement>('[data-task-id]')?.dataset.taskId
+  if (!action || !taskId) return
+  const task = useStore.getState().tasks.find((item) => item.id === taskId)
+  if (!task) return
+  if (action.dataset.rowAction === 'complete') toggleTask(task)
+  else openOverlay(action.dataset.rowAction === 'delete' ? 'delete-task' : 'task', task.projectId, task.id)
+}
 
 export function TaskList({ tasks, label, listId }: { tasks: readonly Task[]; label: string; listId: string }) {
   const enabled = useStore((state) => state.virtualize) && tasks.length > 200
@@ -15,12 +26,17 @@ function useRows(listId: string, tasks: readonly Task[]) {
   const projects = useStore((state) => state.projects)
   const now = useStore((state) => state.now)
   const focused = useStore((state) => state.focusedRows[listId] ?? 0)
+  const mutable = useStore((state) => state.projects.some((p) => p.id === listId) && writesReady(state))
+  const jobs = useStore((state) => state.jobs)
+  const reveal = useStore((state) => state.revealTaskId)
+  const revealIndex = reveal ? tasks.findIndex((task) => task.id === reveal) : -1
   const active = Math.min(focused, Math.max(0, tasks.length - 1))
   const row = (index: number) => {
     const task = tasks[index]
     const project = projects.find((item) => item.id === task.projectId)
     return project ? <TaskRow key={task.id} task={task} project={project}
-      now={now} position={index + 1} total={tasks.length} tabIndex={index === active ? 0 : -1} />
+      now={now} position={index + 1} total={tasks.length} tabIndex={index === active ? 0 : -1}
+      mutable={mutable} pending={jobs.some((job) => job.taskIds.includes(task.id))} />
       : null
   }
   const onFocus = (event: FocusEvent<HTMLDivElement>) => {
@@ -28,7 +44,7 @@ function useRows(listId: string, tasks: readonly Task[]) {
     const index = item ? tasks.findIndex((task) => task.id === item.dataset.taskId) : -1
     if (index >= 0 && index !== active) setFocusedRow(listId, index)
   }
-  return { active, row, onFocus }
+  return { active, row, onFocus, revealIndex }
 }
 
 function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
@@ -44,7 +60,7 @@ function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
 
 function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; label: string; listId: string }) {
   const scrollRef = useRef<HTMLDivElement>(null)
-  const { active, row, onFocus } = useRows(listId, tasks)
+  const { active, row, onFocus, revealIndex } = useRows(listId, tasks)
   const tokens = getComputedStyle(document.documentElement)
   const rowHeight = parseFloat(tokens.getPropertyValue('--row-height'))
   const initialHeight = tokens.getPropertyValue('--desktop-display').trim() === 'none'
@@ -61,8 +77,12 @@ function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
     overscan: 3,
     getItemKey: (index) => tasks[index].id,
     // Keep the focused row mounted when pointer scrolling moves it out of view.
-    rangeExtractor: (range) => [...new Set([...defaultRangeExtractor(range), active])].sort((a, b) => a - b),
+    rangeExtractor: (range) => [...new Set([...defaultRangeExtractor(range), active,
+      ...(revealIndex >= 0 ? [revealIndex] : [])])].sort((a, b) => a - b),
   })
+  useLayoutEffect(() => {
+    if (revealIndex >= 0) virtualizer.scrollToIndex(revealIndex, { align: 'auto' })
+  }, [revealIndex, virtualizer])
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const next = keyboardIndex(event, active, tasks.length)
     if (next === undefined) return
@@ -71,6 +91,7 @@ function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
     requestAnimationFrame(() => scrollRef.current?.querySelector<HTMLElement>(`[data-task-id="${tasks[next].id}"]`)?.focus())
   }
   return <div ref={scrollRef} className={styles.scroll} onKeyDown={onKeyDown} onFocus={onFocus}
+    onClick={rowClick}
     role="list" aria-label={label} data-virtualized="true">
     {/* Virtual offsets are measured geometry, not design values. */}
     <div className={styles.virtualCanvas} role="presentation" style={{ height: virtualizer.getTotalSize() }}>
@@ -82,8 +103,13 @@ function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
 
 function PlainTaskList({ tasks, label, listId }: { tasks: readonly Task[]; label: string; listId: string }) {
   const ref = useRef<HTMLDivElement>(null)
-  const { active, row, onFocus } = useRows(listId, tasks)
+  const { active, row, onFocus, revealIndex } = useRows(listId, tasks)
+  useLayoutEffect(() => {
+    if (revealIndex >= 0) ref.current?.querySelector<HTMLElement>(`[data-task-id="${tasks[revealIndex].id}"]`)
+      ?.scrollIntoView?.({ block: 'nearest' })
+  }, [revealIndex, tasks])
   return <div ref={ref} className={styles.scroll} role="list" aria-label={label} onFocus={onFocus} data-virtualized="false"
+    onClick={rowClick}
     onKeyDown={(event) => {
       const next = keyboardIndex(event, active, tasks.length)
       if (next === undefined) return

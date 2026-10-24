@@ -6,9 +6,11 @@ import './styles/tokens.css'
 import './styles/global.css'
 import { setVirtualize } from './store'
 import { startSession } from './features/auth/session'
+import { installUnloadGuard } from './lib/mutations'
 
 const stopSession = startSession()
-import.meta.hot?.dispose(stopSession)
+const stopUnloadGuard = installUnloadGuard()
+import.meta.hot?.dispose(() => { stopSession(); stopUnloadGuard() })
 
 // An informational benchmark switch; never exposed as a product control.
 if (new URLSearchParams(window.location.search).get('virtualize') === 'off') setVirtualize(false)

@@ -36,7 +36,7 @@ export function startSubscriptions(uid: string): Promise<void> {
       const database = adapter.initializeBrowserFirestore()
       current.controller = listeners.createListenerSession(database, uid, { observer })
       installMutationSession(writes.createMutationWriter(database, uid),
-        () => session === current && token === generation)
+        () => session === current && token === generation, uid)
       if (import.meta.env.MODE === 'e2e') probe?.installWriteTestProbe(database)
     } catch (error) {
       if (session !== current || token !== generation) return

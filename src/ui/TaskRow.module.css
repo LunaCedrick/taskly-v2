@@ -14,3 +14,8 @@
 .priority[data-priority='high'] .dot { background:var(--prio-high); }
 .priority[data-priority='medium'] .dot { background:var(--prio-med); }
 .priority[data-priority='low'] .dot { background:var(--prio-low); }
+.checkTarget { min-width:var(--touch); min-height:var(--touch); display:flex; align-items:center; justify-content:center;
+  background:var(--clear); border:none; padding:var(--space-0); flex-shrink:var(--zero); color:var(--ink); }
+.actions { display:flex; flex-shrink:var(--zero); }
+.actions button { min-width:var(--touch); min-height:var(--touch); background:var(--clear); color:var(--ink); border:none;
+  padding:var(--space-1); font:inherit; }

@@ -12,13 +12,18 @@ export interface TaskRowProps {
   position: number
   total: number
   tabIndex?: number
+  mutable?: boolean
+  pending?: boolean
 }
 
-export const TaskRow = memo(function TaskRow({ task, project, now, position, total, tabIndex }: TaskRowProps) {
+export const TaskRow = memo(function TaskRow({ task, project, now, position, total, tabIndex, mutable, pending }: TaskRowProps) {
   const group = dueGroup(task, now)
   return <div role="listitem" aria-setsize={total} aria-posinset={position}
     className={styles.row} data-task-id={task.id} data-tone={group} tabIndex={tabIndex}>
-    <span className={styles.checkbox} aria-hidden="true">{task.status === 'done' && <Icon name="check" />}</span>
+    {mutable ? <button className={styles.checkTarget} role="checkbox" aria-checked={task.status === 'done'}
+      aria-label={`Complete ${task.title}`} data-row-action="complete" disabled={pending}>
+      <span className={styles.checkbox} aria-hidden="true">{task.status === 'done' && <Icon name="check" />}</span>
+    </button> : <span className={styles.checkbox} aria-hidden="true">{task.status === 'done' && <Icon name="check" />}</span>}
     <div className={styles.content}>
       <span className={styles.title} title={task.title}>{task.title}</span>
       <div className={styles.meta}>
@@ -32,11 +37,15 @@ export const TaskRow = memo(function TaskRow({ task, project, now, position, tot
       <span className="sr-only">{task.priority} priority</span>
     </span>}
     <span className="sr-only">Status: {task.status.replace('-', ' ')}</span>
+    {mutable && <span className={styles.actions}>
+      <button data-row-action="edit" disabled={pending} aria-label={`Edit ${task.title}`}>Edit</button>
+      <button data-row-action="delete" disabled={pending} aria-label={`Delete ${task.title}`}>Delete</button>
+    </span>}
   </div>
 }, (previous, next) => {
   if (previous.task !== next.task || previous.project !== next.project
     || previous.position !== next.position || previous.total !== next.total
-    || previous.tabIndex !== next.tabIndex) return false
+    || previous.tabIndex !== next.tabIndex || previous.mutable !== next.mutable || previous.pending !== next.pending) return false
   if (previous.now === next.now) return true
   return dueGroup(next.task, previous.now) === dueGroup(next.task, next.now)
     && dueLabel(next.task, previous.now) === dueLabel(next.task, next.now)

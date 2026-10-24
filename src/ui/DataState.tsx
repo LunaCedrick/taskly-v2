@@ -6,11 +6,13 @@ import { retrySubscriptions } from '../lib/subscriptions'
 import { Button, Skeleton } from './Controls'
 import { Icon } from './Icon'
 import styles from './DataState.module.css'
+import { openOverlay, writesReady } from '../store/write-actions'
 
-export function DataState({ children, emptyProject, notFound = false }: {
+export function DataState({ children, emptyProject, notFound = false, projectId }: {
   children?: ReactNode
   emptyProject?: string
   notFound?: boolean
+  projectId?: string
 }) {
   const view = useStore(selectDataView)
   if (view === 'loading') return <div className={styles.loading} role="status"
@@ -35,13 +37,13 @@ export function DataState({ children, emptyProject, notFound = false }: {
     <span className={styles.marker}><Icon name="folder" /></span>
     <h2>Nothing here yet</h2>
     <p>Create a project to start organizing your tasks.</p>
-    <Button aria-disabled="true"><Icon name="plus" />Create your first project</Button>
+    <Button disabled={!writesReady(useStore.getState())} onClick={() => openOverlay('project')}><Icon name="plus" />Create your first project</Button>
   </div>
   if (emptyProject !== undefined) return <div className={styles.panel} data-data-state="empty">
     <span className={styles.marker}><Icon name="tasks" /></span>
     <h2>No tasks in {emptyProject}</h2>
     <p>Add the first task to get this project moving.</p>
-    <Button aria-disabled="true"><Icon name="plus" />Add a task</Button>
+    <Button data-add-task onClick={() => openOverlay('task', projectId)}><Icon name="plus" />Add a task</Button>
   </div>
   return children
 }

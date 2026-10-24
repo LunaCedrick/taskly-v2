@@ -51,6 +51,9 @@
   --auth-values-padding:var(--space-7) 64px; --auth-title-size:40px;
   --auth-body-size:16px; --auth-button-height:48px; --auth-session-mark:64px;
   --auth-loading-width:224px; --auth-loading-fill:40%;
+  --dialog-width:560px; --quick-width:430px; --overlay-max-height:90dvh;
+  --overlay-margin:auto; --overlay-radius:var(--radius-lg); --form-columns:repeat(2,minmax(0,1fr));
+  --toast-bottom:var(--space-5); --z-toast:50;
 }
 /* The single approved breakpoint exception: CSS variables cannot be used in media conditions. */
 @media (width < 820px) {
@@ -67,6 +70,8 @@
     --list-height:calc(100dvh - var(--list-phone-offset));
     --auth-columns:minmax(0,1fr); --auth-brand-offset:var(--space-5);
     --auth-form-padding:var(--space-4); --auth-title-size:34px;
+    --overlay-margin:auto auto var(--space-0); --overlay-radius:var(--radius-lg) var(--radius-lg) var(--zero) var(--zero);
+    --form-columns:minmax(0,1fr); --toast-bottom:calc(var(--tab-height) + var(--fab) + var(--space-6));
   }
 }
 @media (prefers-reduced-motion:reduce) {

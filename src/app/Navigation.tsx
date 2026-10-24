@@ -5,6 +5,7 @@ import { Icon } from '../ui/Icon'
 import styles from './Shell.module.css'
 import { UserMenu } from '../features/auth/UserMenu'
 import { ProjectNavigationItem } from './ProjectNavigationItem'
+import { openOverlay, writesReady } from '../store/write-actions'
 
 export const Navigation = memo(function Navigation() {
   const projects = useStore((state) => state.projects)
@@ -17,8 +18,14 @@ export const Navigation = memo(function Navigation() {
       <NavLink to="/tasks" onClick={() => setDrawerOpen(false)}><Icon name="tasks" />My Tasks</NavLink>
       <p className={styles.navLabel}>Projects</p>
       {projects.map((project) => <ProjectNavigationItem project={project} key={project.id} />)}
-      <button type="button" className={styles.newProject} aria-disabled="true"><Icon name="plus" />New project</button>
+      <NewProjectControl />
     </nav>
     <UserMenu />
   </>
 })
+
+function NewProjectControl() {
+  const ready = useStore(writesReady)
+  return <button type="button" className={styles.newProject} disabled={!ready}
+    onClick={() => openOverlay('project')}><Icon name="plus" />New project</button>
+}

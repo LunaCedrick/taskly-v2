@@ -24,7 +24,8 @@ export function makeFakeData(count = 1000, now = FIXTURE_NOW) {
       id: `task-${index + 1}`, projectId: projects[index % projects.length].id,
       title: `${titles[index % titles.length]}${index >= titles.length ? ` · ${index + 1}` : ''}`,
       description: 'Deterministic Gate 0 sample task', category: '',
-      dueDate: index % 13 === 12 ? null : dueDate.getTime(), dueHasTime: index % 2 === 1,
+      dueDate: index % 13 === 12 ? null : index % 2 ? dueDate.getTime()
+        : Date.UTC(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate()), dueHasTime: index % 2 === 1,
       priority: priorities[index % priorities.length], status,
       createdAt: now - index * 60_000, updatedAt: now,
       completedAt: status === 'done' ? now : null,

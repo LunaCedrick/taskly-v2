@@ -28,33 +28,33 @@ it('does not turn cache-only documents into initial readiness or first-run', () 
   expect(screen.queryByRole('listitem')).not.toBeInTheDocument()
 })
 
-it('renders exact first-run copy and a visible, focusable inert G0-style action', () => {
+it('renders exact first-run copy and a working project action', () => {
   applySession({ uid: 'empty-owner', displayName: 'Owner', photoURL: null })
   publishSessionData('empty-owner', { streams: { projects: confirmedStream, tasks: confirmedStream } })
   render(<MemoryRouter><Dashboard /></MemoryRouter>)
   expect(screen.getByRole('heading', { name: 'Nothing here yet' })).toBeInTheDocument()
   expect(screen.getByText('Create a project to start organizing your tasks.')).toBeInTheDocument()
   const action = screen.getByRole('button', { name: 'Create your first project' })
-  expect(action).toHaveAttribute('aria-disabled', 'true')
+  expect(action).not.toHaveAttribute('aria-disabled')
   expect(action).not.toBeDisabled()
   action.focus()
   expect(action).toHaveFocus()
   fireEvent.click(action)
   expect(screen.getByRole('heading', { name: 'Nothing here yet' })).toBeInTheDocument()
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  expect(useStore.getState().overlay).toBe('project')
 })
 
-it('renders exact empty-project copy with the same inert action treatment', () => {
+it('renders exact empty-project copy with the working add-task action', () => {
   seedStore(0)
   render(<MemoryRouter initialEntries={['/projects/project-1']}>
     <Routes><Route path="/projects/:id" element={<ProjectPage />} /></Routes>
   </MemoryRouter>)
   expect(screen.getByText('Add the first task to get this project moving.')).toBeInTheDocument()
   const action = screen.getByRole('button', { name: 'Add a task' })
-  expect(action).toHaveAttribute('aria-disabled', 'true')
+  expect(action).not.toHaveAttribute('aria-disabled')
   expect(action).not.toBeDisabled()
   fireEvent.click(action)
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  expect(useStore.getState().overlay).toBe('task')
 })
 
 it('announces project/task errors, retries explicitly, and restores retained data without a skeleton', () => {
