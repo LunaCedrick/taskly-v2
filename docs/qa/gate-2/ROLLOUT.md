@@ -1,6 +1,6 @@
 # G2 owner rollout handoff
 
-G2 completion combines the recorded local checks with the owner's accepted speed record, rules deployment, published-rules confirmation and deployed-preview check under Q03. These are now verified, and G2 is complete pending owner merge. Production stays **UNVERIFIED** until after merge. No rules deployment, console change, live seed, PR creation or merge has been performed by the agent.
+G2 completion combines the recorded local checks with the owner's accepted speed record, rules deployment, published-rules confirmation and deployed-preview check under Q03. G2 merged through plain merge commit `0374036` (PR #5); Production is **VERIFIED by owner, 2026-10-24** as recorded below. No rules deployment, console change, live seed, PR creation or merge has been performed by the agent.
 
 | When | Owner action | Current status |
 |---|---|---|
@@ -12,11 +12,11 @@ G2 completion combines the recorded local checks with the owner's accepted speed
 | After rules review, before merge | Owner deployed `firestore.rules` from `f92fb4b` with `firebase deploy --only firestore:rules --project taskly-v2`. Preview and Production share this Firebase project (owner-verified 2026-10-23), so the rules deploy and any rollback affect both. | VERIFIED by owner, 2026-10-23; agent never deploys |
 | Immediately after rules deployment | Console Rules tab showed publication at Oct 23, 3:54pm; the text matches the reviewed file from `f92fb4b`. | VERIFIED by owner, 2026-10-23 |
 | After rules deployment, before merge | Preview at `f92fb4b`, fresh Chrome profile, 155.0.8059.85 (Official Build) (64-bit) (cohort: Stable), Windows 11: real Google sign-in worked; first-run shown; no load error after 15 s or on Dashboard/My Tasks; 0 console errors; reload kept the session; sign-out returned to sign-in. | VERIFIED by owner, 2026-10-23 |
-| After merge | Owner verifies Production sign-in and first-run/console behavior. | UNVERIFIED |
+| After merge | Production sign-in worked; first-run state with no load error; `/tasks` loaded directly (no 404); zero console errors. | VERIFIED by owner, 2026-10-24 |
 
 Expected stable alias: https://taskly-v2-git-gate-2-store-and-sync-lunacedricks-projects.vercel.app/
 
-Read-only HEAD on 2026-10-23 returned HTTP 302 to `vercel.com`, consistent with deployment protection. The agent did not authenticate past that protection. The owner subsequently verified the setup, shared-project identity, deployment, console ruleset match and preview behavior recorded above. These are owner-reported results, not independent agent verification. Production remains **UNVERIFIED** until after merge.
+Read-only HEAD on 2026-10-23 returned HTTP 302 to `vercel.com`, consistent with deployment protection. The agent did not authenticate past that protection. The owner subsequently verified the setup, shared-project identity, deployment, console ruleset match and preview behavior on 2026-10-23, then Production on 2026-10-24. These are owner-reported results, not independent agent verification. The same Production check also covers G1's outstanding Production items: build Ready, sign-in works and the `/tasks` deep link does not 404.
 
 ## Owner deployment and published-rules confirmation
 
