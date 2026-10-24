@@ -20,7 +20,7 @@ interface Diagnostics {
 
 function fixtureRun(mode: 'exit' | 'timeout' | 'trace-pending' | 'success' | 'java-missing' | 'java-old'
   | 'cli-missing' | 'cli-mismatch' | 'collision', port?: number, trace = false) {
-  const base = resolve('test-results/gate-2')
+  const base = resolve('test-results/gate-3')
   mkdirSync(base, { recursive: true })
   const fixture = mkdtempSync(join(base, 'runner-fixture-'))
   const fakeCli = join(fixture, 'node_modules/firebase-tools/lib/bin')
@@ -89,10 +89,10 @@ globalThis.fetch = async (url) => {
       TASKLY_TRACE_PRIVATE_SENTINEL: 'private-tracer-fixture-value', FIREBASE_DEBUG_PATH: join(fixture, 'firebase-debug.log') },
   })
   expect(result.error).toBeUndefined()
-  const directories = readdirSync(join(fixture, 'test-results/gate-2'))
+  const directories = readdirSync(join(fixture, 'test-results/gate-3'))
     .filter((name) => name.startsWith('emulator-'))
   expect(directories).toHaveLength(1)
-  const artifacts = join(fixture, 'test-results/gate-2', directories[0])
+  const artifacts = join(fixture, 'test-results/gate-3', directories[0])
   const diagnostics = JSON.parse(readFileSync(join(artifacts, 'startup.json'), 'utf8')) as Diagnostics
   const output = readFileSync(join(artifacts, 'output.log'), 'utf8')
   return { result, diagnostics, output, artifacts, fixture }

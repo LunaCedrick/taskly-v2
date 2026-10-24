@@ -11,7 +11,7 @@ export default defineConfig({
   retries: 0,
   timeout: 45_000,
   reporter: 'list',
-  outputDir: './test-results/playwright',
+  outputDir: `./test-results/gate-3/${process.env.TASKLY_EVIDENCE_RUN ?? 'manual'}/playwright`,
   use: {
     baseURL: 'http://127.0.0.1:4173',
     browserName: 'chromium',

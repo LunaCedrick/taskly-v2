@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { stripVTControlCharacters } from 'node:util'
 
-export const BUNDLE_GRAPH_PATH = 'test-results/gate-2/bundle-graph.json'
+export const BUNDLE_GRAPH_PATH = 'test-results/gate-3/bundle-graph.json'
 const rebuild = 'Run npm run build before measuring.'
 const hash = (source) => createHash('sha256').update(source).digest('hex')
 

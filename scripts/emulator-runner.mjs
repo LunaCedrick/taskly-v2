@@ -32,10 +32,11 @@ export function emulatorEnvironment(recordEvidence = false) {
 
 export async function startEmulatorHarness(options = {}) {
   const root = resolve(options.root ?? process.cwd())
-  const qaDirectory = join(root, 'test-results/gate-2')
+  const qaDirectory = join(root, 'test-results/gate-3')
   await mkdir(qaDirectory, { recursive: true })
   const diagnosticsDirectory = await mkdtemp(join(qaDirectory, 'emulator-'))
   const environment = emulatorEnvironment(options.recordEvidence)
+  environment.TASKLY_EVIDENCE_RUN = diagnosticsDirectory.split(/[\\/]/).at(-1)
   const owner = createProcessOwner(root, environment)
   const outputPath = join(diagnosticsDirectory, 'output.log')
   await writeFile(outputPath, '')
@@ -132,7 +133,7 @@ export async function startEmulatorHarness(options = {}) {
     await waitForEmulators(emulator, startup)
     startup.status = 'ready'
     console.log(`Auth ready ${startup.services.auth.readyMs} ms; Firestore ready ${startup.services.firestore.readyMs} ms; first output ${startup.firstOutputMs} ms`)
-    const defaultOutDir = join(root, 'test-results/gate-2/e2e-dist')
+    const defaultOutDir = join(root, 'test-results/gate-3/e2e-dist')
     return {
       environment, diagnosticsDirectory, startup,
       run: owner.run,

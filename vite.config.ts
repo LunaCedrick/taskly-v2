@@ -33,5 +33,5 @@ export function bundleGraphPlugin({ graphPath = BUNDLE_GRAPH_PATH } = {}): Plugi
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), bundleGraphPlugin(mode === 'e2e'
-    ? { graphPath: 'test-results/gate-2/e2e-bundle-graph.json' } : {})],
+    ? { graphPath: 'test-results/gate-3/e2e-bundle-graph.json' } : {})],
 }))
