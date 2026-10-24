@@ -8,7 +8,7 @@ import { attributeWindow, networkSummary, trackNetwork } from './fixtures/networ
 // Browser tracing changes CPU-throttled timings; retain raw measurements instead.
 test.use({ trace: 'off' })
 
-type Measurement = { from: string; to: string; milliseconds: number }
+type Measurement = { sequence: number; destinationVisit: number; from: string; to: string; milliseconds: number }
 const TRANSITIONS_PER_RUN = 60
 
 function median(sorted: number[]) {
@@ -42,6 +42,7 @@ async function measureRoutes(page: Page, virtualize: boolean) {
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
   const measurements: Measurement[] = []
+  const visits: Record<string, number> = { '/': 1 }
   const windows: ReturnType<typeof attributeWindow>[] = []
   const idleStart = await page.evaluate(() => Date.now())
   await page.waitForTimeout(2000)
@@ -86,13 +87,22 @@ async function measureRoutes(page: Page, virtualize: boolean) {
       return result?.duration !== undefined
     })
     const measured = await page.evaluate(() => window.__routeMeasurement!)
-    measurements.push({ from, to: target.path, milliseconds: Number(measured.duration!.toFixed(2)) })
+    visits[target.path] = (visits[target.path] ?? 0) + 1
+    measurements.push({ sequence: index + 1, destinationVisit: visits[target.path], from,
+      to: target.path, milliseconds: Number(measured.duration!.toFixed(2)) })
     windows.push(attributeWindow(network, measured.startEpoch!, measured.endEpoch!, idleKinds))
   }
   const sorted = measurements.map((item) => item.milliseconds).sort((a, b) => a - b)
   const registrationsAfter = await page.evaluate(() => window.__TASKLY_G2_SYNC_TEST__!.snapshot())
   const slowTransitions = measurements.filter((transition) => transition.milliseconds > 100)
   const slowCountsByRoute: Record<string, number> = {}
+  const countsByRoutePair: Record<string, { total: number; over100Ms: number }> = {}
+  for (const transition of measurements) {
+    const pair = `${transition.from} -> ${transition.to}`
+    const counts = countsByRoutePair[pair] ??= { total: 0, over100Ms: 0 }
+    counts.total++
+    if (transition.milliseconds > 100) counts.over100Ms++
+  }
   for (const transition of slowTransitions) {
     const route = `${transition.from} -> ${transition.to}`
     slowCountsByRoute[route] = (slowCountsByRoute[route] ?? 0) + 1
@@ -105,7 +115,7 @@ async function measureRoutes(page: Page, virtualize: boolean) {
     p95: sorted[Math.ceil(sorted.length * .95) - 1],
     max: sorted[sorted.length - 1],
     transitionsOver100Ms: sorted.filter((duration) => duration > 100).length,
-    slowTransitions, slowCountsByRoute, windows, idleRequests: idle.map(networkSummary),
+    slowTransitions, slowCountsByRoute, countsByRoutePair, windows, idleRequests: idle.map(networkSummary),
     establishedTransportTraffic: attributed.filter((request) => request.attribution === 'established-idle-transport'),
     outsideWindowRequests: network.filter((request) => !windows.some((window) => request.start >= window.start
       && request.start <= window.end)).map(networkSummary),

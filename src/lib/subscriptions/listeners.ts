@@ -1,5 +1,5 @@
 import { collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore'
-import type { Firestore } from 'firebase/firestore'
+import type { Firestore, QueryDocumentSnapshot } from 'firebase/firestore'
 import { decodeDocument } from '../firebase/firestore-codec'
 import type { StreamDocuments, StreamName } from '../types'
 import type { EntityChange } from '../sync-changes'
@@ -12,6 +12,7 @@ export interface SubscriptionEvent {
   type: 'register' | 'stop' | 'snapshot' | 'timeout' | 'error' | 'ready'
   stream: StreamName
   fromCache?: boolean
+  hasPendingWrites?: boolean
   size?: number
   changes?: number
   message?: string
@@ -21,6 +22,7 @@ export interface SubscriptionEvent {
 }
 export interface ListenerObserver {
   event: (event: SubscriptionEvent) => void
+  inspect?: (stream: StreamName, document: QueryDocumentSnapshot) => void
   controls?: (controls: { fail: (stream: StreamName) => void }) => void
 }
 interface Options {
@@ -79,8 +81,12 @@ export function createListenerSession(database: Firestore, uid: string, options:
         const callbackAt = options.observer ? now() : undefined
         try {
           const changes: EntityChange<StreamDocuments[S]>[] = snapshot.docChanges({ includeMetadataChanges: true })
-            .map((change) => ({ id: change.doc.id, type: change.type,
-              ...(change.type === 'removed' ? {} : { data: decodeDocument(stream, change.doc.id, change.doc.data()) }) }))
+            .map((change) => {
+              options.observer?.inspect?.(stream, change.doc)
+              return { id: change.doc.id, type: change.type,
+                ...(change.type === 'removed' ? {} : { data: decodeDocument(stream, change.doc.id,
+                  change.doc.data({ serverTimestamps: 'estimate' })) }) }
+            })
           const fromCache = snapshot.metadata.fromCache
           handle.state = { ...handle.state, fromCache,
             ...(fromCache ? {} : { ready: true, error: null }) }
@@ -92,6 +98,7 @@ export function createListenerSession(database: Firestore, uid: string, options:
           if (!fromCache) handle.reconciled = true
           batch.enqueue(stream, changes, handle.state, ids)
           record({ type: 'snapshot', stream, fromCache, size: snapshot.size, changes: changes.length,
+            hasPendingWrites: snapshot.metadata.hasPendingWrites,
             callbackAt, decodedAt: options.observer ? now() : undefined })
           if (!fromCache) record({ type: 'ready', stream })
         } catch (error) {

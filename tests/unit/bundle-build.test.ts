@@ -123,7 +123,11 @@ it('eliminates the observer module, marker and installer call from real producti
   })
   for (const output of outputs) {
     if (output.type !== 'chunk') continue
-    expect(output.code).not.toMatch(/__TASKLY_G2_SYNC_TEST__|test-observer|installTestObserver/)
+    expect(output.code).not.toMatch(/__TASKLY_G2_SYNC_TEST__|test-observer|installTestObserver|__TASKLY_G3_WRITES_TEST__|installWriteTestProbe|write-test-probe/)
     expect(Object.keys(output.modules).some((id) => id.includes('/subscriptions/test-observer'))).toBe(false)
+    expect(Object.keys(output.modules).some((id) => id.includes('/subscriptions/write-test-probe'))).toBe(false)
   }
+  const graph = analyzeBundle(outputs)
+  expect(graph.boundaryPassed).toBe(true)
+  expect(graph.initial.gzipBytes).toBeLessThan(200_000)
 }, 20_000)
