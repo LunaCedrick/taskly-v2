@@ -2,7 +2,7 @@ import { useStore } from './index'
 import { emptyDraft, type Draft, type Overlay, type Toast } from './write-slice'
 import { dateInput, parseDue, timeInput } from '../lib/task-dates'
 import { defaultProject, taskPlan, projectPlan, deleteTaskPlan, cascadePlan, type TaskValues } from '../lib/write-plans'
-import { holdPendingWrites, pendingTasksFor, submitMutation } from '../lib/mutations'
+import { holdPendingWrites, pendingProjectsFor, pendingTasksFor, submitMutation } from '../lib/mutations'
 import type { WriteOperation } from '../lib/mutations/types'
 import type { DataSlice } from './data-slice'
 import type { Task } from '../lib/types'
@@ -31,7 +31,8 @@ export function recoverDraft(toast: Toast) {
   if (toast.projectRecovery) useStore.setState({ overlay: 'project', fieldError: '',
     projectName: toast.projectRecovery.name, editProjectId: toast.projectRecovery.projectId ?? null,
     projectRetry: toast.projectRecovery.operations })
-  else if (toast.recovery) useStore.setState({ draft: { ...toast.recovery }, overlay: 'task', editTaskId: null, fieldError: '' })
+  else if (toast.recovery) useStore.setState({ draft: { ...toast.recovery }, overlay: 'task',
+    editTaskId: toast.recovery.originalTaskId ?? null, fieldError: '' })
   dismissToast(toast.id)
 }
 export const updateDraft = (patch: Partial<Draft>) => useStore.setState((state) => ({
@@ -70,6 +71,7 @@ export function closeOverlay() {
 export function relevantPending(taskIds: readonly string[], projectId?: string) {
   const state = useStore.getState()
   return pendingTasksFor(state.dataUid).some((taskId) => taskIds.includes(taskId))
+    || Boolean(projectId && pendingProjectsFor(state.dataUid).includes(projectId))
     || state.jobs.some((job) => job.projectId === projectId && projectId !== undefined
     || job.taskIds.some((taskId) => taskIds.includes(taskId)))
 }
@@ -84,7 +86,7 @@ async function perform(operations: readonly WriteOperation[], options: {
   const job = { id: id(), taskIds, projectId: options.projectId }
   try {
     useStore.setState({ jobs: [...state.jobs, job] })
-    const promise = submitMutation(operations)
+    const promise = submitMutation(operations, state.rawTasks.filter((task) => taskIds.includes(task.id)).map((task) => task.projectId))
     options.local?.()
     if (options.toast) addToast(options.toast)
     const result = await promise
@@ -110,9 +112,10 @@ function taskValues(draft: Draft): TaskValues {
 export function saveTask(quick = false) {
   const state = useStore.getState()
   if (!writesReady(state)) return
-  const submitted = { ...state.draft }
+  const submitted = { ...state.draft, originalTaskId: state.editTaskId ?? undefined }
   try {
     const previous = state.tasks.find((task) => task.id === state.editTaskId)
+    if (state.editTaskId && !previous) throw new Error('Could not save your change')
     const operations = submitted.retry ?? taskPlan(taskValues(submitted), state.projects, id, previous)
     void perform(operations, { draft: submitted,
       toast: previous ? undefined : `Task added to ${state.projects.find((p) => p.id === submitted.projectId)?.name}`,

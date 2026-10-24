@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { seedStore } from './data-fixtures'
 import { publishSessionData, useStore } from '../../src/store'
 import { clearMutationSession, installMutationSession, pendingWriteCount } from '../../src/lib/mutations'
-import { deleteProject, openOverlay, recoverDraft, saveTask, updateDraft, writesReady } from '../../src/store/write-actions'
+import { deleteProject, openOverlay, recoverDraft, relevantPending, saveTask, updateDraft, writesReady } from '../../src/store/write-actions'
 import type { WriteOperation } from '../../src/lib/mutations/types'
 
 afterEach(() => clearMutationSession())
@@ -68,4 +68,37 @@ it('retains partial deletion, stops on failure and retries remaining tasks with 
   expect(batches.at(-1)?.[1].id).toBe(summary)
   expect(pendingWriteCount()).toBe(0)
   expect(useStore.getState().deletedProjectId).toBe('project-1')
+})
+
+it('retains edit identity when a recovered failed edit is changed before retry', async () => {
+  const state = seedStore(1)
+  const writer = vi.fn(async (operations: readonly WriteOperation[]) => { void operations; throw new Error('denied') })
+  installMutationSession(writer, () => true, state.dataUid!)
+  openOverlay('task', 'project-1', state.tasks[0].id)
+  updateDraft({ title: 'Failed edit' })
+  saveTask()
+  await vi.waitFor(() => expect(useStore.getState().jobs).toHaveLength(0))
+  const toast = useStore.getState().toasts.find((item) => item.recovery)!
+  recoverDraft(toast)
+  expect(useStore.getState().editTaskId).toBe(state.tasks[0].id)
+  updateDraft({ title: 'Changed recovered edit' })
+  saveTask()
+  expect(writer.mock.calls[1][0][0]).toMatchObject({ kind: 'update', id: state.tasks[0].id })
+  await vi.waitFor(() => expect(useStore.getState().jobs).toHaveLength(0))
+})
+
+it('recognizes pending task writes by project even before a local row exists and after session UI reset', async () => {
+  const state = seedStore(0)
+  let acknowledge!: () => void
+  installMutationSession(() => new Promise((resolve) => { acknowledge = resolve }), () => true, state.dataUid!)
+  openOverlay('quick', 'project-1')
+  updateDraft({ title: 'Not published yet' })
+  saveTask(true)
+  expect(useStore.getState().rawTasks).toHaveLength(0)
+  useStore.setState({ jobs: [] })
+  expect(relevantPending([], 'project-1')).toBe(true)
+  expect(relevantPending([], 'project-2')).toBe(false)
+  acknowledge()
+  await vi.waitFor(() => expect(pendingWriteCount()).toBe(0))
+  expect(relevantPending([], 'project-1')).toBe(false)
 })

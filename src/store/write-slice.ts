@@ -2,7 +2,9 @@ import type { TaskValues } from '../lib/write-plans'
 import type { WriteOperation } from '../lib/mutations/types'
 
 export type Overlay = 'quick' | 'task' | 'project' | 'delete-task' | 'delete-project' | null
-export interface Draft extends TaskValues { date: string; time: string; retry?: readonly WriteOperation[] }
+export interface Draft extends TaskValues {
+  date: string; time: string; retry?: readonly WriteOperation[]; originalTaskId?: string
+}
 export interface Toast {
   id: string; text: string; error: boolean; recovery?: Draft
   projectRecovery?: { name: string; projectId?: string; operations: readonly WriteOperation[] }

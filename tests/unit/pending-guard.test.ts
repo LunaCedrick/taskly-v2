@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest'
 import { clearMutationSession, holdPendingWrites, installMutationSession, installUnloadGuard,
-  pendingTasksFor, pendingWriteCount, submitMutation } from '../../src/lib/mutations'
+  pendingProjectsFor, pendingTasksFor, pendingWriteCount, submitMutation } from '../../src/lib/mutations'
 
 it('keeps the unload guard and relevant pending tasks through sign-out/account switch until the original write settles', async () => {
   const cleanup = installUnloadGuard()
@@ -10,11 +10,12 @@ it('keeps the unload guard and relevant pending tasks through sign-out/account s
   expect(idle.defaultPrevented).toBe(false)
   let acknowledge!: () => void
   installMutationSession(() => new Promise((resolve) => { acknowledge = resolve }), () => true, 'A')
-  const result = submitMutation([{ kind: 'delete', stream: 'tasks', id: 'task-A' }])
+  const result = submitMutation([{ kind: 'delete', stream: 'tasks', id: 'task-A' }], ['project-A'])
   expect(pendingWriteCount()).toBe(1)
   clearMutationSession()
   installMutationSession(async () => {}, () => true, 'B')
   expect(pendingTasksFor('A')).toEqual(['task-A'])
+  expect(pendingProjectsFor('A')).toEqual(['project-A'])
   expect(pendingTasksFor('B')).toEqual([])
   const leaving = new Event('beforeunload', { cancelable: true })
   window.dispatchEvent(leaving)
@@ -23,6 +24,7 @@ it('keeps the unload guard and relevant pending tasks through sign-out/account s
   expect(await result).toEqual({ outcome: 'acknowledged', currentSession: false })
   expect(pendingWriteCount()).toBe(0)
   expect(pendingTasksFor('A')).toEqual([])
+  expect(pendingProjectsFor('A')).toEqual([])
   const settled = new Event('beforeunload', { cancelable: true })
   window.dispatchEvent(settled)
   expect(settled.defaultPrevented).toBe(false)

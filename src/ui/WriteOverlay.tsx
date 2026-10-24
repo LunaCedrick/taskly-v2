@@ -51,7 +51,8 @@ export function WriteOverlay() {
       if (event.target === event.currentTarget) closeOverlay()
     }}>
     <form className={styles.inner} noValidate onSubmit={(event) => { event.preventDefault(); save() }} onKeyDown={(event) => {
-      if (quick && event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); save() }
+      if (quick && event.target instanceof HTMLTextAreaElement && event.target.name === 'title'
+        && event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); save() }
       if (event.key !== 'Tab') return
       const controls = ref.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), textarea, select:not(:disabled)')
       if (!controls?.length) return
