@@ -1,5 +1,32 @@
 # Checkpoint 1 navigation measurements
 
+## Checkpoint 2 regression-monitor protocol (2026-10-25)
+
+Commit and push this protocol before running the monitor. One fixed session only:
+A1 B1 A2 B2 A3 B3, unchanged main versus the checkpoint-2 branch. Each run retains
+60 trusted-click transitions, the same 1,000-task fixture size, 4× CPU, resolved
+Auth/data/fonts/session-lazy modules, tracing off, and the existing two-frame paint
+measurement. Use normal e2e builds with identical explicit fake Firebase configuration
+and empty envDir, without a no-probe variant or additional profiles/diagnostics.
+Freeze and record exact revisions and build environments in the session manifest.
+
+Use a unique G3 session directory and separate A1–A3/B1–B3 directories. Copy main's
+fixed `test-results/gate-2/speed-1.json` immediately after every run with a freshness
+check. Retain failed commands, missing-sample outcomes and all raw samples; do not
+rerun a slow test or replace any previous evidence. Keep per-run results, route-pair
+counts and every >100 ms transition with first/repeat destination annotations.
+
+Reading rule: pool all retained samples separately for A and B. Report the share
+strictly over 100 ms, nearest-rank pooled p95 and p99, and the number of >100 ms
+repeat `/tasks` → `/projects/project-1` transitions (destination visit >1 within its
+run). Compare matched pairs as well as pooled summaries. A consistently larger
+branch tail across pairs and the pooled measures is a regression warning: report it
+plainly and stop before checkpoint-2 sign-off; propose changes, do not chase a pass.
+Mixed or close results are inconclusive. Three runs per side cannot prove a regression
+either way under the earlier six-run diagnostic reading rule. This smaller monitor
+is expressly owner-requested and is neither acceptance nor evidence of no regression.
+Acceptance stays at the end of G3 under Q15, without changing strict p95 <100 ms.
+
 ## Review diagnostic protocol (2026-10-24)
 
 This protocol and the follow-up profile declaration were first committed with the
