@@ -1,5 +1,37 @@
 # G3 checkpoint 2
 
+## Review revision (2026-10-25)
+
+Q18–Q20 in `docs/decisions/g3.md` are verbatim owner decisions. Work order is UI/tests
+and full checks first; commit/push the exact rules-test plan second; only then apply
+the approved rules diff and its tests together in a separate commit. No deployment.
+
+| Review item | Change / validation |
+|---|---|
+| 2 Errors | Errors bypass the four-normal-toast cap and identical messages merge; every recovery draft survives merging. Normal overflow removes the oldest queued normal, preserving the visible message. Unit coverage added. |
+| 3 Confirmations | Stronger destructive-submit selector uses `--overdue`; both dialogs have a tinted trash icon; counts use `1 task`. Browser computed-color/icon assertions added. |
+| 4 Focus | Cancel returns to the trigger; only an actual task-delete operation selects Q12's fallback. Browser assertions cover cancel and deletion. |
+| 5 Rejected UI save / sign-out | New emulator browser coverage injects a one-time immutable-createdAt change into a UI task update: real rules rejection, recover original edit, retry to server success. Another test keeps the unload guard active after SDK-offline sign-out, then reconnects/returns to the original user and waits for settlement. Auth/browser remain online. |
+| 6 DST | `npm run test` now includes a separate New York forks project with a mandatory timezone assertion; no DST skip. |
+| 7 Rollout | Row (d) requires a pinned owner-reviewed rules commit, a clean checkout and exact approved rules text. Real project is `taskly-v2`; commit ID is filled after step 3. All statuses remain UNVERIFIED. |
+| 8 Unused guard | Removed `PendingUnloadGuard`; `main.tsx` remains the sole installer. |
+| 9 Row actions | Q19 approves always-visible Edit/Delete as a deviation from SCREENS line 38's hover reveal. Code already did this; no hover implementation added. |
+| 10 Provenance | `run-checkpoint2-monitor.mjs` and `analyze-speed.mjs` changed after the `fdb9a2f` monitor ran: derived sequence/visit annotations only, no timing samples changed. The full-e2e result at the final step-1 source head is recorded below when run. |
+| 11 Loading | Q20 rejects the lazy-loading proposal in G3; no loading redesign. Existing Firestore boundary remains. |
+| 12 Full suite | Pending execution at the committed final step-1 source head; no further app/test edits after that run without revalidation. |
+
+Initial focused run: 12 tests passed but one worker-start timeout; its inherited
+project configuration also merged include arrays. Explicit project configs now avoid
+duplicate scheduling; corrected focused run: 3 files / 9 tests PASS, including DST,
+10.48 s. Initial browser attempt `emulator-LxzrFy` failed at the unchanged shared
+90 s startup deadline before assertions; retain it, do not relabel it a UI failure.
+Current rules and rule-test files remain untouched during step 1.
+
+The sections below retain the original report at `2a3d557`; current review results
+and the subsequent approved rules application supersede their historical stop status.
+
+## Original checkpoint 2 (retained)
+
 Owner extended P9 through checkpoint 2 on 2026-10-25. STOP before editing
 `firestore.rules`. G3 is not complete; no later steps, deployment or merge is claimed.
 Q17 is appended verbatim after the existing blocks in `docs/decisions/g3.md`.

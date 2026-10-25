@@ -8,6 +8,7 @@ export interface Draft extends TaskValues {
 export interface Toast {
   id: string; text: string; error: boolean; recovery?: Draft
   projectRecovery?: { name: string; projectId?: string; operations: readonly WriteOperation[] }
+  extraRecoveries?: readonly { recovery?: Draft; projectRecovery?: Toast['projectRecovery'] }[]
 }
 export interface WriteJob { id: string; taskIds: readonly string[]; projectId?: string }
 

@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { useStore } from '../store'
-import { installUnloadGuard } from '../lib/mutations'
 import { WriteOverlay } from './WriteOverlay'
 import { Toasts } from './Toasts'
 
@@ -22,10 +21,4 @@ export function WriteUI() {
     }
   }, [deleted, navigate, pathname])
   return <><WriteOverlay /><Toasts /></>
-}
-
-// Mounted above the authenticated route so pending old-user writes protect tab close too.
-export function PendingUnloadGuard() {
-  useEffect(() => installUnloadGuard(), [])
-  return null
 }

@@ -1,7 +1,7 @@
 import { disableNetwork, enableNetwork, waitForPendingWrites } from 'firebase/firestore'
 import type { Firestore } from 'firebase/firestore'
 import { submitMutation } from '../mutations'
-import type { MutationResult, WriteOperation } from '../mutations/types'
+import type { MutationResult, MutationWriter, WriteOperation } from '../mutations/types'
 import { initializeBrowserAuth } from '../firebase/auth'
 import { useStore } from '../../store'
 
@@ -11,6 +11,7 @@ interface Observation {
   error?: string
 }
 interface WriteTestProbe {
+  rejectNextTaskUpdate: () => void
   network: (enabled: boolean) => Promise<void>
   enqueue: (id: string, operations: readonly WriteOperation[]) => void
   wait: (id: string) => void
@@ -20,12 +21,24 @@ interface WriteTestProbe {
 }
 declare global { interface Window { __TASKLY_G3_WRITES_TEST__?: WriteTestProbe } }
 
+let rejectNextUpdate = false
+/** A real invalid immutable-time update, sent to emulator rules, never a mocked rejection. */
+export function instrumentMutationWriter(writer: MutationWriter): MutationWriter {
+  return (operations) => {
+    if (!rejectNextUpdate) return writer(operations)
+    rejectNextUpdate = false
+    return writer(operations.map((operation) => operation.stream === 'tasks' && operation.kind === 'update'
+      ? { ...operation, data: { ...operation.data, createdAt: 0 } } : operation))
+  }
+}
+
 /** Emulator-only SDK experiment controls. Removed from normal production builds. */
 export function installWriteTestProbe(database: Firestore) {
   if (window.__TASKLY_G3_WRITES_TEST__) return
   const operations: Record<string, Observation> = {}
   const waiters: Record<string, Observation> = {}
   window.__TASKLY_G3_WRITES_TEST__ = {
+    rejectNextTaskUpdate: () => { rejectNextUpdate = true },
     network: (enabled) => enabled ? enableNetwork(database) : disableNetwork(database),
     enqueue(id, writes) {
       if (operations[id]) throw new Error('An experiment ID cannot be reused')

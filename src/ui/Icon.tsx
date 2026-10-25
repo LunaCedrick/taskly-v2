@@ -12,6 +12,7 @@ const paths = {
   leaf: 'M20 4C9 3 3 9 5 19c10 2 16-4 15-15z M5 19l9-9',
   lock: 'M6 10h12v11H6z M8 10V6a4 4 0 0 1 8 0v4',
   warning: 'm12 3 10 18H2z M12 9v5 M12 17v1',
+  trash: 'M3 6h18 M9 6V3h6v3 M5 6l1 15h12l1-15 M10 10v7 M14 10v7',
 } as const
 export type IconName = keyof typeof paths
 

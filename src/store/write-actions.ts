@@ -6,6 +6,7 @@ import { holdPendingWrites, pendingProjectsFor, pendingTasksFor, submitMutation 
 import type { WriteOperation } from '../lib/mutations/types'
 import type { DataSlice } from './data-slice'
 import type { Task } from '../lib/types'
+import { enqueueToast } from '../lib/toast-queue'
 
 const id = () => crypto.randomUUID()
 export function writesReady(state: DataSlice) {
@@ -16,7 +17,7 @@ export const disabledExplanation = (state: DataSlice) => writesReady(state) ? ''
     : 'Waiting for your projects and tasks to load.'
 
 export function addToast(text: string, error = false, recovery?: Draft, projectRecovery?: Toast['projectRecovery']) {
-  useStore.setState((state) => ({ toasts: [...state.toasts, { id: id(), text, error, recovery, projectRecovery }].slice(0, 4) }))
+  useStore.setState((state) => ({ toasts: enqueueToast(state.toasts, { id: id(), text, error, recovery, projectRecovery }) }))
 }
 export const dismissToast = (toastId: string) => useStore.setState((state) => ({
   toasts: state.toasts.filter((toast) => toast.id !== toastId),
@@ -33,7 +34,11 @@ export function recoverDraft(toast: Toast) {
     projectRetry: toast.projectRecovery.operations })
   else if (toast.recovery) useStore.setState({ draft: { ...toast.recovery }, overlay: 'task',
     editTaskId: toast.recovery.originalTaskId ?? null, fieldError: '' })
-  dismissToast(toast.id)
+  if (toast.extraRecoveries?.length) {
+    const [next, ...remaining] = toast.extraRecoveries
+    useStore.setState((current) => ({ toasts: current.toasts.map((item) => item.id === toast.id
+      ? { ...item, ...next, extraRecoveries: remaining } : item) }))
+  } else dismissToast(toast.id)
 }
 export const updateDraft = (patch: Partial<Draft>) => useStore.setState((state) => ({
   draft: { ...state.draft, retry: undefined, ...patch }, fieldError: '',
@@ -58,11 +63,15 @@ export function openOverlay(overlay: NonNullable<Overlay>, currentProject?: stri
 }
 
 export function closeOverlay() {
-  const { returnFocus, fallbackFocus, overlay } = useStore.getState()
+  dismissOverlay(false)
+}
+
+function dismissOverlay(deletedTask: boolean) {
+  const { returnFocus, fallbackFocus } = useStore.getState()
   useStore.setState({ overlay: null, fieldError: '', resumeOverlay: null })
   requestAnimationFrame(() => {
     if (useStore.getState().overlay) return
-    const target = overlay !== 'delete-task' && returnFocus?.isConnected ? returnFocus
+    const target = !deletedTask && returnFocus?.isConnected ? returnFocus
       : document.querySelector<HTMLElement>(fallbackFocus || '#main h1')
     target?.focus()
   })
@@ -157,7 +166,7 @@ export function deleteTask() {
   const state = useStore.getState()
   const task = state.tasks.find((t) => t.id === state.editTaskId)
   if (!task || !writesReady(state) || relevantPending([task.id])) return
-  void perform(deleteTaskPlan(task, id), { toast: 'Task deleted', local: closeOverlay })
+  void perform(deleteTaskPlan(task, id), { toast: 'Task deleted', local: () => dismissOverlay(true) })
 }
 
 export async function deleteProject() {

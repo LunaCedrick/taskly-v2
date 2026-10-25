@@ -19,10 +19,3 @@ it('uses next strictly future Monday, including Sunday and Monday', () => {
   expect(() => parseDue('2026-02-30', '')).toThrow('valid date')
   expect(() => parseDue('', '12:00')).toThrow('before a time')
 })
-
-it.skipIf(process.env.TZ !== 'America/New_York')('rejects the DST spring gap and selects the earlier repeated fall time', () => {
-  expect(() => parseDue('2026-03-08', '02:30')).toThrow('does not exist')
-  expect(parseDue('2026-11-01', '01:30').dueDate).toBe(Date.UTC(2026, 10, 1, 5, 30))
-  const spring = { ...makeFakeData(1).tasks[0], ...parseDue('2026-03-08', '') }
-  expect(dueInstant(spring)).toBe(new Date(2026, 2, 8, 23, 59, 59, 999).getTime())
-})

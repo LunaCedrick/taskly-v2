@@ -5,6 +5,7 @@ import { TaskFields } from '../features/tasks/TaskFields'
 import { Button, IconButton } from './Controls'
 import styles from './Overlays.module.css'
 import { observePendingWrites, pendingWriteCount } from '../lib/mutations'
+import { Icon } from './Icon'
 
 export function WriteOverlay() {
   useSyncExternalStore(observePendingWrites, pendingWriteCount)
@@ -62,11 +63,12 @@ export function WriteOverlay() {
     }}>
       <header className={styles.header}><h2 id="overlay-title">{title}</h2>
         <IconButton icon="close" label="Close dialog" onClick={closeOverlay} /></header>
+      {deleting && <span className={styles.confirmationIcon} data-confirmation-icon aria-hidden="true"><Icon name="trash" /></span>}
       {form ? <TaskFields quick={quick} /> : overlay === 'project'
         ? <label className={styles.field}><span>Project name <span aria-hidden="true">*</span></span>
           <input value={name} aria-required="true" aria-invalid={Boolean(error)} aria-describedby={error ? 'write-error' : undefined}
             onChange={(event) => useStore.setState({ projectName: event.target.value, projectRetry: undefined, fieldError: '' })} /></label>
-        : <p>“{overlay === 'delete-task' ? task?.title : project?.name}”{overlay === 'delete-project' ? ` and its ${count} tasks` : ''}
+        : <p>“{overlay === 'delete-task' ? task?.title : project?.name}”{overlay === 'delete-project' ? ` and its ${count} ${count === 1 ? 'task' : 'tasks'}` : ''}
           {' '}will be permanently deleted. This cannot be undone.{overlay === 'delete-task' && ' 1 task affected.'}</p>}
       {pending && <p role="status">Waiting for pending task writes. The count will update before you can confirm.</p>}
       {error && <p id="write-error" role="alert" className={styles.error}>{error}</p>}

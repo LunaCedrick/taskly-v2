@@ -23,7 +23,9 @@
 .chips button, .footer > button, .toast button { border: var(--border) solid var(--line); border-radius: var(--radius-sm);
   background: var(--surface); color: var(--ink); padding: var(--space-2) var(--space-3); font: inherit; cursor: pointer; }
 .footer button[type=submit] { background: var(--accent); color: var(--surface); border-color: var(--accent); }
-.footer .destructive { background: var(--overdue); border-color: var(--overdue); }
+.footer button[type=submit].destructive { background: var(--overdue); border-color: var(--overdue); }
+.confirmationIcon { display: grid; place-items: center; width: var(--touch); height: var(--touch);
+  background: var(--overdue-tint); color: var(--overdue); border-radius: var(--radius-sm); }
 .footer .danger, .error { color: var(--overdue); }
 .spacer { flex: var(--one); }
 .toast { position: fixed; z-index: var(--z-toast); bottom: var(--toast-bottom); left: var(--space-5);
