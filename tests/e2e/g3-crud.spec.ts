@@ -97,8 +97,8 @@ test('G3 cascades more than 1,000 tasks with one project summary while dismissed
   await expect(dialog).toContainText('1001 tasks')
   await dialog.getByRole('button', { name: 'Delete project', exact: true }).click()
   await page.keyboard.press('Escape')
-  await expect.poll(async () => (await writeSnapshot(page)).projects.some((p) => p.id === 'project-1')).toBe(false)
-  await expect.poll(async () => (await writeSnapshot(page)).tasks.length).toBe(2002)
+  // Completion is a sync condition, not an unapproved five-second cascade latency gate.
+  await waitForSync(page, { projects: 3, tasks: 2002 })
   const state = await writeSnapshot(page)
   expect(state.activity.filter((event) => event.type === 'project.deleted')).toHaveLength(1)
   expect(state.activity.some((event) => event.type === 'task.deleted')).toBe(false)

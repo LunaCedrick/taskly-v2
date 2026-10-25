@@ -8,6 +8,23 @@ export function WriteUI() {
   const deleted = useStore((state) => state.deletedProjectId)
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const focusAfterDelete = useStore((state) => state.focusAfterDelete)
+  const rowRemoved = useStore((state) => Boolean(state.focusAfterDelete
+    && !state.tasks.some((task) => task.id === state.focusAfterDelete?.taskId)))
+  useEffect(() => {
+    if (!focusAfterDelete || !rowRemoved) return
+    const frame = requestAnimationFrame(() => {
+      const state = useStore.getState()
+      if (state.focusAfterDelete !== focusAfterDelete) return
+      if (!state.overlay) {
+        const target = document.querySelector<HTMLElement>(focusAfterDelete.selector)
+          ?? document.querySelector<HTMLElement>('[data-add-task]')
+        target?.focus()
+      }
+      useStore.setState({ focusAfterDelete: null })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [focusAfterDelete, rowRemoved])
   useEffect(() => {
     if (!deleted) return
     useStore.setState({ deletedProjectId: null })

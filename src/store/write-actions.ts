@@ -67,11 +67,13 @@ export function closeOverlay() {
 }
 
 function dismissOverlay(deletedTask: boolean) {
-  const { returnFocus, fallbackFocus } = useStore.getState()
-  useStore.setState({ overlay: null, fieldError: '', resumeOverlay: null })
+  const { returnFocus, fallbackFocus, editTaskId } = useStore.getState()
+  useStore.setState({ overlay: null, fieldError: '', resumeOverlay: null,
+    focusAfterDelete: deletedTask && editTaskId ? { taskId: editTaskId, selector: fallbackFocus } : null })
+  if (deletedTask) return // The listener publication and DOM commit must precede fallback focus.
   requestAnimationFrame(() => {
     if (useStore.getState().overlay) return
-    const target = !deletedTask && returnFocus?.isConnected ? returnFocus
+    const target = returnFocus?.isConnected ? returnFocus
       : document.querySelector<HTMLElement>(fallbackFocus || '#main h1')
     target?.focus()
   })

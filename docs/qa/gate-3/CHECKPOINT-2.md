@@ -26,6 +26,11 @@ duplicate scheduling; corrected focused run: 3 files / 9 tests PASS, including D
 10.48 s. Initial browser attempt `emulator-LxzrFy` failed at the unchanged shared
 90 s startup deadline before assertions; retain it, do not relabel it a UI failure.
 Current rules and rule-test files remain untouched during step 1.
+The first full run at `b56f8c8` retained 39 e2e passes and three failures: both widths'
+post-delete focus assertion and a five-second cascade poll. Deletion focus now waits
+for listener publication and the replacement DOM; cancel still returns to its trigger.
+Cascade completion uses the existing 15-second `waitForSync` condition, not a new
+latency target. That failed full run and all its speed samples are retained separately.
 
 The sections below retain the original report at `2a3d557`; current review results
 and the subsequent approved rules application supersede their historical stop status.
