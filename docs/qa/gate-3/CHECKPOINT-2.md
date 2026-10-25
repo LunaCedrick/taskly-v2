@@ -13,7 +13,7 @@ the approved rules diff and its tests together in a separate commit. No deployme
 | 4 Focus | Cancel returns to the trigger; only an actual task-delete operation selects Q12's fallback. Browser assertions cover cancel and deletion. |
 | 5 Rejected UI save / sign-out | New emulator browser coverage injects a one-time immutable-createdAt change into a UI task update: real rules rejection, recover original edit, retry to server success. Another test keeps the unload guard active after SDK-offline sign-out, then reconnects/returns to the original user and waits for settlement. Auth/browser remain online. |
 | 6 DST | `npm run test` now includes a separate New York forks project with a mandatory timezone assertion; no DST skip. |
-| 7 Rollout | Row (d) requires a pinned owner-reviewed rules commit, a clean checkout and exact approved rules text. Real project is `taskly-v2`; commit ID is filled after step 3. All statuses remain UNVERIFIED. |
+| 7 Rollout | Row (d) pins rules candidate `6728275` for owner review, requires a clean checkout and exact approved rules text. Real project is `taskly-v2`. All statuses remain UNVERIFIED. |
 | 8 Unused guard | Removed `PendingUnloadGuard`; `main.tsx` remains the sole installer. |
 | 9 Row actions | Q19 approves always-visible Edit/Delete as a deviation from SCREENS line 38's hover reveal. Code already did this; no hover implementation added. |
 | 10 Provenance | `run-checkpoint2-monitor.mjs` and `analyze-speed.mjs` changed after the `fdb9a2f` monitor ran: derived sequence/visit annotations only, no timing samples changed. The full-e2e result at the final step-1 source head is recorded below when run. |
@@ -66,6 +66,20 @@ Apply `PROPOSED-RULES.diff` unchanged together with these edits in a separate co
 - Expected result: all original 116 tests plus 6 new tests = **122** on the approved
   rules. Do not edit tests/rules or firestore.rules before this plan is committed/pushed.
   No other rule, field contract, enum, cap, lookup, index or query changes are authorized.
+
+### Step 3 result
+
+After step-1 fixes and this test plan were committed/pushed (`bb4f7a9`, `0854c53`),
+rules/tests were applied together in **`6728275`**, touching only `firestore.rules` and
+the three planned rules-test files. The rules text exactly matches the approved diff.
+`npm run test:rules`: **122 passed / 2 files, 17.25 s**; command/startup total 41.57 s.
+[Exact rules-commit result and log](checkpoint2-review-xbNmX1/approved-rules.json).
+No other rule changed. Nothing deployed; every rollout row stays UNVERIFIED pending
+owner reports, and the owner will review this rules commit before deploying.
+Post-rule `npm run typecheck`: PASS.
+Only read for this phase: approved diff, existing rule/fixture/query contracts and
+owner decisions. Full e2e was run on final step-1 head with current G2 rules; after
+the separate rule edit, the full rules suite was run. The speed failures remain open.
 
 The sections below retain the original report at `2a3d557`; current review results
 and the subsequent approved rules application supersede their historical stop status.
