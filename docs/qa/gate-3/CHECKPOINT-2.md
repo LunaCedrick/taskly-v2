@@ -18,7 +18,7 @@ the approved rules diff and its tests together in a separate commit. No deployme
 | 9 Row actions | Q19 approves always-visible Edit/Delete as a deviation from SCREENS line 38's hover reveal. Code already did this; no hover implementation added. |
 | 10 Provenance | `run-checkpoint2-monitor.mjs` and `analyze-speed.mjs` changed after the `fdb9a2f` monitor ran: derived sequence/visit annotations only, no timing samples changed. The full-e2e result at the final step-1 source head is recorded below when run. |
 | 11 Loading | Q20 rejects the lazy-loading proposal in G3; no loading redesign. Existing Firestore boundary remains. |
-| 12 Full suite | Pending execution at the committed final step-1 source head; no further app/test edits after that run without revalidation. |
+| 12 Full suite | Final step-1 head `bb4f7a9`: build/lint/typecheck PASS; 223 unit tests and 116 current-rule tests PASS; full e2e 39 functional passes / 3 numeric speed failures, exit 1. Logs linked below. |
 
 Initial focused run: 12 tests passed but one worker-start timeout; its inherited
 project configuration also merged include arrays. Explicit project configs now avoid
@@ -31,6 +31,41 @@ post-delete focus assertion and a five-second cascade poll. Deletion focus now w
 for listener publication and the replacement DOM; cancel still returns to its trigger.
 Cascade completion uses the existing 15-second `waitForSync` condition, not a new
 latency target. That failed full run and all its speed samples are retained separately.
+
+Final step-1 source `bb4f7a9`: [full command manifest/logs](checkpoint2-review-xbNmX1/manifest.json).
+Full e2e: **39 passed / 3 failed**, 5.3 min; all failures are speed p95 **106.9 / 111.0 /
+101.8 ms** against strict `<100 ms`. No immediately preceding unchanged-main baseline;
+neither a Q15-qualified branch pass nor fail is claimed. No unchanged-code rerun or
+threshold relaxation. All samples, including [the earlier full run](checkpoint2-review-TNDzZx/manifest.json),
+remain retained. Gate completion is blocked; cause is unproven. New recovery, sign-out,
+cancel-focus and deletion-focus browser assertions pass at the final step-1 head.
+Normal production initial/deferred/total: **134,460 / 141,228 / 275,688 B gzip**,
+local `.env` config inlined; initial below 200,000 B, no initial/preloaded Firestore runtime.
+
+### Step 2: exact rules-test plan (committed before any rule/test edit)
+
+The reviewer reported 16/116 failures with the diff alone; that is not this agent's run.
+Apply `PROPOSED-RULES.diff` unchanged together with these edits in a separate commit:
+
+- `tests/rules/fixtures.ts`: import `serverTimestamp`; export a shared
+  `SERVER_CREATED_AT = serverTimestamp()` marker. Change `validDocument(collection,
+  createdAt: unknown = SERVER_CREATED_AT)` so all three create payloads use that value.
+  Keep `CREATED_AT = Timestamp.fromMillis(1000)` for stored fixtures; `seedDocument`
+  defaults to `validDocument(collection, CREATED_AT)` for immutable-update/read tests.
+- `tests/rules/validation.test.ts`: `rejectsCreateAndUpdate` sends its create data as-is.
+  For the existing-document set only, replace `createdAt` with `CREATED_AT` iff the
+  supplied value is exactly `SERVER_CREATED_AT`. Preserve missing/invalid createdAt
+  unchanged. This keeps every existing negative-field update test testing that field,
+  rather than accidentally failing solely on immutable creation time.
+- In the per-collection validation describe, add exactly two cases: reject create with
+  client `CREATED_AT`; create with `SERVER_CREATED_AT`, then update name/title/text
+  WITHOUT a createdAt field and assert success plus unchanged stored creation timestamp.
+- `tests/rules/ownership.test.ts`: denied replacement of a seeded existing document uses
+  `validDocument(collection, CREATED_AT)`; new creates use the default server marker.
+  Retain every existing ownership/query/profile/unmatched-path test.
+- Expected result: all original 116 tests plus 6 new tests = **122** on the approved
+  rules. Do not edit tests/rules or firestore.rules before this plan is committed/pushed.
+  No other rule, field contract, enum, cap, lookup, index or query changes are authorized.
 
 The sections below retain the original report at `2a3d557`; current review results
 and the subsequent approved rules application supersede their historical stop status.

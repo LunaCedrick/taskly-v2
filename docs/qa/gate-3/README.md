@@ -1,5 +1,7 @@
 # G3 evidence
 
+- [Checkpoint-2 review speed results](SPEED-CHECKPOINT-2-REVIEW.md): both full-suite
+  runs retained; final step-1 full e2e has 39 passes / 3 numeric speed failures.
 - [Checkpoint 2](CHECKPOINT-2.md): integrated CRUD, Q17 pending-only guard, ran/read
   record, proposed rules diff and owner handoff. Rules remain unchanged.
 - [Paired checkpoint-2 monitor](checkpoint2-monitor-VNDDJq/summary.json): all 360
