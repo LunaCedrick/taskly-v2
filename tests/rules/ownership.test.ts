@@ -4,7 +4,7 @@ import type { RulesTestEnvironment } from '@firebase/rules-unit-testing'
 import { Timestamp } from 'firebase/firestore'
 import {
   COLLECTIONS, OWNER_UID, OTHER_UID, collectionPath, createRulesEnvironment,
-  seedDocument, validDocument,
+  seedDocument, validDocument, CREATED_AT,
 } from './fixtures'
 import type { RulesDb } from './fixtures'
 
@@ -42,7 +42,7 @@ describe.each(COLLECTIONS)('%s ownership', (collection) => {
     await assertFails(existing.get())
     await assertFails(database.collection(collectionPath(collection)).get())
     await assertFails(database.doc(`${collectionPath(collection)}/new`).set(validDocument(collection)))
-    await assertFails(existing.set(validDocument(collection)))
+    await assertFails(existing.set(validDocument(collection, CREATED_AT)))
     await assertFails(existing.update({ createdAt: Timestamp.fromMillis(1_000) }))
     await assertFails(existing.delete())
   })

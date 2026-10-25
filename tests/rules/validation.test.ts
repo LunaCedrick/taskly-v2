@@ -5,6 +5,7 @@ import type { RulesTestEnvironment } from '@firebase/rules-unit-testing'
 import { Timestamp } from 'firebase/firestore'
 import {
   COLLECTIONS, OWNER_UID, collectionPath, createRulesEnvironment, seedDocument, validDocument,
+  CREATED_AT, SERVER_CREATED_AT,
 } from './fixtures'
 import type { RulesCollection, RulesDb, RulesDocument } from './fixtures'
 
@@ -21,10 +22,25 @@ async function rejectsCreateAndUpdate(collection: RulesCollection, data: RulesDo
   const path = collectionPath(collection)
   await assertFails(owner.doc(`${path}/new`).set(data))
   await seedDocument(environment, collection)
-  await assertFails(owner.doc(`${path}/existing`).set(data))
+  // Keep invalid-field update coverage independent from the immutable-createdAt rule.
+  const update = data.createdAt === SERVER_CREATED_AT ? { ...data, createdAt: CREATED_AT } : data
+  await assertFails(owner.doc(`${path}/existing`).set(update))
 }
 
 describe.each(COLLECTIONS)('%s exact document contract', (collection) => {
+  it('rejects a client createdAt timestamp on create', async () => {
+    await assertFails(owner.doc(`${collectionPath(collection)}/client-time`).set(validDocument(collection, CREATED_AT)))
+  })
+
+  it('allows an update without createdAt after a server-timestamp create', async () => {
+    const document = owner.doc(`${collectionPath(collection)}/server-time`)
+    await assertSucceeds(document.set(validDocument(collection)))
+    const createdAt = (await document.get()).get('createdAt')
+    const field = collection === 'projects' ? 'name' : collection === 'tasks' ? 'title' : 'text'
+    await assertSucceeds(document.update({ [field]: 'Partial update without createdAt' }))
+    expect((await document.get()).get('createdAt').isEqual(createdAt)).toBe(true)
+  })
+
   it.each(Object.keys(validDocument(collection)))('requires %s, including nullable slots', async (field) => {
     const data = validDocument(collection)
     delete data[field]

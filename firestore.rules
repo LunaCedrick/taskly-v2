@@ -51,21 +51,24 @@ service cloud.firestore {
 
     match /users/{uid}/projects/{id} {
       allow read, delete: if isOwner(uid);
-      allow create: if isOwner(uid) && validProject(request.resource.data);
+      allow create: if isOwner(uid) && validProject(request.resource.data)
+        && request.resource.data.createdAt == request.time;
       allow update: if isOwner(uid) && validProject(request.resource.data)
         && request.resource.data.createdAt == resource.data.createdAt;
     }
 
     match /users/{uid}/tasks/{id} {
       allow read, delete: if isOwner(uid);
-      allow create: if isOwner(uid) && validTask(request.resource.data);
+      allow create: if isOwner(uid) && validTask(request.resource.data)
+        && request.resource.data.createdAt == request.time;
       allow update: if isOwner(uid) && validTask(request.resource.data)
         && request.resource.data.createdAt == resource.data.createdAt;
     }
 
     match /users/{uid}/activity/{id} {
       allow read, delete: if isOwner(uid);
-      allow create: if isOwner(uid) && validActivity(request.resource.data);
+      allow create: if isOwner(uid) && validActivity(request.resource.data)
+        && request.resource.data.createdAt == request.time;
       allow update: if isOwner(uid) && validActivity(request.resource.data)
         && request.resource.data.createdAt == resource.data.createdAt;
     }

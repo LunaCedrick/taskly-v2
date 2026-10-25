@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { initializeTestEnvironment } from '@firebase/rules-unit-testing'
 import type { RulesTestContext, RulesTestEnvironment } from '@firebase/rules-unit-testing'
-import { Timestamp } from 'firebase/firestore'
+import { serverTimestamp, Timestamp } from 'firebase/firestore'
 import {
   EMULATOR_HOST, EMULATOR_PORTS, EMULATOR_PROJECT_ID,
 } from '../../src/lib/firebase/emulator-config.ts'
@@ -13,6 +13,7 @@ export type RulesCollection = typeof COLLECTIONS[number]
 export type RulesDocument = Record<string, unknown>
 export type RulesDb = ReturnType<RulesTestContext['firestore']>
 export const CREATED_AT = Timestamp.fromMillis(1_000)
+export const SERVER_CREATED_AT = serverTimestamp()
 
 export async function createRulesEnvironment(
   options: { loadRules?: boolean } = {},
@@ -38,20 +39,20 @@ export function collectionPath(collection: RulesCollection, uid = OWNER_UID): st
   return `users/${uid}/${collection}`
 }
 
-export function validDocument(collection: RulesCollection): RulesDocument {
+export function validDocument(collection: RulesCollection, createdAt: unknown = SERVER_CREATED_AT): RulesDocument {
   if (collection === 'projects') {
-    return { name: 'Project', colorIndex: 0, createdAt: CREATED_AT, updatedAt: CREATED_AT }
+    return { name: 'Project', colorIndex: 0, createdAt, updatedAt: CREATED_AT }
   }
   if (collection === 'tasks') {
     return {
       projectId: 'project-1', title: 'Task', description: '', category: '', dueDate: null,
-      dueHasTime: false, priority: 'none', status: 'todo', createdAt: CREATED_AT,
+      dueHasTime: false, priority: 'none', status: 'todo', createdAt,
       updatedAt: CREATED_AT, completedAt: null,
     }
   }
   return {
     type: 'created', taskId: 'task-1', projectId: 'project-1', text: 'Task created',
-    createdAt: CREATED_AT,
+    createdAt,
   }
 }
 
@@ -59,7 +60,7 @@ export async function seedDocument(
   environment: RulesTestEnvironment,
   collection: RulesCollection,
   id = 'existing',
-  data = validDocument(collection),
+  data = validDocument(collection, CREATED_AT),
 ): Promise<void> {
   await environment.withSecurityRulesDisabled(async (context) => {
     await context.firestore().doc(`${collectionPath(collection)}/${id}`).set(data)
