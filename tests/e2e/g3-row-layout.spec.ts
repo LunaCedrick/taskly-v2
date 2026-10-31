@@ -60,6 +60,12 @@ async function adjacentRows(list: Locator) {
   })
 }
 
+const position = (list: Locator) => list.evaluate((element) => ({
+  scrollTop: element.scrollTop,
+  focusedTask: document.activeElement?.closest('[data-task-id]')?.getAttribute('data-task-id') ?? null,
+  tabStop: element.querySelector('[data-task-id][tabindex="0"]')?.getAttribute('data-task-id'),
+}))
+
 for (const width of [320, 360, 390, 1280]) for (const taskCount of [6, 1000]) {
   const mode = taskCount === 6 ? 'plain' : 'virtual'
   test(`G3 ${mode} Project rows fit long and short titles at ${width}px`, async ({ page }, info) => {
@@ -110,13 +116,17 @@ for (const width of [320, 360, 390, 1280]) for (const taskCount of [6, 1000]) {
           expect((part.top + part.bottom) / 2).toBeCloseTo(bandCenter, 0)
       }
       expect(initial.long.parts.title.height).toBeGreaterThan(initial.long.title.lineHeight)
+      await shortRow.focus()
+      if (mode === 'virtual') await list.evaluate((element) => { element.scrollTop = 80 })
+      const beforeResize = await position(list)
       // A measured phone list must return to the existing fixed desktop geometry.
       await page.setViewportSize({ width: 1280, height: 900 })
       const desktopHeight = await page.evaluate(() =>
         parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--row-height')))
       await expect.poll(async () => (await geometry(longRow)).rect.height).toBe(desktopHeight)
       await expect.poll(() => adjacentRows(list)).toBe(true)
-      const desktop = { long: await geometry(longRow), short: await geometry(shortRow) }
+      await expect(shortRow).toHaveAttribute('tabindex', '0')
+      const desktop = { long: await geometry(longRow), short: await geometry(shortRow), position: await position(list) }
       expectClear(desktop.long)
       expectClear(desktop.short)
       await page.setViewportSize({ width, height: 800 })
@@ -124,6 +134,8 @@ for (const width of [320, 360, 390, 1280]) for (const taskCount of [6, 1000]) {
         .toBeGreaterThan(initial.long.title.lineHeight)
       await expect.poll(() => adjacentRows(list)).toBe(true)
       expectClear(await geometry(longRow))
+      await expect(shortRow).toHaveAttribute('tabindex', '0')
+      const afterResize = await position(list)
       // Variable titles must remeasure while mounted, not only on initial rendering.
       const expanded = `${longTitle} ${'More project details '.repeat(8)}`
       await longRow.getByRole('button', { name: `Edit ${longTitle}`, exact: true }).click()
@@ -135,7 +147,8 @@ for (const width of [320, 360, 390, 1280]) for (const taskCount of [6, 1000]) {
       await expect.poll(() => adjacentRows(list)).toBe(true)
       const grown = await geometry(longRow)
       expectClear(grown)
-      observations.set(info.testId, { name: `project-rows-${mode}-${width}`, result: { initial, desktop, grown } })
+      observations.set(info.testId, { name: `project-rows-${mode}-${width}`,
+        result: { initial, beforeResize, desktop, afterResize, grown, measurementWarnings } })
       await capture(page, `g3-project-rows-${mode}-grown`)
     } else {
       const expectedHeight = await page.evaluate(() =>

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type KeyboardEvent, type FocusEvent } from 'react'
+import { useLayoutEffect, useRef, useSyncExternalStore, type KeyboardEvent, type FocusEvent } from 'react'
 import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual'
 import type { Task } from '../lib/types'
 import { useStore, setFocusedRow } from '../store'
@@ -16,8 +16,25 @@ function rowClick(event: React.MouseEvent<HTMLDivElement>) {
   else openOverlay(action.dataset.rowAction === 'delete' ? 'delete-task' : 'task', task.projectId, task.id)
 }
 
-export function TaskList({ tasks, label, listId }: { tasks: readonly Task[]; label: string; listId: string }) {
+type ListProps = { tasks: readonly Task[]; label: string; listId: string }
+
+function subscribeLayout(onChange: () => void) {
+  window.addEventListener('resize', onChange)
+  return () => window.removeEventListener('resize', onChange)
+}
+
+const phoneLayout = () => getComputedStyle(document.documentElement).getPropertyValue('--desktop-display').trim() === 'none'
+
+function ResponsiveProjectList(props: ListProps) {
+  const phone = useSyncExternalStore(subscribeLayout, phoneLayout)
+  // Rebuild the virtualizer, its measured elements and observers as one layout-specific instance.
+  return <VirtualTaskList key={phone ? 'phone' : 'desktop'} {...props} />
+}
+
+export function TaskList({ tasks, label, listId }: ListProps) {
   const enabled = useStore((state) => state.virtualize) && tasks.length > 200
+  const project = useStore((state) => state.projects.some((item) => item.id === listId))
+  if (enabled && project) return <ResponsiveProjectList tasks={tasks} label={label} listId={listId} />
   return enabled ? <VirtualTaskList tasks={tasks} label={label} listId={listId} />
     : <PlainTaskList tasks={tasks} label={label} listId={listId} />
 }
@@ -58,14 +75,13 @@ function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
   return next
 }
 
-function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; label: string; listId: string }) {
+function VirtualTaskList({ tasks, label, listId }: ListProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const { active, row, onFocus, revealIndex, mutable } = useRows(listId, tasks)
   const tokens = getComputedStyle(document.documentElement)
   const rowHeight = parseFloat(tokens.getPropertyValue('--row-height'))
   const phone = tokens.getPropertyValue('--desktop-display').trim() === 'none'
   const dynamic = phone && mutable
-  const previousDynamic = useRef(dynamic)
   const initialHeight = phone
     ? window.innerHeight - parseFloat(tokens.getPropertyValue('--list-phone-offset'))
     : parseFloat(tokens.getPropertyValue('--list-height'))
@@ -83,13 +99,6 @@ function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
     rangeExtractor: (range) => [...new Set([...defaultRangeExtractor(range), active,
       ...(revealIndex >= 0 ? [revealIndex] : [])])].sort((a, b) => a - b),
   })
-  useLayoutEffect(() => {
-    if (previousDynamic.current === dynamic) return
-    previousDynamic.current = dynamic
-    virtualizer.measure()
-    if (dynamic) scrollRef.current?.querySelectorAll<HTMLElement>('[data-index]')
-      .forEach((element) => virtualizer.measureElement(element))
-  }, [dynamic, virtualizer])
   useLayoutEffect(() => {
     if (revealIndex >= 0) virtualizer.scrollToIndex(revealIndex, { align: 'auto' })
   }, [revealIndex, virtualizer])
@@ -112,7 +121,7 @@ function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
   </div>
 }
 
-function PlainTaskList({ tasks, label, listId }: { tasks: readonly Task[]; label: string; listId: string }) {
+function PlainTaskList({ tasks, label, listId }: ListProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { active, row, onFocus, revealIndex } = useRows(listId, tasks)
   useLayoutEffect(() => {
