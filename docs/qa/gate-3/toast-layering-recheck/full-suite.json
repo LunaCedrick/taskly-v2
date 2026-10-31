@@ -1,0 +1,51 @@
+{
+  "sourceHead": "d326f821a404f2aaf47e8e4e8505c324faa535d1",
+  "started": "2026-10-31T03:50:42.730Z",
+  "buildEnvironment": "Existing local .env Firebase config inlined; no values read, printed, or changed",
+  "acceptance": false,
+  "baseline": "No immediately preceding unchanged-main baseline; not Q15 acceptance",
+  "runs": [
+    {
+      "name": "build",
+      "command": "npm run build",
+      "code": 0,
+      "seconds": 7.961,
+      "log": "build.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 build\n> tsc -b && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 180 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                      0.70 kB │ gzip:   0.36 kB\ndist/assets/index-C_ZYDR5F.css      26.66 kB │ gzip:   5.58 kB\ndist/assets/firestore-CP7PVYof.js    0.21 kB │ gzip:   0.17 kB\ndist/assets/writes-DlzJliqO.js       0.83 kB │ gzip:   0.51 kB\ndist/assets/listeners-DM8jVyW-.js    7.08 kB │ gzip:   2.84 kB\ndist/assets/index-vCr4YhuF.js      437.13 kB │ gzip: 135.88 kB\ndist/assets/index.esm-C2feRr7a.js  463.10 kB │ gzip: 139.09 kB\n\n✓ built in 1.01s\n"
+    },
+    {
+      "name": "lint-final",
+      "command": "npm run lint",
+      "code": 0,
+      "seconds": 22.015,
+      "log": "lint-final.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 lint\n> eslint .\n\n"
+    },
+    {
+      "name": "typecheck-final",
+      "command": "npm run typecheck",
+      "code": 0,
+      "seconds": 10.088,
+      "log": "typecheck-final.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 typecheck\n> tsc -b && tsc -p tsconfig.tests.json\n\n"
+    },
+    {
+      "name": "unit-final",
+      "command": "npm run test",
+      "code": 0,
+      "seconds": 95.403,
+      "log": "unit-final.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 test\n> vitest run\n\n\n RUN  v5.0.5 C:/Users/Cedrick/Desktop/Personal projects/taskly-v2\n\n\n Test Files  30 passed (30)\n      Tests  223 passed (223)\n   Start at  11:51:24\n   Duration  93.79s (environment 69%, setup 18%, tests 10%, import 2%, transform 1%)\n\nEnvironment  |unit| jsdom was created 29 times · 57.66s total, 69% of tracked time\n             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)\n             learn more: https://vitest.dev/guide/improving-performance#test-environments\n\n"
+    },
+    {
+      "name": "rules-final",
+      "command": "npm run test:rules",
+      "code": 0,
+      "seconds": 43.184,
+      "log": "rules-final.log.gz",
+      "tail": ". It usually means the last handler in the pipeline did not handle the exception.\\r\\njava.net.SocketException: Connection reset\\r\\n\\tat java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:401)\\r\\n\\tat java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:434)\\r\\n\\tat io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:255)\\r\\n\\tat io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)\\r\\n\\tat io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:356)\\r\\n\\tat io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:156)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:796)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:732)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:658)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)\\r\\n\\tat io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998)\\r\\n\\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\\r\\n\\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\\r\\n\\tat java.base/java.lang.Thread.run(Thread.java:1583)\\r\\n\\r\\n\"}}\r\n\n Test Files  2 passed (2)\n      Tests  122 passed (122)\n   Start at  11:53:27\n   Duration  13.32s (tests 87%, import 12%, transform 1%)\n\nAuth/Firestore emulator diagnostics retained: C:\\Users\\Cedrick\\Desktop\\Personal projects\\taskly-v2\\test-results\\gate-3\\emulator-FqIuIG\n"
+    }
+  ],
+  "stopped": "Interrupted before completion to cover the phone menu native dialog as well as project-name dialogs; completed checks retained. No final-suite or acceptance claim.",
+  "finished": "2026-10-31T03:55:06.957Z"
+}

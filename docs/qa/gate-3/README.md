@@ -1,12 +1,17 @@
 # G3 evidence
 
+- [Checkpoint-2 recheck addition, 2026-10-31](CHECKPOINT-2-RECHECK.md): toast
+  layering reproduction/fix, 46 passing e2e tests and precise owner-reported rollout
+  status. [All 180 route samples](SPEED-TOAST-RECHECK.md) are retained; no Q15 acceptance claim.
+
 - [Checkpoint-2 review speed results](SPEED-CHECKPOINT-2-REVIEW.md): both full-suite
   runs retained; final step-1 full e2e has 39 passes / 3 numeric speed failures.
 - [Checkpoint 2](CHECKPOINT-2.md): integrated CRUD, Q17 pending-only guard, ran/read
-  record, proposed rules diff and owner handoff. Rules remain unchanged.
+  record, approved rules/test commit `6728275` and owner handoff.
 - [Paired checkpoint-2 monitor](checkpoint2-monitor-VNDDJq/summary.json): all 360
   samples retained; diagnostic monitor only, not Q15 acceptance. Protocol committed
-  in `4181103` before runs. [Rollout actions (a)–(f)](ROLLOUT.md) remain owner-UNVERIFIED.
+  in `4181103` before runs. [Rollout actions (a)–(f)](ROLLOUT.md) separate verified
+  setup/deployment reports from unverified console/Preview/device/Production checks.
 - [Checkpoint 1 and review revision](CHECKPOINT-1.md): scope, per-item ran/read record,
   SDK outcomes, environment-specific bundles and owner stop points.
 - [Speed interpretation and results](SPEED-CHECKPOINT-1.md): diagnostic protocol and provenance,

@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-31T04:03:44.534Z",
+  "initialDefinition": "Entry + transitive static imports + HTML modulepreloads; each emitted JS asset gzipped once",
+  "gate2GzipBytes": {
+    "initial": 127820,
+    "deferred": 137162,
+    "total": 264982
+  },
+  "deltaGzipBytes": {
+    "initial": 6819,
+    "deferred": 4065,
+    "total": 10884
+  },
+  "hardBudgetBytes": 200000,
+  "chunks": [
+    {
+      "fileName": "assets/firestore-CWVMWrgd.js",
+      "rawBytes": 211,
+      "gzipBytes": 178,
+      "initial": false,
+      "firestore": false,
+      "firestoreModuleIds": []
+    },
+    {
+      "fileName": "assets/index-BEgiWBP2.js",
+      "rawBytes": 437254,
+      "gzipBytes": 134639,
+      "initial": true,
+      "firestore": false,
+      "firestoreModuleIds": []
+    },
+    {
+      "fileName": "assets/index.esm-BoG2Xui5.js",
+      "rawBytes": 463108,
+      "gzipBytes": 137694,
+      "initial": false,
+      "firestore": true,
+      "firestoreModuleIds": [
+        "<root>/node_modules/@firebase/firestore/dist/common-D9UYuXJO.esm.js",
+        "<root>/node_modules/@firebase/firestore/dist/index.esm.js",
+        "<root>/node_modules/firebase/firestore/dist/esm/index.esm.js"
+      ]
+    },
+    {
+      "fileName": "assets/listeners-DyJzc8uN.js",
+      "rawBytes": 7081,
+      "gzipBytes": 2837,
+      "initial": false,
+      "firestore": false,
+      "firestoreModuleIds": []
+    },
+    {
+      "fileName": "assets/writes-uTV5bbs_.js",
+      "rawBytes": 838,
+      "gzipBytes": 518,
+      "initial": false,
+      "firestore": false,
+      "firestoreModuleIds": []
+    }
+  ],
+  "roots": [
+    "assets/index-BEgiWBP2.js"
+  ],
+  "staticEdges": [
+    {
+      "from": "assets/firestore-CWVMWrgd.js",
+      "to": "assets/index-BEgiWBP2.js"
+    },
+    {
+      "from": "assets/firestore-CWVMWrgd.js",
+      "to": "assets/index.esm-BoG2Xui5.js"
+    },
+    {
+      "from": "assets/index.esm-BoG2Xui5.js",
+      "to": "assets/index-BEgiWBP2.js"
+    },
+    {
+      "from": "assets/listeners-DyJzc8uN.js",
+      "to": "assets/index-BEgiWBP2.js"
+    },
+    {
+      "from": "assets/listeners-DyJzc8uN.js",
+      "to": "assets/index.esm-BoG2Xui5.js"
+    },
+    {
+      "from": "assets/writes-uTV5bbs_.js",
+      "to": "assets/index.esm-BoG2Xui5.js"
+    }
+  ],
+  "dynamicEdges": [
+    {
+      "from": "assets/index-BEgiWBP2.js",
+      "to": "assets/firestore-CWVMWrgd.js"
+    },
+    {
+      "from": "assets/index-BEgiWBP2.js",
+      "to": "assets/listeners-DyJzc8uN.js"
+    },
+    {
+      "from": "assets/index-BEgiWBP2.js",
+      "to": "assets/writes-uTV5bbs_.js"
+    }
+  ],
+  "initial": {
+    "rawBytes": 437254,
+    "gzipBytes": 134639,
+    "files": [
+      "assets/index-BEgiWBP2.js"
+    ]
+  },
+  "deferred": {
+    "rawBytes": 471238,
+    "gzipBytes": 141227,
+    "files": [
+      "assets/firestore-CWVMWrgd.js",
+      "assets/index.esm-BoG2Xui5.js",
+      "assets/listeners-DyJzc8uN.js",
+      "assets/writes-uTV5bbs_.js"
+    ]
+  },
+  "total": {
+    "rawBytes": 908492,
+    "gzipBytes": 275866,
+    "files": [
+      "assets/firestore-CWVMWrgd.js",
+      "assets/index-BEgiWBP2.js",
+      "assets/index.esm-BoG2Xui5.js",
+      "assets/listeners-DyJzc8uN.js",
+      "assets/writes-uTV5bbs_.js"
+    ]
+  },
+  "firestoreChunks": [
+    "assets/index.esm-BoG2Xui5.js"
+  ],
+  "initialFirestoreChunks": [],
+  "boundaryPassed": true,
+  "passed": true
+}

@@ -1,0 +1,4 @@
+{
+  "testStatus": "passed",
+  "result": {"rect":{"left":24,"right":245.765625,"top":816,"bottom":876},"openPopover":true,"hitTests":[{"x":28,"y":820,"clear":true},{"x":241.765625,"y":820,"clear":true},{"x":28,"y":872,"clear":true},{"x":241.765625,"y":872,"clear":true},{"x":106.8828125,"y":845.9921875,"clear":true},{"x":207.765625,"y":846,"clear":true}],"inViewport":true,"primary":{"x":1140.5625,"y":731,"width":82.4375,"height":44},"avoidsPrimary":true}
+}

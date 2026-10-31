@@ -1,5 +1,7 @@
 # G3 checkpoint 2
 
+Latest addition: [2026-10-31 toast layering and owner rollout reports](CHECKPOINT-2-RECHECK.md).
+
 ## Review revision (2026-10-25)
 
 Q18–Q20 in `docs/decisions/g3.md` are verbatim owner decisions. Work order is UI/tests

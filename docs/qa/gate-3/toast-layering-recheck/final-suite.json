@@ -1,0 +1,66 @@
+{
+  "sourceHead": "d03acb1d5c7c71c94a6b60dccd55e34c6772d945",
+  "started": "2026-10-31T03:55:39.505Z",
+  "buildEnvironment": "Existing local .env Firebase config inlined; no values read, printed, or changed",
+  "acceptance": false,
+  "baseline": "No immediately preceding unchanged-main baseline; not Q15 acceptance",
+  "runs": [
+    {
+      "name": "final-build",
+      "command": "npm run build",
+      "code": 0,
+      "seconds": 6.222,
+      "log": "final-build.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 build\n> tsc -b && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 180 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                      0.70 kB │ gzip:   0.36 kB\ndist/assets/index-C_ZYDR5F.css      26.66 kB │ gzip:   5.58 kB\ndist/assets/firestore-CWVMWrgd.js    0.21 kB │ gzip:   0.17 kB\ndist/assets/writes-uTV5bbs_.js       0.83 kB │ gzip:   0.51 kB\ndist/assets/listeners-DyJzc8uN.js    7.08 kB │ gzip:   2.84 kB\ndist/assets/index-BEgiWBP2.js      437.25 kB │ gzip: 135.92 kB\ndist/assets/index.esm-BoG2Xui5.js  463.10 kB │ gzip: 139.09 kB\n\n✓ built in 625ms\n"
+    },
+    {
+      "name": "final-lint",
+      "command": "npm run lint",
+      "code": 0,
+      "seconds": 17.519,
+      "log": "final-lint.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 lint\n> eslint .\n\n"
+    },
+    {
+      "name": "final-typecheck",
+      "command": "npm run typecheck",
+      "code": 0,
+      "seconds": 9.866,
+      "log": "final-typecheck.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 typecheck\n> tsc -b && tsc -p tsconfig.tests.json\n\n"
+    },
+    {
+      "name": "final-unit",
+      "command": "npm run test",
+      "code": 0,
+      "seconds": 108.766,
+      "log": "final-unit.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 test\n> vitest run\n\n\n RUN  v5.0.5 C:/Users/Cedrick/Desktop/Personal projects/taskly-v2\n\n\n Test Files  30 passed (30)\n      Tests  223 passed (223)\n   Start at  11:56:14\n   Duration  107.25s (environment 69%, setup 18%, tests 9%, import 2%, transform 1%)\n\nEnvironment  |unit| jsdom was created 29 times · 66.87s total, 69% of tracked time\n             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)\n             learn more: https://vitest.dev/guide/improving-performance#test-environments\n\n"
+    },
+    {
+      "name": "final-rules",
+      "command": "npm run test:rules",
+      "code": 0,
+      "seconds": 38.189,
+      "log": "final-rules.log.gz",
+      "tail": "ava:796)\r\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:732)\r\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:658)\r\n\tat io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)\r\n\tat io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998)\r\n\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\r\n\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\r\n\tat java.base/java.lang.Thread.run(Thread.java:1583)\r\n\r\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Oct 31, 2026 11:58:39 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException\\r\\nWARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.\\r\\njava.net.SocketException: Connection reset\\r\\n\\tat java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:401)\\r\\n\\tat java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:434)\\r\\n\\tat io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:255)\\r\\n\\tat io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)\\r\\n\\tat io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:356)\\r\\n\\tat io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:156)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:796)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:732)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:658)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)\\r\\n\\tat io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998)\\r\\n\\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\\r\\n\\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\\r\\n\\tat java.base/java.lang.Thread.run(Thread.java:1583)\\r\\n\\r\\n\"}}\r\n\n Test Files  2 passed (2)\n      Tests  122 passed (122)\n   Start at  11:58:24\n   Duration  15.36s (tests 92%, import 8%)\n\nAuth/Firestore emulator diagnostics retained: C:\\Users\\Cedrick\\Desktop\\Personal projects\\taskly-v2\\test-results\\gate-3\\emulator-2bwQFf\n"
+    },
+    {
+      "name": "final-e2e",
+      "command": "npm run e2e -- --record-evidence",
+      "code": 0,
+      "seconds": 303.619,
+      "log": "final-e2e.log.gz",
+      "tail": "netty.HttpVersionRoutingHandler channelRead\\r\\nINFO: Detected non-HTTP/2 connection.\\r\\n\"}}\r\n[2026-10-31T04:03:36.790Z] Oct 31, 2026 12:03:36 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\r\nINFO: Detected non-HTTP/2 connection.\r\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Oct 31, 2026 12:03:36 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\r\\nINFO: Detected non-HTTP/2 connection.\\r\\n\"}}\r\n{\n  \"signedInToDataMs\": 8069,\n  \"signedInToDataPaintMs\": 8175,\n  \"navigationToDataPaintMs\": 11585,\n  \"startupEncodedTransferBytes\": 1165326,\n  \"state\": {\n    \"uid\": \"BXTQ3NMzAfEmX3bd3AYveYrstwho\",\n    \"dataReady\": true,\n    \"handles\": 3,\n    \"activeHandles\": 3,\n    \"registrations\": 3,\n    \"projects\": 4,\n    \"tasks\": 1000,\n    \"activity\": 20,\n    \"activityIds\": [\n      \"activity-1\",\n      \"activity-2\",\n      \"activity-3\",\n      \"activity-4\",\n      \"activity-5\",\n      \"activity-6\",\n      \"activity-7\",\n      \"activity-8\",\n      \"activity-9\",\n      \"activity-10\",\n      \"activity-11\",\n      \"activity-12\",\n      \"activity-13\",\n      \"activity-14\",\n      \"activity-15\",\n      \"activity-16\",\n      \"activity-17\",\n      \"activity-18\",\n      \"activity-19\",\n      \"activity-20\"\n    ],\n    \"activityCreatedAt\": [\n      1793419409742,\n      1793419408742,\n      1793419407742,\n      1793419406742,\n      1793419405742,\n      1793419404742,\n      1793419403742,\n      1793419402742,\n      1793419401742,\n      1793419400742,\n      1793419399742,\n      1793419398742,\n      1793419397742,\n      1793419396742,\n      1793419395742,\n      1793419394742,\n      1793419393742,\n      1793419392742,\n      1793419391742,\n      1793419390742\n    ],\n    \"orphanCount\": 0,\n    \"streams\": {\n      \"projects\": {\n        \"ready\": true,\n        \"fromCache\": false,\n        \"registered\": true,\n        \"error\": null\n      },\n      \"tasks\": {\n        \"ready\": true,\n        \"fromCache\": false,\n        \"registered\": true,\n        \"error\": null\n      },\n      \"activity\": {\n        \"ready\": true,\n        \"fromCache\": false,\n        \"registered\": true,\n        \"error\": null\n      }\n    }\n  },\n  \"errors\": []\n}\n  ok 46 tests\\e2e\\startup.spec.ts:14:1 › signed-in startup transfer and first-data latency: Slow 4G / 4x CPU (14.9s)\n\n  46 passed (4.5m)\nAuth/Firestore emulator diagnostics retained: C:\\Users\\Cedrick\\Desktop\\Personal projects\\taskly-v2\\test-results\\gate-3\\emulator-6RYrlz\n"
+    },
+    {
+      "name": "final-bundle",
+      "command": "npm run measure:bundle",
+      "code": 0,
+      "seconds": 0.881,
+      "log": "final-bundle.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 measure:bundle\n> node scripts/measure-bundle.mjs\n\n{\n  \"initialGzipBytes\": 134639,\n  \"deferredGzipBytes\": 141227,\n  \"totalGzipBytes\": 275866,\n  \"initialFirestoreChunks\": [],\n  \"passed\": true\n}\n"
+    }
+  ],
+  "finished": "2026-10-31T04:03:44.588Z"
+}

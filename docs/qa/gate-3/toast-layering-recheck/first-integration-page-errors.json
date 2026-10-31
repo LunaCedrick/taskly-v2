@@ -1,0 +1,116 @@
+[
+  {
+    "testDirectory": "g3-crud-G3-first-run-Quick-465a8-d-project-deletion-at-390px",
+    "pageErrors": [
+      {
+        "error": {
+          "error": {
+            "message": "Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.",
+            "stack": "InvalidStateError: Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.\n    at http://127.0.0.1:4173/assets/index-B5S5LXxd.js:10:216717\n    at wl (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:94986)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118209)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:119425)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)",
+            "name": "InvalidStateError"
+          }
+        },
+        "location": {
+          "url": "http://127.0.0.1:4173/assets/index-B5S5LXxd.js",
+          "line": 9,
+          "column": 216716
+        }
+      }
+    ]
+  },
+  {
+    "testDirectory": "g3-crud-G3-first-run-Quick-51a04--project-deletion-at-1280px",
+    "pageErrors": [
+      {
+        "error": {
+          "error": {
+            "message": "Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.",
+            "stack": "InvalidStateError: Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.\n    at http://127.0.0.1:4173/assets/index-B5S5LXxd.js:10:216717\n    at wl (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:94986)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118209)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:119425)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)",
+            "name": "InvalidStateError"
+          }
+        },
+        "location": {
+          "url": "http://127.0.0.1:4173/assets/index-B5S5LXxd.js",
+          "line": 9,
+          "column": 216716
+        }
+      }
+    ]
+  },
+  {
+    "testDirectory": "g3-crud-G3-offline-local-a-af95d-ctive-confirmation-disabled",
+    "pageErrors": [
+      {
+        "error": {
+          "error": {
+            "message": "Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.",
+            "stack": "InvalidStateError: Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.\n    at http://127.0.0.1:4173/assets/index-B5S5LXxd.js:10:216717\n    at wl (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:94986)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118209)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:119425)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)",
+            "name": "InvalidStateError"
+          }
+        },
+        "location": {
+          "url": "http://127.0.0.1:4173/assets/index-B5S5LXxd.js",
+          "line": 9,
+          "column": 216716
+        }
+      }
+    ]
+  },
+  {
+    "testDirectory": "g3-recovery-G3-unload-guar-7a254-al-SDK-queued-write-settles",
+    "pageErrors": [
+      {
+        "error": {
+          "error": {
+            "message": "Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.",
+            "stack": "InvalidStateError: Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.\n    at http://127.0.0.1:4173/assets/index-B5S5LXxd.js:10:216717\n    at wl (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:94986)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118209)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:119425)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)",
+            "name": "InvalidStateError"
+          }
+        },
+        "location": {
+          "url": "http://127.0.0.1:4173/assets/index-B5S5LXxd.js",
+          "line": 9,
+          "column": 216716
+        }
+      }
+    ]
+  },
+  {
+    "testDirectory": "g3-toast-layering-G3-error-83d07--deletion-dialogs-at-1280px",
+    "pageErrors": [
+      {
+        "error": {
+          "error": {
+            "message": "Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.",
+            "stack": "InvalidStateError: Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.\n    at http://127.0.0.1:4173/assets/index-B5S5LXxd.js:10:216717\n    at wl (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:94986)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118209)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:119425)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)",
+            "name": "InvalidStateError"
+          }
+        },
+        "location": {
+          "url": "http://127.0.0.1:4173/assets/index-B5S5LXxd.js",
+          "line": 9,
+          "column": 216716
+        }
+      }
+    ]
+  },
+  {
+    "testDirectory": "g3-toast-layering-G3-error-d1b8e-d-deletion-dialogs-at-390px",
+    "pageErrors": [
+      {
+        "error": {
+          "error": {
+            "message": "Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.",
+            "stack": "InvalidStateError: Failed to execute 'showPopover' on 'HTMLElement': Invalid on disconnected popover elements.\n    at http://127.0.0.1:4173/assets/index-B5S5LXxd.js:10:216717\n    at wl (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:94986)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118209)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:119425)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)\n    at Wu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:118189)\n    at Uu (http://127.0.0.1:4173/assets/index-B5S5LXxd.js:9:117982)",
+            "name": "InvalidStateError"
+          }
+        },
+        "location": {
+          "url": "http://127.0.0.1:4173/assets/index-B5S5LXxd.js",
+          "line": 9,
+          "column": 216716
+        }
+      }
+    ]
+  }
+]

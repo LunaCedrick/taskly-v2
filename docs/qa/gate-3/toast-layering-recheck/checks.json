@@ -1,0 +1,17 @@
+[
+  {
+    "command": "npm run lint",
+    "code": 1,
+    "seconds": 192.791
+  },
+  {
+    "command": "npm run typecheck",
+    "code": 0,
+    "seconds": 23.623
+  },
+  {
+    "command": "npm run test",
+    "code": 0,
+    "seconds": 187.513
+  }
+]
