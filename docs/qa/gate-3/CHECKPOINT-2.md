@@ -1,6 +1,6 @@
 # G3 checkpoint 2
 
-Latest: [row-layout recheck](CHECKPOINT-2-ROWS.md), INCOMPLETE (51 e2e passed / 3 resize failures); [prior toast recheck](CHECKPOINT-2-RECHECK.md).
+Latest: [Q22 remount recheck](CHECKPOINT-2-ROWS.md), targeted 8 / full e2e 54 passed; scroll/focus tradeoff recorded, prior failures retained; [toast recheck](CHECKPOINT-2-RECHECK.md).
 
 ## Review revision (2026-10-25)
 

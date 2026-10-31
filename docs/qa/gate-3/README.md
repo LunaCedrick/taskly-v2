@@ -1,9 +1,10 @@
 # G3 evidence
 
-- [Project-row layout addition, 2026-10-31](CHECKPOINT-2-ROWS.md): narrow-width
-  **INCOMPLETE**: latest full e2e 51 passed / 3 phone resize failures; stopped after
-  two unsuccessful follow-ups. Owner-confirmed row (e) recorded.
-  [All 360 route samples](SPEED-ROW-RECHECK.md) retained; no Q15 acceptance claim.
+- [Project-row layout addition, 2026-10-31](CHECKPOINT-2-ROWS.md): Q22 single
+  remount attempt PASS at `0541208`; targeted 8 / full e2e 54 passed. Scroll resets
+  and DOM row focus clears across the breakpoint; the stored tab stop persists.
+  [New 180 route samples](SPEED-ROW-REMOUNT.md) and [prior 360](SPEED-ROW-RECHECK.md)
+  retained, including prior failures. No Q15 acceptance claim. Owner-confirmed row (e) unchanged.
 
 - [Checkpoint-2 recheck addition, 2026-10-31](CHECKPOINT-2-RECHECK.md): toast
   layering reproduction/fix, 46 passing e2e tests and precise owner-reported rollout

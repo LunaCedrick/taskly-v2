@@ -1,6 +1,88 @@
 # G3 checkpoint-2 row-layout addition (2026-10-31)
 
-**INCOMPLETE — stopped after two unsuccessful resize follow-ups.** Latest full
+## Q22: one bounded remount attempt (2026-10-31)
+
+Latest source **0541208**. The owner authorized exactly one further attempt and
+the specified fallback in [Q22](../../decisions/g3.md); only the supplied sentence
+is attributed to the owner. Targeted row spec: **8 passed, 38.9 s**
+([command/log](row-remount-0GEweP/attempt-target.json), `emulator-EB3PdQ`).
+**Full suite PASS at the same source; fallback not needed.** Earlier failures remain retained.
+
+- `src/ui/TaskList.tsx`: key only virtualized Project lists by the CSS layout mode.
+  A small resize subscription reads `--desktop-display`; the approved 820 px
+  breakpoint remains defined only in tokens.css. Each mode gets a new virtualizer,
+  measured-element cache, DOM and observers. The previous in-place measurement-reset
+  effect is removed. No `measureElement` override, store/schema/writer/rule change.
+- Focused/revealed range extraction, task keys, store focused index and the reveal
+  scroll effect remain intact. Dashboard/My Tasks and plain lists do not get this remount.
+- `tests/e2e/g3-row-layout.spec.ts`: keeps the requested layout, growth, resize,
+  End/Home and specific missing-index warning assertions. Adds raw scroll/focus/tab-stop
+  observations and confirms the same stored row is the tab stop after both mode changes.
+- The attempt is frozen after its first targeted run. No second implementation,
+  measurement override, assertion relaxation, new diagnostic or acceptance run is added.
+
+Virtualization starts at **201 tasks in the displayed list** (`tasks.length > 200`,
+enabled by default), not 201 tasks across the account. Fixtures have 1,000 account
+tasks / 334 project-1 tasks; the plain fixture has six account tasks / two in that project.
+A user with more than 200 tasks in one project can reach this by dragging a browser
+window or responsive DevTools across 820 px, then back. A phone whose landscape CSS
+width reaches 820 px can also cross it on rotation; a narrower landscape viewport cannot.
+
+Observed tradeoff in all three phone virtual-list cases, before and after remount:
+
+| Width | Before: scroll / focused row | Desktop: scroll / focused row | Back to phone | Stored tab stop |
+|---|---|---|---|---|
+| 320 | 80 px / task-10 | 0 px / none in list | 0 px / none in list | task-10 throughout |
+| 360 | 80 px / task-10 | 0 px / none in list | 0 px / none in list | task-10 throughout |
+| 390 | 80 px / task-10 | 0 px / none in list | 0 px / none in list | task-10 throughout |
+
+Remounting discards the old scroll offset and DOM focus inside that removed list.
+The store retains the focused index; its row remains in the extracted range and is
+the roving tab stop. No scroll-offset or DOM-focus restoration was added. If a reveal
+target exists, the unchanged mount effect scrolls to it (source behavior; the table
+above has no reveal target). Plain cases retain task-4 DOM focus and scroll 0 throughout.
+No missing-index warnings, clipping, part/row overlaps or horizontal overflow occur
+in the eight targeted cases. Phone rows grow after editing; desktop rows stay 64 px.
+
+Full validation at `05412081bc514e7ef115bb7c989796115a631226`:
+
+| Command | Result | Command duration |
+|---|---|---|
+| `npm run build` | PASS | 6.116 s |
+| `npm run lint` | PASS | 24.686 s |
+| `npm run typecheck` | PASS | 10.373 s |
+| `npm run test` | PASS: 223 tests / 30 files, no skips; Vitest 103.85 s | 105.644 s |
+| `npm run test:rules` | PASS: 122 tests / 2 files; Vitest 11.72 s | 31.409 s |
+| `npm run e2e -- --record-evidence` | PASS: 54 tests, 4.9 min | 312.515 s |
+| `npm run measure:bundle` | PASS | 0.833 s |
+
+[Manifest/compressed logs](row-remount-0GEweP/full-suite.json); full e2e artifacts:
+`emulator-BDlWFa`, including all eight passing row cases. The scroll/focus values
+and empty missing-index-warning arrays match the targeted run. No assertion was relaxed.
+Initial/deferred/total: **134,792 / 141,229 / 276,021 B gzip**;
+G2 baseline 127,820 / 137,162 / 264,982 B, deltas **+6,972 / +4,067 / +11,039 B**.
+Build environment: existing local `.env` Firebase config inlined; values not
+read/printed/changed. Initial remains strictly under 200,000 B; no initial runtime
+Firestore, including static imports/modulepreloads. Production graph has no test
+observer/probe/inspect/shim modules. Bundle measured immediately after normal build.
+
+[All 180 new navigation samples](SPEED-ROW-REMOUNT.md): p95 **87.5 / 85.6 / 83.9 ms**.
+Five >100 ms transitions retained, all first visits; zero slow repeat project visits.
+No immediately preceding unchanged-main baseline: neither Q15 acceptance pass nor fail.
+No extra diagnostic, baseline rerun or acceptance run. The G2 speed-margin risk and
+deferred/unverified Production latency remain carried; these local results do not resolve them.
+
+Ran: Java 21.0.12.1; the targeted row spec first, then the full commands above.
+Only read: G3/AGENTS/review instructions, relevant PLAN/SCREENS/DESIGN and decisions,
+the prior row report, TaskList/ProjectPage/store integration and emulator harness.
+The review skill was not executed: this is a bounded recheck stop, not end-of-gate review.
+No physical phone or fresh live Preview/Production/console check. Rollout rows are unchanged.
+App/test source was frozen after the targeted pass. Stop here under Q22; no fallback
+or further implementation. No rules edits, deployments, dependencies, AGENTS or PLAN edits.
+
+## Retained prior recheck at b4ca916
+
+**INCOMPLETE at that head — stopped after two unsuccessful resize follow-ups.** Its latest full
 e2e at source `2183186`: **51 passed / 3 failed**. Initial phone geometry passes;
 phone→desktop→phone virtual-list row separation fails. Earlier passes below do
 not supersede this failure. No further code fix or unchanged-code rerun was tried.

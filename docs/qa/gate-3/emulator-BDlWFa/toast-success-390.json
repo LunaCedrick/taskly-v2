@@ -1,0 +1,4 @@
+{
+  "testStatus": "passed",
+  "result": {"browserName":"chromium","observations":{"rect":{"left":24,"right":245.765625,"top":12,"bottom":72},"openPopover":true,"hitTests":[{"x":28,"y":16,"clear":true},{"x":241.765625,"y":16,"clear":true},{"x":28,"y":68,"clear":true},{"x":241.765625,"y":68,"clear":true},{"x":106.8828125,"y":41.9921875,"clear":true},{"x":207.765625,"y":42,"clear":true}],"inViewport":true,"primary":{"x":41,"y":737.671875,"width":82.4375,"height":44},"avoidsPrimary":true}}
+}
