@@ -106,7 +106,7 @@ function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
     {/* Virtual offsets are measured geometry, not design values. */}
     <div className={styles.virtualCanvas} role="presentation" style={{ height: virtualizer.getTotalSize() }}>
       {virtualizer.getVirtualItems().map((item) => <div key={item.key} role="presentation"
-        data-index={dynamic ? item.index : undefined} ref={dynamic ? virtualizer.measureElement : undefined}
+        data-index={item.index} ref={dynamic ? virtualizer.measureElement : undefined}
         className={styles.virtualRow} style={{ transform: `translateY(${item.start}px)` }}>{row(item.index)}</div>)}
     </div>
   </div>

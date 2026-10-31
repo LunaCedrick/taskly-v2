@@ -65,6 +65,11 @@ for (const width of [320, 360, 390, 1280]) for (const taskCount of [6, 1000]) {
   test(`G3 ${mode} Project rows fit long and short titles at ${width}px`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: width === 1280 ? 900 : 800 })
     const diagnostics = collectDiagnostics(page)
+    const measurementWarnings: string[] = []
+    page.on('console', (message) => {
+      if (message.type() === 'warning' && message.text().includes('Missing attribute name'))
+        measurementWarnings.push(message.text())
+    })
     const uid = await signIn(page, '/', { seed: false })
     const seed = await seedUser(uid, { taskCount })
     const projectTasks = seed.tasks.filter((task) => task.projectId === 'project-1')
@@ -144,6 +149,7 @@ for (const width of [320, 360, 390, 1280]) for (const taskCount of [6, 1000]) {
     await page.keyboard.press('Home')
     await expect(longRow).toBeFocused()
     await expect.poll(() => adjacentRows(list)).toBe(true)
+    expect(measurementWarnings).toEqual([])
     expectNormalDiagnostics(diagnostics)
     expect((await writeSnapshot(page)).projects).toHaveLength(4)
   })
