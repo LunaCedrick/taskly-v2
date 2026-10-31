@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-31T05:06:03.823Z",
+  "initialDefinition": "Entry + transitive static imports + HTML modulepreloads; each emitted JS asset gzipped once",
+  "gate2GzipBytes": {
+    "initial": 127820,
+    "deferred": 137162,
+    "total": 264982
+  },
+  "deltaGzipBytes": {
+    "initial": 6916,
+    "deferred": 4068,
+    "total": 10984
+  },
+  "hardBudgetBytes": 200000,
+  "chunks": [
+    {
+      "fileName": "assets/firestore-5H7N7dD9.js",
+      "rawBytes": 211,
+      "gzipBytes": 182,
+      "initial": false,
+      "firestore": false,
+      "firestoreModuleIds": []
+    },
+    {
+      "fileName": "assets/index-1VOA9Gd4.js",
+      "rawBytes": 437537,
+      "gzipBytes": 134736,
+      "initial": true,
+      "firestore": false,
+      "firestoreModuleIds": []
+    },
+    {
+      "fileName": "assets/index.esm-CMRt6y1c.js",
+      "rawBytes": 463108,
+      "gzipBytes": 137694,
+      "initial": false,
+      "firestore": true,
+      "firestoreModuleIds": [
+        "<root>/node_modules/@firebase/firestore/dist/common-D9UYuXJO.esm.js",
+        "<root>/node_modules/@firebase/firestore/dist/index.esm.js",
+        "<root>/node_modules/firebase/firestore/dist/esm/index.esm.js"
+      ]
+    },
+    {
+      "fileName": "assets/listeners-BZgZSfzB.js",
+      "rawBytes": 7081,
+      "gzipBytes": 2837,
+      "initial": false,
+      "firestore": false,
+      "firestoreModuleIds": []
+    },
+    {
+      "fileName": "assets/writes-nPYSysOB.js",
+      "rawBytes": 838,
+      "gzipBytes": 517,
+      "initial": false,
+      "firestore": false,
+      "firestoreModuleIds": []
+    }
+  ],
+  "roots": [
+    "assets/index-1VOA9Gd4.js"
+  ],
+  "staticEdges": [
+    {
+      "from": "assets/firestore-5H7N7dD9.js",
+      "to": "assets/index-1VOA9Gd4.js"
+    },
+    {
+      "from": "assets/firestore-5H7N7dD9.js",
+      "to": "assets/index.esm-CMRt6y1c.js"
+    },
+    {
+      "from": "assets/index.esm-CMRt6y1c.js",
+      "to": "assets/index-1VOA9Gd4.js"
+    },
+    {
+      "from": "assets/listeners-BZgZSfzB.js",
+      "to": "assets/index-1VOA9Gd4.js"
+    },
+    {
+      "from": "assets/listeners-BZgZSfzB.js",
+      "to": "assets/index.esm-CMRt6y1c.js"
+    },
+    {
+      "from": "assets/writes-nPYSysOB.js",
+      "to": "assets/index.esm-CMRt6y1c.js"
+    }
+  ],
+  "dynamicEdges": [
+    {
+      "from": "assets/index-1VOA9Gd4.js",
+      "to": "assets/firestore-5H7N7dD9.js"
+    },
+    {
+      "from": "assets/index-1VOA9Gd4.js",
+      "to": "assets/listeners-BZgZSfzB.js"
+    },
+    {
+      "from": "assets/index-1VOA9Gd4.js",
+      "to": "assets/writes-nPYSysOB.js"
+    }
+  ],
+  "initial": {
+    "rawBytes": 437537,
+    "gzipBytes": 134736,
+    "files": [
+      "assets/index-1VOA9Gd4.js"
+    ]
+  },
+  "deferred": {
+    "rawBytes": 471238,
+    "gzipBytes": 141230,
+    "files": [
+      "assets/firestore-5H7N7dD9.js",
+      "assets/index.esm-CMRt6y1c.js",
+      "assets/listeners-BZgZSfzB.js",
+      "assets/writes-nPYSysOB.js"
+    ]
+  },
+  "total": {
+    "rawBytes": 908775,
+    "gzipBytes": 275966,
+    "files": [
+      "assets/firestore-5H7N7dD9.js",
+      "assets/index-1VOA9Gd4.js",
+      "assets/index.esm-CMRt6y1c.js",
+      "assets/listeners-BZgZSfzB.js",
+      "assets/writes-nPYSysOB.js"
+    ]
+  },
+  "firestoreChunks": [
+    "assets/index.esm-CMRt6y1c.js"
+  ],
+  "initialFirestoreChunks": [],
+  "boundaryPassed": true,
+  "passed": true
+}

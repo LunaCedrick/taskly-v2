@@ -1,5 +1,7 @@
 # G3 checkpoint-2 recheck addition (2026-10-31)
 
+Subsequent [row-layout recheck](CHECKPOINT-2-ROWS.md) updates row (e) after owner confirmation.
+
 Scope: owner-requested items 5–6 only, on `gate-3-projects-tasks`. No rule edit,
 deployment, dependency change, later-gate work, or gate-completion claim.
 Q21 in `docs/decisions/g3.md` copies the owner's observation verbatim. Other

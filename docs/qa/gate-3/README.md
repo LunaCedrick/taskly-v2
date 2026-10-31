@@ -1,5 +1,10 @@
 # G3 evidence
 
+- [Project-row layout addition, 2026-10-31](CHECKPOINT-2-ROWS.md): narrow-width
+  **INCOMPLETE**: latest full e2e 51 passed / 3 phone resize failures; stopped after
+  two unsuccessful follow-ups. Owner-confirmed row (e) recorded.
+  [All 360 route samples](SPEED-ROW-RECHECK.md) retained; no Q15 acceptance claim.
+
 - [Checkpoint-2 recheck addition, 2026-10-31](CHECKPOINT-2-RECHECK.md): toast
   layering reproduction/fix, 46 passing e2e tests and precise owner-reported rollout
   status. [All 180 route samples](SPEED-TOAST-RECHECK.md) are retained; no Q15 acceptance claim.
@@ -10,8 +15,9 @@
   record, approved rules/test commit `6728275` and owner handoff.
 - [Paired checkpoint-2 monitor](checkpoint2-monitor-VNDDJq/summary.json): all 360
   samples retained; diagnostic monitor only, not Q15 acceptance. Protocol committed
-  in `4181103` before runs. [Rollout actions (a)–(f)](ROLLOUT.md) separate verified
-  setup/deployment reports from unverified console/Preview/device/Production checks.
+  in `4181103` before runs. [Rollout actions (a)–(f)](ROLLOUT.md) record owner
+  setup/deployment/Preview reports, the unretained formal timing table, and unverified
+  Firebase Rules-tab/Production checks.
 - [Checkpoint 1 and review revision](CHECKPOINT-1.md): scope, per-item ran/read record,
   SDK outcomes, environment-specific bundles and owner stop points.
 - [Speed interpretation and results](SPEED-CHECKPOINT-1.md): diagnostic protocol and provenance,

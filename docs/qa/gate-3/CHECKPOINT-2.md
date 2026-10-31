@@ -1,6 +1,6 @@
 # G3 checkpoint 2
 
-Latest addition: [2026-10-31 toast layering and owner rollout reports](CHECKPOINT-2-RECHECK.md).
+Latest: [row-layout recheck](CHECKPOINT-2-ROWS.md), INCOMPLETE (51 e2e passed / 3 resize failures); [prior toast recheck](CHECKPOINT-2-RECHECK.md).
 
 ## Review revision (2026-10-25)
 

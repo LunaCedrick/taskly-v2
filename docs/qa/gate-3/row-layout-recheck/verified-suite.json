@@ -1,0 +1,66 @@
+{
+  "sourceHead": "2183186c12112b5bd343efdadebec52cb496a3fb",
+  "started": "2026-10-31T05:07:34.836Z",
+  "buildEnvironment": "Existing local .env Firebase config inlined; values not read, printed or modified",
+  "acceptance": false,
+  "baseline": "No immediately preceding unchanged-main baseline; not Q15 acceptance",
+  "runs": [
+    {
+      "name": "build",
+      "command": "npm run build",
+      "code": 0,
+      "seconds": 6.651,
+      "log": "verified-build.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 build\n> tsc -b && vite build\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 180 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                      0.70 kB │ gzip:   0.36 kB\ndist/assets/index-DLsIANR-.css      28.52 kB │ gzip:   5.91 kB\ndist/assets/firestore-oD9R21xV.js    0.21 kB │ gzip:   0.18 kB\ndist/assets/writes-Dskm7LqW.js       0.83 kB │ gzip:   0.51 kB\ndist/assets/listeners-DXT1m2Gy.js    7.08 kB │ gzip:   2.84 kB\ndist/assets/index-CqzwTlM1.js      437.52 kB │ gzip: 136.01 kB\ndist/assets/index.esm-m5w8HpXD.js  463.10 kB │ gzip: 139.10 kB\n\n✓ built in 956ms\n"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "code": 0,
+      "seconds": 18.245,
+      "log": "verified-lint.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 lint\n> eslint .\n\n"
+    },
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "code": 0,
+      "seconds": 10.43,
+      "log": "verified-typecheck.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 typecheck\n> tsc -b && tsc -p tsconfig.tests.json\n\n"
+    },
+    {
+      "name": "unit",
+      "command": "npm run test",
+      "code": 0,
+      "seconds": 90.101,
+      "log": "verified-unit.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 test\n> vitest run\n\n\n RUN  v5.0.5 C:/Users/Cedrick/Desktop/Personal projects/taskly-v2\n\n\n Test Files  30 passed (30)\n      Tests  223 passed (223)\n   Start at  13:08:11\n   Duration  88.75s (environment 68%, setup 18%, tests 10%, import 2%, transform 1%)\n\nEnvironment  |unit| jsdom was created 29 times · 54.00s total, 68% of tracked time\n             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)\n             learn more: https://vitest.dev/guide/improving-performance#test-environments\n\n"
+    },
+    {
+      "name": "rules",
+      "command": "npm run test:rules",
+      "code": 0,
+      "seconds": 28.916,
+      "log": "verified-rules.log.gz",
+      "tail": ".netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998)\\r\\n\\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\\r\\n\\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\\r\\n\\tat java.base/java.lang.Thread.run(Thread.java:1583)\\r\\n\\r\\nOct 31, 2026 1:10:08 PM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException\\r\\nWARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.\\r\\njava.net.SocketException: Connection reset\\r\\n\\tat java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:401)\\r\\n\\tat java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:434)\\r\\n\\tat io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:255)\\r\\n\\tat io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)\\r\\n\\tat io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:356)\\r\\n\\tat io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:156)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:796)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:732)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:658)\\r\\n\\tat io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)\\r\\n\\tat io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998)\\r\\n\\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\\r\\n\\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\\r\\n\\tat java.base/java.lang.Thread.run(Thread.java:1583)\\r\\n\\r\\n\"}}\r\n\n Test Files  2 passed (2)\n      Tests  122 passed (122)\n   Start at  13:09:56\n   Duration  12.01s (tests 92%, import 7%)\n\nAuth/Firestore emulator diagnostics retained: C:\\Users\\Cedrick\\Desktop\\Personal projects\\taskly-v2\\test-results\\gate-3\\emulator-r0JHsj\n"
+    },
+    {
+      "name": "e2e",
+      "command": "npm run e2e -- --record-evidence",
+      "code": 1,
+      "seconds": 317.527,
+      "log": "verified-e2e.log.gz",
+      "tail": "────────────────────────────\n\n  3) tests\\e2e\\g3-row-layout.spec.ts:65:3 › G3 virtual Project rows fit long and short titles at 390px \n\n    Error: expect(received).toBe(expected) // Object.is equality\n\n    Expected: true\n    Received: false\n\n    Call Log:\n    - Timeout 5000ms exceeded while waiting on the predicate\n\n      123 |       await expect.poll(async () => (await geometry(longRow)).parts.title.height)\n      124 |         .toBeGreaterThan(initial.long.title.lineHeight)\n    > 125 |       await expect.poll(() => adjacentRows(list)).toBe(true)\n          |                                                   ^\n      126 |       expectClear(await geometry(longRow))\n      127 |       // Variable titles must remeasure while mounted, not only on initial rendering.\n      128 |       const expanded = `${longTitle} ${'More project details '.repeat(8)}`\n        at C:\\Users\\Cedrick\\Desktop\\Personal projects\\taskly-v2\\tests\\e2e\\g3-row-layout.spec.ts:125:51\n\n    Error Context: test-results\\gate-3\\emulator-jQaXSl\\playwright\\g3-row-layout-G3-virtual-P-a833e-g-and-short-titles-at-390px\\error-context.md\n\n    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────\n    test-results\\gate-3\\emulator-jQaXSl\\playwright\\g3-row-layout-G3-virtual-P-a833e-g-and-short-titles-at-390px\\trace.zip\n    Usage:\n\n        npx playwright show-trace test-results\\gate-3\\emulator-jQaXSl\\playwright\\g3-row-layout-G3-virtual-P-a833e-g-and-short-titles-at-390px\\trace.zip\n\n    ────────────────────────────────────────────────────────────────────────────────────────────────\n\n  3 failed\n    tests\\e2e\\g3-row-layout.spec.ts:65:3 › G3 virtual Project rows fit long and short titles at 320px \n    tests\\e2e\\g3-row-layout.spec.ts:65:3 › G3 virtual Project rows fit long and short titles at 360px \n    tests\\e2e\\g3-row-layout.spec.ts:65:3 › G3 virtual Project rows fit long and short titles at 390px \n  51 passed (4.9m)\nProcess exited 1 (signal null)\nAuth/Firestore emulator diagnostics retained: C:\\Users\\Cedrick\\Desktop\\Personal projects\\taskly-v2\\test-results\\gate-3\\emulator-jQaXSl\n"
+    },
+    {
+      "name": "bundle",
+      "command": "npm run measure:bundle",
+      "code": 0,
+      "seconds": 0.978,
+      "log": "verified-bundle.log.gz",
+      "tail": "\n> taskly-v2@0.0.0 measure:bundle\n> node scripts/measure-bundle.mjs\n\n{\n  \"initialGzipBytes\": 134734,\n  \"deferredGzipBytes\": 141232,\n  \"totalGzipBytes\": 275966,\n  \"initialFirestoreChunks\": [],\n  \"passed\": true\n}\n"
+    }
+  ],
+  "finished": "2026-10-31T05:15:27.708Z"
+}

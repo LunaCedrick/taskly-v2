@@ -1,0 +1,10 @@
+diff --git a/src/ui/TaskList.tsx b/src/ui/TaskList.tsx
+--- a/src/ui/TaskList.tsx
++++ b/src/ui/TaskList.tsx
+@@ -75,6 +75,8 @@
+     count: tasks.length,
+     getScrollElement: () => scrollRef.current,
+     estimateSize: () => rowHeight,
++    // Read current geometry across breakpoints; the default sync path can reuse a stale size.
++    measureElement: (element) => element.getBoundingClientRect().height,
+     // Render the first range immediately, rather than waiting for ResizeObserver to populate an empty list.

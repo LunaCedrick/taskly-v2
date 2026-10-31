@@ -1,0 +1,4 @@
+{
+  "testStatus": "passed",
+  "result": {"offline":"Firestore SDK disableNetwork; Auth reachable","activeAfterSignOut":true,"signOutConfirmation":false,"activeAfterOriginalQueueSettled":false}
+}
