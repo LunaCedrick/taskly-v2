@@ -54,6 +54,7 @@
   --dialog-width:560px; --quick-width:430px; --overlay-max-height:90dvh;
   --overlay-margin:auto; --overlay-radius:var(--radius-lg); --form-columns:repeat(2,minmax(0,1fr));
   --toast-bottom:var(--space-5); --z-toast:50;
+  --toast-dialog-top:auto; --toast-dialog-bottom:var(--toast-bottom);
 }
 /* The single approved breakpoint exception: CSS variables cannot be used in media conditions. */
 @media (width < 820px) {
@@ -72,6 +73,7 @@
     --auth-form-padding:var(--space-4); --auth-title-size:34px;
     --overlay-margin:auto auto var(--space-0); --overlay-radius:var(--radius-lg) var(--radius-lg) var(--zero) var(--zero);
     --form-columns:minmax(0,1fr); --toast-bottom:calc(var(--tab-height) + var(--fab) + var(--space-6));
+    --toast-dialog-top:var(--space-3); --toast-dialog-bottom:auto;
   }
 }
 @media (prefers-reduced-motion:reduce) {

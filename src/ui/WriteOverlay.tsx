@@ -1,4 +1,4 @@
-import { useEffect, useRef, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react'
 import { useStore } from '../store'
 import { closeOverlay, deleteProject, deleteTask, relevantPending, saveProject, saveTask, writesReady } from '../store/write-actions'
 import { TaskFields } from '../features/tasks/TaskFields'
@@ -20,6 +20,11 @@ export function WriteOverlay() {
   const jobs = useStore((state) => state.jobs)
   const ready = useStore(writesReady)
   const ref = useRef<HTMLDialogElement>(null)
+  const setDialog = useCallback((dialog: HTMLDialogElement | null) => {
+    ref.current = dialog
+    // Popovers must descend from the modal to escape its inert background.
+    useStore.setState({ toastHost: dialog })
+  }, [])
   useEffect(() => {
     if (!overlay) return
     const dialog = ref.current
@@ -47,7 +52,7 @@ export function WriteOverlay() {
     else if (overlay === 'delete-task') deleteTask()
     else void deleteProject()
   }
-  return <dialog ref={ref} className={quick ? styles.quick : styles.modal} aria-labelledby="overlay-title"
+  return <dialog ref={setDialog} className={quick ? styles.quick : styles.modal} aria-labelledby="overlay-title"
     onCancel={(event) => { event.preventDefault(); closeOverlay() }} onClick={(event) => {
       if (event.target === event.currentTarget) closeOverlay()
     }}>
