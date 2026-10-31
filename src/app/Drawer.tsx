@@ -2,6 +2,7 @@ import { memo, useEffect, useRef } from 'react'
 import { useStore, setDrawerOpen } from '../store'
 import { IconButton } from '../ui/Controls'
 import { Navigation } from './Navigation'
+import { registerToastHost } from '../store/write-actions'
 import styles from './Shell.module.css'
 
 export const Drawer = memo(function Drawer() {
@@ -12,9 +13,11 @@ export const Drawer = memo(function Drawer() {
     const trigger = document.activeElement
     const dialog = ref.current
     dialog?.showModal()
+    const unregisterToastHost = dialog && registerToastHost(dialog)
     const oldOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
+      unregisterToastHost?.()
       dialog?.close()
       document.body.style.overflow = oldOverflow
       if (trigger instanceof HTMLElement) trigger.focus()

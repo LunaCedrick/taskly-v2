@@ -7,7 +7,7 @@ import styles from './Overlays.module.css'
 
 export function Toasts() {
   const toast = useStore((state) => state.toasts[0])
-  const host = useStore((state) => state.toastHost)
+  const host = useStore((state) => state.toastHosts.at(-1) ?? null)
   const overlay = useStore((state) => state.overlay)
   const ref = useRef<HTMLDivElement>(null)
   const toastId = toast?.id

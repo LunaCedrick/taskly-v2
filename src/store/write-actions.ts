@@ -16,6 +16,12 @@ export const disabledExplanation = (state: DataSlice) => writesReady(state) ? ''
   : state.streams.projects.error || state.streams.tasks.error ? 'Tasks could not load. Try again before adding a task.'
     : 'Waiting for your projects and tasks to load.'
 
+/** Keep notification controls inside the most recently opened modal's inert boundary. */
+export function registerToastHost(dialog: HTMLDialogElement) {
+  useStore.setState((state) => ({ toastHosts: [...state.toastHosts.filter((host) => host !== dialog), dialog] }))
+  return () => useStore.setState((state) => ({ toastHosts: state.toastHosts.filter((host) => host !== dialog) }))
+}
+
 export function addToast(text: string, error = false, recovery?: Draft, projectRecovery?: Toast['projectRecovery']) {
   useStore.setState((state) => ({ toasts: enqueueToast(state.toasts, { id: id(), text, error, recovery, projectRecovery }) }))
 }

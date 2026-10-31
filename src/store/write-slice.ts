@@ -19,7 +19,7 @@ export function emptyDraft(projectId = ''): Draft {
 
 export function initialWriteState() {
   return { overlay: null as Overlay, draft: emptyDraft(), projectName: '', fieldError: '',
-    toastHost: null as HTMLDialogElement | null,
+    toastHosts: [] as readonly HTMLDialogElement[],
     editTaskId: null as string | null, editProjectId: null as string | null,
     returnFocus: null as HTMLElement | null, fallbackFocus: '',
     focusAfterDelete: null as { taskId: string; selector: string } | null,

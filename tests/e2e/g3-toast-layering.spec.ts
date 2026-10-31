@@ -11,7 +11,7 @@ test.afterEach(async ({ browserName }, info) => {
   observations.delete(info.testId)
 })
 
-async function visibility(toast: Locator, dialog: Locator) {
+async function visibility(toast: Locator, dialog: Locator, primaryControl = dialog.locator('button[type=submit]')) {
   await expect(toast).toBeVisible()
   const surface = await toast.evaluate((element) => {
     const rect = element.getBoundingClientRect()
@@ -27,7 +27,7 @@ async function visibility(toast: Locator, dialog: Locator) {
         clear: element.contains(document.elementFromPoint(x, y)) })),
       inViewport: rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight }
   })
-  const primary = await dialog.locator('button[type=submit]').boundingBox()
+  const primary = await primaryControl.boundingBox()
   const r = surface.rect
   return { ...surface, primary, avoidsPrimary: Boolean(primary && (r.right <= primary.x
     || r.left >= primary.x + primary.width || r.bottom <= primary.y || r.top >= primary.y + primary.height)) }
@@ -78,12 +78,18 @@ for (const width of [390, 1280]) {
     const failure = page.locator('[role=alert]').filter({ hasText: 'Could not save your change' })
     await expect(failure).toBeVisible()
     const results = []
-    for (const kind of ['quick-add', 'edit', 'delete-task', 'delete-project']) {
+    for (const kind of ['quick-add', 'edit', 'delete-task', 'delete-project', 'rename-project', 'new-project',
+      ...(width === 390 ? ['menu'] : [])]) {
       if (kind === 'quick-add') await page.getByRole('button', { name: 'Quick Add', exact: true }).click()
       else if (kind === 'edit') await edit.click()
-      else await page.getByRole('button', { name: kind === 'delete-task'
-        ? `Delete ${task.title}` : 'Delete project', exact: true }).click()
-      results.push({ kind, ...await visibility(failure, dialog) })
+      else if (kind === 'menu') await page.getByRole('button', { name: 'Open menu', exact: true }).click()
+      else if (kind === 'new-project') {
+        if (width === 390) await page.getByRole('button', { name: 'Open menu', exact: true }).click()
+        await page.getByRole('button', { name: 'New project', exact: true }).click()
+      } else await page.getByRole('button', { name: kind === 'delete-task' ? `Delete ${task.title}`
+        : kind === 'rename-project' ? 'Rename project' : 'Delete project', exact: true }).click()
+      results.push({ kind, ...await visibility(failure, dialog,
+        kind === 'menu' ? dialog.getByRole('button', { name: 'New project', exact: true }) : undefined) })
       await capture(page, `g3-error-toast-open-${kind}`)
       await dialog.press('Escape')
     }
