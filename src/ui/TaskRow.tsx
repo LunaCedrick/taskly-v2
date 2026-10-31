@@ -19,7 +19,7 @@ export interface TaskRowProps {
 export const TaskRow = memo(function TaskRow({ task, project, now, position, total, tabIndex, mutable, pending }: TaskRowProps) {
   const group = dueGroup(task, now)
   return <div role="listitem" aria-setsize={total} aria-posinset={position}
-    className={styles.row} data-task-id={task.id} data-tone={group} tabIndex={tabIndex}>
+    className={styles.row} data-task-id={task.id} data-tone={group} data-mutable={Boolean(mutable)} tabIndex={tabIndex}>
     {mutable ? <button className={styles.checkTarget} role="checkbox" aria-checked={task.status === 'done'}
       aria-label={`Complete ${task.title}`} data-row-action="complete" disabled={pending}>
       <span className={styles.checkbox} aria-hidden="true">{task.status === 'done' && <Icon name="check" />}</span>

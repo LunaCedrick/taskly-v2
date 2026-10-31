@@ -19,3 +19,13 @@
 .actions { display:flex; flex-shrink:var(--zero); }
 .actions button { min-width:var(--touch); min-height:var(--touch); background:var(--clear); color:var(--ink); border:none;
   padding:var(--space-1); font:inherit; }
+.row[data-mutable=true] { display:var(--project-row-display); height:var(--project-row-height);
+  column-gap:var(--project-row-column-gap); grid-template-columns:var(--project-row-columns); grid-template-areas:var(--project-row-areas); }
+.row[data-mutable=true] .checkTarget { grid-area:check; }
+.row[data-mutable=true] .content { display:var(--project-content-display); }
+.row[data-mutable=true] .title { grid-area:title; display:var(--project-title-display);
+  overflow:var(--project-title-overflow); -webkit-line-clamp:var(--project-title-lines); }
+.row[data-mutable=true] .meta { grid-area:meta; min-width:var(--zero); flex-wrap:var(--project-meta-wrap); }
+.row[data-mutable=true] .meta > span { max-width:var(--full); white-space:var(--project-meta-space); overflow-wrap:anywhere; }
+.row[data-mutable=true] .priority { grid-area:priority; min-width:var(--project-priority-min); }
+.row[data-mutable=true] .actions { grid-area:actions; }

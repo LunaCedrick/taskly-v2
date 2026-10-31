@@ -44,7 +44,7 @@ function useRows(listId: string, tasks: readonly Task[]) {
     const index = item ? tasks.findIndex((task) => task.id === item.dataset.taskId) : -1
     if (index >= 0 && index !== active) setFocusedRow(listId, index)
   }
-  return { active, row, onFocus, revealIndex }
+  return { active, row, onFocus, revealIndex, mutable }
 }
 
 function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
@@ -60,10 +60,13 @@ function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
 
 function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; label: string; listId: string }) {
   const scrollRef = useRef<HTMLDivElement>(null)
-  const { active, row, onFocus, revealIndex } = useRows(listId, tasks)
+  const { active, row, onFocus, revealIndex, mutable } = useRows(listId, tasks)
   const tokens = getComputedStyle(document.documentElement)
   const rowHeight = parseFloat(tokens.getPropertyValue('--row-height'))
-  const initialHeight = tokens.getPropertyValue('--desktop-display').trim() === 'none'
+  const phone = tokens.getPropertyValue('--desktop-display').trim() === 'none'
+  const dynamic = phone && mutable
+  const previousDynamic = useRef(dynamic)
+  const initialHeight = phone
     ? window.innerHeight - parseFloat(tokens.getPropertyValue('--list-phone-offset'))
     : parseFloat(tokens.getPropertyValue('--list-height'))
   // No React Compiler is enabled; this component deliberately uses the virtualizer imperatively.
@@ -81,6 +84,13 @@ function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
       ...(revealIndex >= 0 ? [revealIndex] : [])])].sort((a, b) => a - b),
   })
   useLayoutEffect(() => {
+    if (previousDynamic.current === dynamic) return
+    previousDynamic.current = dynamic
+    virtualizer.measure()
+    if (dynamic) scrollRef.current?.querySelectorAll<HTMLElement>('[data-index]')
+      .forEach((element) => virtualizer.measureElement(element))
+  }, [dynamic, virtualizer])
+  useLayoutEffect(() => {
     if (revealIndex >= 0) virtualizer.scrollToIndex(revealIndex, { align: 'auto' })
   }, [revealIndex, virtualizer])
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -96,6 +106,7 @@ function VirtualTaskList({ tasks, label, listId }: { tasks: readonly Task[]; lab
     {/* Virtual offsets are measured geometry, not design values. */}
     <div className={styles.virtualCanvas} role="presentation" style={{ height: virtualizer.getTotalSize() }}>
       {virtualizer.getVirtualItems().map((item) => <div key={item.key} role="presentation"
+        data-index={dynamic ? item.index : undefined} ref={dynamic ? virtualizer.measureElement : undefined}
         className={styles.virtualRow} style={{ transform: `translateY(${item.start}px)` }}>{row(item.index)}</div>)}
     </div>
   </div>

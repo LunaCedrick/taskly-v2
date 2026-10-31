@@ -55,6 +55,10 @@
   --overlay-margin:auto; --overlay-radius:var(--radius-lg); --form-columns:repeat(2,minmax(0,1fr));
   --toast-bottom:var(--space-5); --z-toast:50;
   --toast-dialog-top:auto; --toast-dialog-bottom:var(--toast-bottom);
+  --project-row-display:flex; --project-row-height:var(--row-height); --project-row-column-gap:var(--space-3);
+  --project-row-columns:none; --project-row-areas:none; --project-content-display:flex;
+  --project-title-display:-webkit-box; --project-title-overflow:hidden; --project-title-lines:var(--title-lines);
+  --project-meta-wrap:nowrap; --project-meta-space:nowrap; --project-priority-min:var(--touch);
 }
 /* The single approved breakpoint exception: CSS variables cannot be used in media conditions. */
 @media (width < 820px) {
@@ -74,6 +78,11 @@
     --overlay-margin:auto auto var(--space-0); --overlay-radius:var(--radius-lg) var(--radius-lg) var(--zero) var(--zero);
     --form-columns:minmax(0,1fr); --toast-bottom:calc(var(--tab-height) + var(--fab) + var(--space-6));
     --toast-dialog-top:var(--space-3); --toast-dialog-bottom:auto;
+    --project-row-display:grid; --project-row-height:auto; --project-row-column-gap:var(--space-1);
+    --project-row-columns:var(--touch) minmax(var(--zero),1fr) auto auto;
+    --project-row-areas:"check title title title" "meta meta priority actions"; --project-content-display:contents;
+    --project-title-display:block; --project-title-overflow:visible; --project-title-lines:unset;
+    --project-meta-wrap:wrap; --project-meta-space:normal; --project-priority-min:var(--zero);
   }
 }
 @media (prefers-reduced-motion:reduce) {

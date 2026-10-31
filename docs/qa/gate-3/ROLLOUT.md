@@ -16,15 +16,17 @@ Deployment identity and protection status are recorded in CHECKPOINT-2.md.
 | (b) Before preview writes | Confirm `VITE_USE_AUTH_EMULATOR` and `VITE_USE_FIRESTORE_EMULATOR` remain unset in both Vercel Preview and Production. | VERIFIED by owner, 2026-10-31 |
 | (c) Before rules deployment | Confirm `VITE_FIREBASE_PROJECT_ID` is still identical in Preview and Production. Rules deployment/rollback affects both environments. G2 Production code only reads; unchanged read rules keep it compatible. | VERIFIED by owner, 2026-10-31 |
 | (d) Rules review/deployment | Deployment instructions: deploy **only rules commit `6728275` after owner review**. Use a clean checkout pinned to the full hash below (`git status --porcelain` empty: no staged/untracked/modified files), with rules text matching `2a3d557:firestore.rules` plus only the approved `PROPOSED-RULES.diff`. Never deploy arbitrary branch HEAD. Owner only: `firebase deploy --only firestore:rules --project taskly-v2`, then verify published text/timestamp in the console Rules tab. Use rules-only; a plain Firestore deploy also pushes indexes. Rollback: clean checkout of reviewed G2 rules at merge `0374036`, same project, then confirm the console ruleset. These instructions do not establish the deployed commit or console text. | DEPLOYED by owner, 2026-10-31, 10:39 AM (Asia/Shanghai), owner report only; console Rules tab text check UNVERIFIED |
-| (e) After setup, before G3 completion | Check real Google sign-in and writes on Preview: create project, Quick Add, edit, complete, move status/project per Q07, delete task and project; zero console errors. Record URL/build/browser. Film both real device screens together: 3 samples each laptop→phone for add task, complete task, create project; 3 phone→laptop add-task samples. Every sample within 1 s; retain all samples/failures and fixture/network/device conditions. Preview and second-device results are separate and both required. | UNVERIFIED: formal Preview and second-device timing samples pending the final head |
+| (e) After setup, before G3 completion | Check real Google sign-in and writes on Preview: create project, Quick Add, edit, complete, move status/project per Q07, delete task and project; zero console errors. Record URL/build/browser. Film both real device screens together: 3 samples each laptop→phone for add task, complete task, create project; 3 phone→laptop add-task samples. Every sample within 1 s; retain all samples/failures and fixture/network/device conditions. Preview and second-device results are separate and both required. | owner-verified by the owner on 2026-10-31; formal 12-sample timing table not retained |
 | (f) After merge | Verify Production real Google sign-in, direct `/tasks`, expected data/state and zero console errors; report deployment identity. No agent merge/release authorization is implied. | UNVERIFIED |
 
 Rules candidate pin: `6728275e91aea331b77eb5417cc563350e716af0`.
 The instructions require `git rev-parse HEAD` to equal that hash and the clean
 checkout/rules-text checks in row (d). The owner's deployment report does not separately
 confirm those checks, the deployed commit, or the console Rules tab text. Production
-verification remains UNVERIFIED in row (f); formal Preview and second-device timing
-samples in row (e) are pending the final head. No agent deployment occurred.
+verification remains UNVERIFIED in row (f). Row (e) records the requested owner
+verification after the owner confirmed zero Preview console errors on 2026-10-31;
+the formal 12-sample timing table was not retained. No sample durations are inferred.
+This does not verify the Firebase console Rules tab text. No agent deployment occurred.
 
 Read-only empty-database record: VERIFIED by owner, 2026-10-24: the real project had
 no collections or documents. This is the real-project legacy compatibility record;
