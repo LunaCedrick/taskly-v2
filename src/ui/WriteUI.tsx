@@ -1,13 +1,11 @@
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { useStore } from '../store'
 import { WriteOverlay } from './WriteOverlay'
 import { Toasts } from './Toasts'
 
-export function WriteUI() {
+export const WriteUI = memo(function WriteUI() {
   const deleted = useStore((state) => state.deletedProjectId)
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
   const focusAfterDelete = useStore((state) => state.focusAfterDelete)
   const rowRemoved = useStore((state) => Boolean(state.focusAfterDelete
     && !state.tasks.some((task) => task.id === state.focusAfterDelete?.taskId)))
@@ -25,8 +23,13 @@ export function WriteUI() {
     })
     return () => cancelAnimationFrame(frame)
   }, [focusAfterDelete, rowRemoved])
+  return <><WriteOverlay /><Toasts />{deleted && <DeletedProjectNavigation deleted={deleted} />}</>
+})
+
+function DeletedProjectNavigation({ deleted }: { deleted: string }) {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
   useEffect(() => {
-    if (!deleted) return
     useStore.setState({ deletedProjectId: null })
     if (pathname === `/projects/${deleted}`) {
       navigate('/')
@@ -37,5 +40,5 @@ export function WriteUI() {
       })
     }
   }, [deleted, navigate, pathname])
-  return <><WriteOverlay /><Toasts /></>
+  return null
 }
