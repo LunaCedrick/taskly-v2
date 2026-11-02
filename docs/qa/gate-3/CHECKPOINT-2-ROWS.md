@@ -2,9 +2,9 @@
 
 ## Q22: one bounded remount attempt (2026-10-31)
 
-Latest source **0541208**. The owner authorized exactly one further attempt and
-the specified fallback in [Q22](../../decisions/g3.md); only the supplied sentence
-is attributed to the owner. Targeted row spec: **8 passed, 38.9 s**
+Remount source **0541208**. [Q22](../../decisions/g3.md) contains the owner's
+authorization sentence, not the conversation's fallback text. No fallback was used;
+no fallback wording is quoted here. Targeted row spec: **8 passed, 38.9 s**
 ([command/log](row-remount-0GEweP/attempt-target.json), `emulator-EB3PdQ`).
 **Full suite PASS at the same source; fallback not needed.** Earlier failures remain retained.
 
@@ -234,10 +234,11 @@ In those initial/earlier passing observations: zero overlapping part boxes, no t
 horizontal scroll and no overlapping adjacent rows. All three action targets meet
 44×44 px; Edit/Delete are right aligned. Earlier passing phone→desktop→phone checks
 return the desktop row height to 64 px; latest phone row separation fails as above.
-[320 screenshot](emulator-5BDgCv/g3-project-rows-plain-320.png),
-[360 virtual growth](emulator-5BDgCv/g3-project-rows-virtual-grown-360.png),
-[390 screenshot](emulator-5BDgCv/g3-project-rows-plain-390.png),
-[1280 screenshot](emulator-5BDgCv/g3-project-rows-virtual-1280.png).
+Final remount full-suite screenshots (`emulator-BDlWFa`, source `0541208`):
+[320 screenshot](emulator-BDlWFa/g3-project-rows-plain-320.png),
+[360 virtual growth](emulator-BDlWFa/g3-project-rows-virtual-grown-360.png),
+[390 screenshot](emulator-BDlWFa/g3-project-rows-plain-390.png),
+[1280 screenshot](emulator-BDlWFa/g3-project-rows-virtual-1280.png).
 
 ## Ran versus only read
 
