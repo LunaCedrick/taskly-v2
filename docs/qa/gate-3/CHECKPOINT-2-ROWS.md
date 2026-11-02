@@ -30,17 +30,20 @@ width reaches 820 px can also cross it on rotation; a narrower landscape viewpor
 
 Observed tradeoff in all three phone virtual-list cases, before and after remount:
 
-| Width | Before: scroll / focused row | Desktop: scroll / focused row | Back to phone | Stored tab stop |
+| Width | Before: scroll / focused row | Desktop: scroll / focused row | Back to phone | Immediate tabindex="0" attribute |
 |---|---|---|---|---|
 | 320 | 80 px / task-10 | 0 px / none in list | 0 px / none in list | task-10 throughout |
 | 360 | 80 px / task-10 | 0 px / none in list | 0 px / none in list | task-10 throughout |
 | 390 | 80 px / task-10 | 0 px / none in list | 0 px / none in list | task-10 throughout |
 
 Remounting discards the old scroll offset and DOM focus inside that removed list.
-The store retains the focused index; its row remains in the extracted range and is
-the roving tab stop. No scroll-offset or DOM-focus restoration was added. If a reveal
-target exists, the unchanged mount effect scrolls to it (source behavior; the table
-above has no reveal target). Plain cases retain task-4 DOM focus and scroll 0 throughout.
+The captured row retains `tabindex="0"`; this does **not** mean Tab returns to it.
+The recheck reports focus on `<body>`, ArrowDown doing nothing, then Tab landing
+on row 1's checkbox (row buttons are ordinary tab stops), which overwrites the stored
+index. This is a known limitation for a Project list with more than 200 tasks when
+crossing 820 px: scroll resets and focus is lost. Q23 accepts it; no focus fix is added.
+The table captures attributes immediately after remount, before that Tab interaction.
+Plain cases retain task-4 DOM focus and scroll 0 throughout.
 No missing-index warnings, clipping, part/row overlaps or horizontal overflow occur
 in the eight targeted cases. Phone rows grow after editing; desktop rows stay 64 px.
 

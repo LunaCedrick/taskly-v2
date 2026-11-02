@@ -2,7 +2,8 @@
 
 - [Project-row layout addition, 2026-10-31](CHECKPOINT-2-ROWS.md): Q22 single
   remount attempt PASS at `0541208`; targeted 8 / full e2e 54 passed. Scroll resets
-  and DOM row focus clears across the breakpoint; the stored tab stop persists.
+  and DOM row focus clears across the breakpoint. Q23 accepts this limitation;
+  retaining a tabindex attribute does not restore Tab focus.
   [New 180 route samples](SPEED-ROW-REMOUNT.md) and [prior 360](SPEED-ROW-RECHECK.md)
   retained, including prior failures. No Q15 acceptance claim. Owner-confirmed row (e) unchanged.
 
