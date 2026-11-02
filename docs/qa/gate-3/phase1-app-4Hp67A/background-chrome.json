@@ -1,0 +1,15 @@
+{
+  "recordedAt": "2026-11-02T12:01:34.960Z",
+  "ownerReply": "End background Chrome processes",
+  "action": {
+    "visibleWindows": 0,
+    "endedInstalledChromeProcesses": 3,
+    "remainingImmediatelyAfterAction": 1
+  },
+  "subsequentDiagnostic": {
+    "directory": "phase1-speed-olTMAH",
+    "checks": 13,
+    "allZero": true
+  },
+  "note": "Only the exact installed Google Chrome path was targeted after verifying no visible window. No process was ended before the explicit reply."
+}

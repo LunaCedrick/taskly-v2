@@ -1,0 +1,8 @@
+{
+  "command": "node tests/diagnostics/run-checkpoint2-monitor.mjs --phase1",
+  "started": "2026-11-02T11:41:21.357Z",
+  "code": 1,
+  "finished": "2026-11-02T11:41:22.577Z",
+  "tail": "Checkpoint 2 monitor: C:\\Users\\Cedrick\\Desktop\\Personal projects\\taskly-v2\\docs\\qa\\gate-3\\phase1-speed-8gWS1k\nfile:///C:/Users/Cedrick/Desktop/Personal%20projects/taskly-v2/tests/diagnostics/run-checkpoint2-monitor.mjs:22\r\n  if (count !== 0) throw new Error(`Close Chrome before the diagnostic (${label}: ${count} processes)`)\r\n                         ^\r\n\r\nError: Close Chrome before the diagnostic (session-start: 11 processes)\r\n    at assertChromeClosed (file:///C:/Users/Cedrick/Desktop/Personal%20projects/taskly-v2/tests/diagnostics/run-checkpoint2-monitor.mjs:22:26)\r\n    at file:///C:/Users/Cedrick/Desktop/Personal%20projects/taskly-v2/tests/diagnostics/run-checkpoint2-monitor.mjs:43:3\r\n\r\nNode.js v24.16.0\r\n",
+  "diagnosticDirectory": "C:\\Users\\Cedrick\\Desktop\\Personal projects\\taskly-v2\\docs\\qa\\gate-3\\phase1-speed-8gWS1k"
+}

@@ -1,0 +1,1 @@
+{"variant":"normal","removed":{"probeLoad":0,"probeInstall":0,"listenerInspect":0,"observerInspect":0},"probeModule":false,"probeMarker":false,"inspectInAppChunks":false,"environment":"e2e; explicit fake demo Firebase variables; empty envDir; same config on A/B/C"}

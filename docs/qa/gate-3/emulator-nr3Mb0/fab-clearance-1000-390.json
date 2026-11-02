@@ -1,0 +1,4 @@
+{
+  "testStatus": "passed",
+  "result": {"browserName":"chromium","observations":{"keyboard":{"button":{"top":515,"right":361,"bottom":559,"left":310.4375,"width":50.5625,"height":44},"floating":{"top":658,"right":372,"bottom":714,"left":316,"width":56,"height":56},"overlap":false,"inViewport":true,"hits":[true,true,true,true,true],"horizontalOverflow":false},"maximum":{"button":{"top":515,"right":361,"bottom":559,"left":310.4375,"width":50.5625,"height":44},"floating":{"top":658,"right":372,"bottom":714,"left":316,"width":56,"height":56},"overlap":false,"inViewport":true,"hits":[true,true,true,true,true],"horizontalOverflow":false}}}
+}

@@ -1,5 +1,10 @@
 # G3 evidence
 
+- [Phase-1 app recheck, 2026-11-02](PHASE-1-RECHECK.md): four separate app fixes;
+  226 unit / 122 rules / 66 e2e tests pass. [All 540 speed samples](PHASE-1-SPEED.md),
+  the Chrome-condition abort and initial four test failures are retained. No Q14
+  timing, Q15 acceptance or closeout work.
+
 - [Project-row layout addition, 2026-10-31](CHECKPOINT-2-ROWS.md): Q22 single
   remount attempt PASS at `0541208`; targeted 8 / full e2e 54 passed. Scroll resets
   and DOM row focus clears across the breakpoint. Q23 accepts this limitation;
