@@ -7,11 +7,20 @@ import { decorate, summarize } from './analyze-speed.mjs'
 
 const root = process.cwd()
 const main = resolve('test-results/gate-3/review-main')
-const directory = await mkdtemp(resolve('docs/qa/gate-3/checkpoint2-monitor-'))
+const phase1 = process.argv.includes('--phase1')
+const directory = await mkdtemp(resolve(`docs/qa/gate-3/${phase1 ? 'phase1-speed-' : 'checkpoint2-monitor-'}`))
 const order = ['A1', 'B1', 'A2', 'B2', 'A3', 'B3']
 const runs = []
 const servers = []
+const chromeChecks = []
 let harness
+function assertChromeClosed(label) {
+  if (!phase1) return
+  const count = Number(execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+    '@(Get-Process -Name chrome -ErrorAction SilentlyContinue).Count'], { encoding: 'utf8', windowsHide: true }).trim())
+  chromeChecks.push({ label, at: new Date().toISOString(), count })
+  if (count !== 0) throw new Error(`Close Chrome before the diagnostic (${label}: ${count} processes)`)
+}
 async function run(args, cwd, env, file) {
   const output = []
   const child = spawn(process.execPath, args, { cwd, env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
@@ -28,9 +37,10 @@ try {
   if (revisionA !== git(['rev-parse', 'origin/main'])) throw new Error('Baseline checkout must match unchanged origin/main')
   if (git(['status', '--porcelain'], main)) throw new Error('Dirty main checkout')
   if (git(['diff', '--name-only', 'HEAD', '--', 'src', 'tests', 'firestore.rules'])) throw new Error('Commit implementation first')
-  const manifest = { diagnostic: true, acceptance: false, revisionA, revisionB, order, runs,
-    protocol: 'SPEED-CHECKPOINT-1.md: Checkpoint 2 regression-monitor protocol',
+  const manifest = { diagnostic: true, acceptance: false, revisionA, revisionB, order, runs, chromeChecks,
+    protocol: phase1 ? 'PHASE-1-SPEED-PROTOCOL.md' : 'SPEED-CHECKPOINT-1.md: Checkpoint 2 regression-monitor protocol',
     environment: 'e2e; identical explicit fake Firebase config; empty envDir; same existing dependencies' }
+  assertChromeClosed('session-start')
   await writeFile(join(directory, 'manifest.json'), JSON.stringify(manifest) + '\n')
   harness = await startEmulatorHarness()
   for (const [side, source, port] of [['A', main, 4175], ['B', root, 4173]]) {
@@ -42,6 +52,7 @@ try {
       preview: { host: '127.0.0.1', port, strictPort: true } }))
   }
   for (const label of order) {
+    assertChromeClosed(`${label}-before`)
     const source = label[0] === 'A' ? main : root
     const output = resolve(directory, label)
     await mkdir(output)
@@ -62,6 +73,7 @@ try {
       samples = JSON.parse(await readFile(original, 'utf8'))
     } catch (error) { missingSamples = String(error) }
     runs.push({ label, code, startedAt, endedAt: Date.now(), missingSamples, samples })
+    assertChromeClosed(`${label}-after`)
     await writeFile(join(directory, 'manifest.json'), JSON.stringify(manifest) + '\n')
     console.log(`${label}: exit ${code}; p95 ${samples?.p95}; ${samples?.transitions.length ?? 0} samples`)
   }
@@ -73,7 +85,7 @@ try {
       over100Samples: decorate(samples).filter((sample) => sample.milliseconds > 100) })) }) + '\n')
   console.log(JSON.stringify(summary))
 } catch (error) {
-  await writeFile(join(directory, 'failure.json'), JSON.stringify({ error: String(error), runs }) + '\n')
+  await writeFile(join(directory, 'failure.json'), JSON.stringify({ error: String(error), runs, chromeChecks }) + '\n')
   throw error
 } finally {
   for (const server of servers) { server.httpServer.closeAllConnections(); await new Promise((done) => server.httpServer.close(done)) }
