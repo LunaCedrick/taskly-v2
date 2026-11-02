@@ -91,6 +91,7 @@ function VirtualTaskList({ tasks, label, listId }: ListProps) {
     count: tasks.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => rowHeight,
+    scrollPaddingEnd: parseFloat(tokens.getPropertyValue('--list-bottom-gap')) || 0,
     // Render the first range immediately, rather than waiting for ResizeObserver to populate an empty list.
     initialRect: { height: initialHeight, width: window.innerWidth },
     overscan: 3,
