@@ -44,6 +44,11 @@ index. This is a known limitation for a Project list with more than 200 tasks wh
 crossing 820 px: scroll resets and focus is lost. Q23 accepts it; no focus fix is added.
 The table captures attributes immediately after remount, before that Tab interaction.
 Plain cases retain task-4 DOM focus and scroll 0 throughout.
+
+Carried G6 item: phone priority is visually a colour dot only
+(`--phone-priority-display:none`, carried since G0), while the design frame includes
+priority text. The screen-reader priority text remains. No priority UI change in phase 1.
+
 No missing-index warnings, clipping, part/row overlaps or horizontal overflow occur
 in the eight targeted cases. Phone rows grow after editing; desktop rows stay 64 px.
 
