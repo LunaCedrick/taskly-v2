@@ -61,7 +61,7 @@ function useRows(listId: string, tasks: readonly Task[]) {
     const index = item ? tasks.findIndex((task) => task.id === item.dataset.taskId) : -1
     if (index >= 0 && index !== active) setFocusedRow(listId, index)
   }
-  return { active, row, onFocus, revealIndex, mutable }
+  return { active, row, onFocus, revealIndex, reveal, mutable }
 }
 
 function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
@@ -77,7 +77,7 @@ function keyboardIndex(event: KeyboardEvent, active: number, count: number) {
 
 function VirtualTaskList({ tasks, label, listId }: ListProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
-  const { active, row, onFocus, revealIndex, mutable } = useRows(listId, tasks)
+  const { active, row, onFocus, revealIndex, reveal, mutable } = useRows(listId, tasks)
   const tokens = getComputedStyle(document.documentElement)
   const rowHeight = parseFloat(tokens.getPropertyValue('--row-height'))
   const phone = tokens.getPropertyValue('--desktop-display').trim() === 'none'
@@ -100,8 +100,10 @@ function VirtualTaskList({ tasks, label, listId }: ListProps) {
       ...(revealIndex >= 0 ? [revealIndex] : [])])].sort((a, b) => a - b),
   })
   useLayoutEffect(() => {
-    if (revealIndex >= 0) virtualizer.scrollToIndex(revealIndex, { align: 'auto' })
-  }, [revealIndex, virtualizer])
+    if (revealIndex < 0) return
+    virtualizer.scrollToIndex(revealIndex, { align: 'auto' })
+    useStore.setState((state) => state.revealTaskId === reveal ? { revealTaskId: null } : state)
+  }, [reveal, revealIndex, virtualizer])
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const next = keyboardIndex(event, active, tasks.length)
     if (next === undefined) return
@@ -123,11 +125,14 @@ function VirtualTaskList({ tasks, label, listId }: ListProps) {
 
 function PlainTaskList({ tasks, label, listId }: ListProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const { active, row, onFocus, revealIndex } = useRows(listId, tasks)
+  const { active, row, onFocus, revealIndex, reveal } = useRows(listId, tasks)
   useLayoutEffect(() => {
-    if (revealIndex >= 0) ref.current?.querySelector<HTMLElement>(`[data-task-id="${tasks[revealIndex].id}"]`)
-      ?.scrollIntoView?.({ block: 'nearest' })
-  }, [revealIndex, tasks])
+    if (revealIndex < 0) return
+    const target = ref.current?.querySelector<HTMLElement>(`[data-task-id="${tasks[revealIndex].id}"]`)
+    if (!target) return
+    target.scrollIntoView?.({ block: 'nearest' })
+    useStore.setState((state) => state.revealTaskId === reveal ? { revealTaskId: null } : state)
+  }, [reveal, revealIndex, tasks])
   return <div ref={ref} className={styles.scroll} role="list" aria-label={label} onFocus={onFocus} data-virtualized="false"
     onClick={rowClick}
     onKeyDown={(event) => {
