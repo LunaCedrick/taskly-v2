@@ -5,9 +5,9 @@ import { capture, collectDiagnostics, expectNormalDiagnostics, navigate, waitFor
 import { saveExperiment } from './fixtures/writes'
 
 const observations = new Map<string, { name: string; result: unknown }>()
-test.afterEach(async ({}, info) => {
+test.afterEach(async ({ browserName }, info) => {
   const saved = observations.get(info.testId)
-  if (saved) await saveExperiment(info, saved.name, saved.result)
+  if (saved) await saveExperiment(info, saved.name, { browserName, observations: saved.result })
   observations.delete(info.testId)
 })
 const frames = (page: Page) => page.evaluate(() => new Promise<void>((resolve) =>
