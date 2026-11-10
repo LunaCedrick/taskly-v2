@@ -1,5 +1,19 @@
 # G3 evidence
 
+## Reviewer-reported machine environment (2026-11-07)
+
+The reviewer reported that the global firebase-tools installation was corrupted
+(`@pnpm/npm-conf/lib/conf.js`) and, with owner approval, reinstalled **15.34.0**.
+The re2 install script was skipped by npm's script policy; the reviewer reported
+that emulators work. The reviewer also found **7 unexpected Windows shutdowns**
+between 2026-10-18 and 2026-11-03. These are reviewer findings, not fresh agent
+measurements or a proven explanation for any timing result.
+
+All new text is written explicitly as UTF-8, avoiding Windows PowerShell 5.1's
+default output-file encoding. Historical timing values are unchanged.
+
+## Evidence index
+
 - [Phase-1 app recheck, 2026-11-02](PHASE-1-RECHECK.md): four separate app fixes;
   226 unit / 122 rules / 66 e2e tests pass. [All 540 speed samples](PHASE-1-SPEED.md),
   the Chrome-condition abort and initial four test failures are retained. No Q14
