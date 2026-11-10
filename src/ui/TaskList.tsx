@@ -114,7 +114,7 @@ function VirtualTaskList({ tasks, label, listId }: ListProps) {
   }
   return <div ref={scrollRef} className={styles.scroll} onKeyDown={onKeyDown} onFocus={onFocus}
     onClick={rowClick}
-    role="list" aria-label={label} data-virtualized="true">
+    role="list" aria-label={label} data-task-list={listId} data-virtualized="true">
     {/* Virtual offsets are measured geometry, not design values. */}
     <div className={styles.virtualCanvas} role="presentation" style={{ height: virtualizer.getTotalSize() }}>
       {virtualizer.getVirtualItems().map((item) => <div key={item.key} role="presentation"
@@ -134,7 +134,7 @@ function PlainTaskList({ tasks, label, listId }: ListProps) {
     target.scrollIntoView?.({ block: 'nearest' })
     useStore.setState((state) => state.revealTaskId === reveal ? { revealTaskId: null } : state)
   }, [reveal, revealIndex, tasks])
-  return <div ref={ref} className={styles.scroll} role="list" aria-label={label} onFocus={onFocus} data-virtualized="false"
+  return <div ref={ref} className={styles.scroll} role="list" aria-label={label} onFocus={onFocus} data-task-list={listId} data-virtualized="false"
     onClick={rowClick}
     onKeyDown={(event) => {
       const next = keyboardIndex(event, active, tasks.length)

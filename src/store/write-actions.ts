@@ -129,6 +129,7 @@ function taskValues(draft: Draft): TaskValues {
 export function saveTask(quick = false) {
   const state = useStore.getState()
   if (!writesReady(state)) return
+  const visibleList = document.querySelector<HTMLElement>('[data-task-list]')?.dataset.taskList
   const submitted = { ...state.draft, originalTaskId: state.editTaskId ?? undefined }
   try {
     const previous = state.tasks.find((task) => task.id === state.editTaskId)
@@ -138,7 +139,7 @@ export function saveTask(quick = false) {
       toast: previous ? undefined : `Task added to ${state.projects.find((p) => p.id === submitted.projectId)?.name}`,
       local: () => {
         useStore.setState({ lastProjectId: submitted.projectId, ...(!previous && operations.length
-          ? { revealTaskId: operations[0].id } : {}) })
+          ? { revealTaskId: visibleList === 'all' || visibleList === submitted.projectId ? operations[0].id : null } : {}) })
         if (quick) updateDraft({ title: '' })
         else closeOverlay()
       } })

@@ -15,6 +15,33 @@ async function confirmed(page: Page, id: string) {
 
 const scrollTop = (list: Locator) => list.evaluate((element) => element.scrollTop)
 
+test('G3 Dashboard add does not leave a reveal for a later project or My Tasks', async ({ page }, info) => {
+  const diagnostics = collectDiagnostics(page)
+  await signIn(page)
+  await expect(page.locator('[data-task-list]')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Quick Add', exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  await dialog.getByLabel('Project', { exact: true }).selectOption('project-3')
+  await dialog.getByLabel('Title').fill('Dashboard add without a later reveal')
+  await dialog.getByLabel('Title').press('Enter')
+  await confirmed(page, 'dashboard-add')
+  const added = (await writeSnapshot(page)).tasks.find((task) => task.title === 'Dashboard add without a later reveal')!
+  expect(added.projectId).toBe('project-3')
+  await page.keyboard.press('Escape')
+  const observations: { route: string; scrollTop: number }[] = []
+  for (const route of ['/projects/project-3', '/tasks']) {
+    await navigate(page, route)
+    await frames(page)
+    const list = page.locator('[data-task-list]')
+    const top = await scrollTop(list)
+    observations.push({ route, scrollTop: top })
+    expect(top).toBe(0)
+    await expect(list.locator(`[data-task-id="${added.id}"]`)).toHaveCount(0)
+  }
+  await saveExperiment(info, 'dashboard-no-later-reveal', observations)
+  expectNormalDiagnostics(diagnostics)
+})
+
 for (const width of [390, 1280]) for (const taskCount of [150, 1000]) {
   test(`G3 reveal is consumed after Quick Add: ${taskCount} tasks at ${width}px`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 })
