@@ -11,10 +11,10 @@ nor fail. Numeric results remain separate from acceptance eligibility; no poolin
 discarded samples or regression inference. All prior failures/results remain in
 [the earlier row report](SPEED-ROW-RECHECK.md) and older checkpoint reports.
 
-Conditions: 1,000 emulator tasks, virtualization on, 4? CPU, Chromium 156.0.8078.4,
+Conditions: 1,000 emulator tasks, virtualization on, 4× CPU, Chromium 156.0.8078.4,
 Windows 10 / Ryzen 5 3400G / 8 logical CPUs, Node 24.16.0. Resolved Auth/data/fonts/
 lazy modules, trusted clicks, tracing off, established two-frame commit/paint metric.
-Twenty Dashboard ? My Tasks ? project-1 ? Dashboard loops per run.
+Twenty Dashboard → My Tasks → project-1 → Dashboard loops per run.
 
 ## Per-run numeric results
 
@@ -31,27 +31,27 @@ raw values and all **180** sequence/source/destination/visit/duration samples re
 
 | Run | Actual route pair | Total | >100 ms |
 |---|---|---|---|
-| 1 | / ? /tasks | 20 | 1 |
-| 1 | /tasks ? /projects/project-1 | 20 | 1 |
-| 1 | /projects/project-1 ? / | 20 | 0 |
-| 2 | / ? /tasks | 20 | 1 |
-| 2 | /tasks ? /projects/project-1 | 20 | 0 |
-| 2 | /projects/project-1 ? / | 20 | 0 |
-| 3 | / ? /tasks | 20 | 1 |
-| 3 | /tasks ? /projects/project-1 | 20 | 1 |
-| 3 | /projects/project-1 ? / | 20 | 0 |
+| 1 | / → /tasks | 20 | 1 |
+| 1 | /tasks → /projects/project-1 | 20 | 1 |
+| 1 | /projects/project-1 → / | 20 | 0 |
+| 2 | / → /tasks | 20 | 1 |
+| 2 | /tasks → /projects/project-1 | 20 | 0 |
+| 2 | /projects/project-1 → / | 20 | 0 |
+| 3 | / → /tasks | 20 | 1 |
+| 3 | /tasks → /projects/project-1 | 20 | 1 |
+| 3 | /projects/project-1 → / | 20 | 0 |
 
 ## Every transition over 100 ms
 
 | Run | Sequence | Actual routes | Duration ms | Destination visit |
 |---|---|---|---|---|
-| 1 | 1 | / ? /tasks | 147 | first |
-| 1 | 2 | /tasks ? /projects/project-1 | 115.9 | first |
-| 2 | 1 | / ? /tasks | 125.2 | first |
-| 3 | 1 | / ? /tasks | 130 | first |
-| 3 | 2 | /tasks ? /projects/project-1 | 106.7 | first |
+| 1 | 1 | / → /tasks | 147 | first |
+| 1 | 2 | /tasks → /projects/project-1 | 115.9 | first |
+| 2 | 1 | / → /tasks | 125.2 | first |
+| 3 | 1 | / → /tasks | 130 | first |
+| 3 | 2 | /tasks → /projects/project-1 | 106.7 | first |
 
-All five slow transitions are first visits; slow repeat /tasks ? project-1 count
+All five slow transitions are first visits; slow repeat /tasks → project-1 count
 is **0**. This does not establish that G2's thin repeat-project margin is resolved.
 No unchanged-main comparison or new diagnostic was run.
 

@@ -18,13 +18,13 @@ Chrome processes ended. The completed session records **13 zero-process checks**
 
 Conditions: existing emulator harness and dependencies, identical explicit fake
 Firebase config and empty envDir on both sides, e2e builds, 1,000 tasks, virtualization,
-4? CPU, resolved Auth/data/fonts/lazy modules, trusted clicks, tracing off, established
+4× CPU, resolved Auth/data/fonts/lazy modules, trusted clicks, tracing off, established
 two-frame commit/paint metric. The usual three-route loop supplies 60 samples/run.
 These builds differ in Firebase configuration from the local-.env normal bundle.
 
 ### Predeclared pooled reading
 
-| Side | Runs / samples | >100 ms | Share >100 ms | Pooled p95 ms | Pooled p99 ms | Slow repeat tasks ? project |
+| Side | Runs / samples | >100 ms | Share >100 ms | Pooled p95 ms | Pooled p99 ms | Slow repeat tasks → project |
 |---|---|---|---|---|---|---|
 | Main A | 3 / 180 | 1 | 0.56% | 59.8 | 94.3 | 0 |
 | Branch B | 3 / 180 | 1 | 0.56% | 64.1 | 99.0 | 0 |
@@ -54,31 +54,31 @@ No Q14 Quick Add timing, acceptance baseline/runs, extra profile or no-probe var
 
 | Run | Actual route pair | Total | >100 ms |
 |---|---|---|---|
-| A1 | / ? /tasks | 20 | 0 |
-| A1 | /tasks ? /projects/project-1 | 20 | 0 |
-| A1 | /projects/project-1 ? / | 20 | 0 |
-| B1 | / ? /tasks | 20 | 1 |
-| B1 | /tasks ? /projects/project-1 | 20 | 0 |
-| B1 | /projects/project-1 ? / | 20 | 0 |
-| A2 | / ? /tasks | 20 | 0 |
-| A2 | /tasks ? /projects/project-1 | 20 | 0 |
-| A2 | /projects/project-1 ? / | 20 | 1 |
-| B2 | / ? /tasks | 20 | 0 |
-| B2 | /tasks ? /projects/project-1 | 20 | 0 |
-| B2 | /projects/project-1 ? / | 20 | 0 |
-| A3 | / ? /tasks | 20 | 0 |
-| A3 | /tasks ? /projects/project-1 | 20 | 0 |
-| A3 | /projects/project-1 ? / | 20 | 0 |
-| B3 | / ? /tasks | 20 | 0 |
-| B3 | /tasks ? /projects/project-1 | 20 | 0 |
-| B3 | /projects/project-1 ? / | 20 | 0 |
+| A1 | / → /tasks | 20 | 0 |
+| A1 | /tasks → /projects/project-1 | 20 | 0 |
+| A1 | /projects/project-1 → / | 20 | 0 |
+| B1 | / → /tasks | 20 | 1 |
+| B1 | /tasks → /projects/project-1 | 20 | 0 |
+| B1 | /projects/project-1 → / | 20 | 0 |
+| A2 | / → /tasks | 20 | 0 |
+| A2 | /tasks → /projects/project-1 | 20 | 0 |
+| A2 | /projects/project-1 → / | 20 | 1 |
+| B2 | / → /tasks | 20 | 0 |
+| B2 | /tasks → /projects/project-1 | 20 | 0 |
+| B2 | /projects/project-1 → / | 20 | 0 |
+| A3 | / → /tasks | 20 | 0 |
+| A3 | /tasks → /projects/project-1 | 20 | 0 |
+| A3 | /projects/project-1 → / | 20 | 0 |
+| B3 | / → /tasks | 20 | 0 |
+| B3 | /tasks → /projects/project-1 | 20 | 0 |
+| B3 | /projects/project-1 → / | 20 | 0 |
 
 ### Every transition over 100 ms
 
 | Run | Sequence | Actual routes | Duration ms | Destination visit |
 |---|---|---|---|---|
-| B1 | 1 | / ? /tasks | 102 | first |
-| A2 | 6 | /projects/project-1 ? / | 112.4 | repeat (3) |
+| B1 | 1 | / → /tasks | 102 | first |
+| A2 | 6 | /projects/project-1 → / | 112.4 | repeat (3) |
 
 All 360 timing windows have zero request starts, zero navigation-attributed requests,
 zero console errors, and three active handles/registrations before and after each
@@ -89,7 +89,7 @@ requests separately. No blanket Firestore exclusion or sample pooling hides a fa
 
 Source **7adfd6d**, full e2e **66 passed**, new **180** raw samples. Chrome count
 before e2e was 0. No app/test change between the diagnostic and this invocation.
-Existing 1,000-task / 4? CPU / trusted-click / untraced protocol, separate from
+Existing 1,000-task / 4× CPU / trusted-click / untraced protocol, separate from
 the A/B results above. No acceptance claim or immediately preceding acceptance baseline.
 
 | Run | Samples | Median ms | p95 ms | Max ms | >100 ms | Evidence |
@@ -100,15 +100,15 @@ the A/B results above. No acceptance claim or immediately preceding acceptance b
 
 | Run | Actual route pair | Total | >100 ms |
 |---|---|---|---|
-| 1 | / ? /tasks | 20 | 0 |
-| 1 | /tasks ? /projects/project-1 | 20 | 0 |
-| 1 | /projects/project-1 ? / | 20 | 0 |
-| 2 | / ? /tasks | 20 | 0 |
-| 2 | /tasks ? /projects/project-1 | 20 | 0 |
-| 2 | /projects/project-1 ? / | 20 | 0 |
-| 3 | / ? /tasks | 20 | 0 |
-| 3 | /tasks ? /projects/project-1 | 20 | 0 |
-| 3 | /projects/project-1 ? / | 20 | 0 |
+| 1 | / → /tasks | 20 | 0 |
+| 1 | /tasks → /projects/project-1 | 20 | 0 |
+| 1 | /projects/project-1 → / | 20 | 0 |
+| 2 | / → /tasks | 20 | 0 |
+| 2 | /tasks → /projects/project-1 | 20 | 0 |
+| 2 | /projects/project-1 → / | 20 | 0 |
+| 3 | / → /tasks | 20 | 0 |
+| 3 | /tasks → /projects/project-1 | 20 | 0 |
+| 3 | /projects/project-1 → / | 20 | 0 |
 
 **No >100 ms transitions** in any of these three runs; none discarded. Each p95
 is strictly below 100 ms. Zero request starts/navigation-attributed requests and

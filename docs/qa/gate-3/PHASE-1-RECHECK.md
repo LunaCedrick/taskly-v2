@@ -73,7 +73,7 @@ First session `phase1-speed-8gWS1k` stopped **before any build or timing sample*
 Chrome process count was 11 despite the owner closing its visible window. A
 follow-up found ten installed Chrome processes and zero visible windows. The
 abort and zero-sample session are retained; neither is a numeric branch pass/fail.
-After the explicit owner reply ?End background Chrome processes?, rechecked zero
+After the explicit owner reply “End background Chrome processes”, rechecked zero
 visible windows and ended three processes belonging only to the exact installed
 Chrome path. The immediate tool count was one remaining process; the subsequent
 new session recorded 13 checks at zero. No process was ended before the answer.
@@ -81,7 +81,7 @@ new session recorded 13 checks at zero. No process was ended before the answer.
 Complete session: `phase1-speed-olTMAH`, A1/B1/A2/B2/A3/B3, **360 samples**.
 All six command exits are 0. Main/branch share >100 ms: **1/180 = 0.56% each**;
 pooled p95: **59.8 / 64.1 ms**; pooled p99: **94.3 / 99.0 ms**;
-slow repeat tasks?project transitions: **0 / 0**. Branch tails are numerically
+slow repeat tasks→project transitions: **0 / 0**. Branch tails are numerically
 higher; three runs per side cannot prove a regression either way. All per-run,
 route-pair and slow-sample details are in [PHASE-1-SPEED.md](PHASE-1-SPEED.md).
 No code was changed in response and no acceptance claim is made.
