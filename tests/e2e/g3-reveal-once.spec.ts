@@ -21,7 +21,7 @@ test('G3 Dashboard add does not leave a reveal for a later project or My Tasks',
   await expect(page.locator('[data-task-list]')).toHaveCount(0)
   await page.getByRole('button', { name: 'Quick Add', exact: true }).click()
   const dialog = page.getByRole('dialog')
-  await dialog.getByLabel('Project', { exact: true }).selectOption('project-3')
+  await dialog.getByRole('combobox', { name: 'Project', exact: true }).selectOption('project-3')
   await dialog.getByLabel('Title').fill('Dashboard add without a later reveal')
   await dialog.getByLabel('Title').press('Enter')
   await confirmed(page, 'dashboard-add')
